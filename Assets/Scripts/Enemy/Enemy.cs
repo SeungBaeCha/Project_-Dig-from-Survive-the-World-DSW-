@@ -3,68 +3,162 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("추격 설정")]
-    public float detectionRadius = 15f; // 플레이어를 탐지할 반경
+    // AI 상태를 구분하기 위한 열거형
+    private enum State
+    {
+        Patrolling, // 순찰
+        Chasing,    // 추격
+        Returning   // 복귀
+    }
 
-    [Header("눈 색깔 설정")]
-    public Color idleColor = Color.white; // 평상시 색
-    public Color chaseColor = Color.red;  // 추격 시 색
+    private State currentState;
 
+    [Header("기본 설정")]
     private NavMeshAgent agent;
     private Transform player;
+    private Vector3 startingPosition; // 처음 위치를 저장할 변수
+
+    [Header("추격 설정")]
+    public float detectionRadius = 15f; // 플레이어를 탐지할 반경
+    public float chaseSpeed = 6f;       // 추격 시 이동 속도
+
+    [Header("순찰 설정")]
+    public float patrolRadius = 10f;    // 순찰 반경
+    public float patrolSpeed = 3f;      // 순찰 시 이동 속도
+    public float patrolWaitTime = 3f;   // 순찰 지점 도착 후 대기 시간
+    private float waitTimer;
+
+    [Header("눈 색깔 설정")]
+    public Color idleColor; // 평상시/순찰 시 색
+    public Color chaseColor;  // 추격 시 색
     private MeshRenderer eyesRenderer;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        startingPosition = transform.position; // 시작 위치 저장
 
-        // 'Eyes'라는 이름의 자식 오브젝트를 찾고, 그 오브젝트의 MeshRenderer를 가져온다.
+        // 'Eyes' 자식 오브젝트의 렌더러 찾기
         Transform eyesTransform = transform.Find("Eyes");
         if (eyesTransform != null)
         {
             eyesRenderer = eyesTransform.GetComponent<MeshRenderer>();
         }
 
-        // 초기 색상 설정
-        if (eyesRenderer != null)
-        {
-            eyesRenderer.material.color = idleColor;
-        }
+        // 순찰 상태로 시작
+        SwitchState(State.Patrolling);
     }
 
     void Update()
     {
-        if (player == null)
+        // 플레이어가 탐지 범위 안에 있는지 항상 확인
+        float distanceToPlayer = (player != null) ? Vector3.Distance(transform.position, player.position) : float.MaxValue;
+
+        // 상태에 따라 행동 결정
+        switch (currentState)
         {
-            // 플레이어가 없으면 정지
-            agent.isStopped = true;
+            case State.Patrolling:
+                HandlePatrolling(distanceToPlayer);
+                break;
+            case State.Chasing:
+                HandleChasing(distanceToPlayer);
+                break;
+            case State.Returning:
+                HandleReturning(distanceToPlayer);
+                break;
+        }
+    }
+
+    // 순찰 상태일 때 처리
+    private void HandlePatrolling(float distanceToPlayer)
+    {
+        if (distanceToPlayer <= detectionRadius)
+        {
+            SwitchState(State.Chasing);
             return;
         }
 
-        // 플레이어와 이 적 사이의 거리를 계산
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        // 목적지에 도착했으면 잠시 대기 후 새로운 목적지 설정
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            waitTimer += Time.deltaTime;
+            if (waitTimer >= patrolWaitTime)
+            {
+                SetNewRandomDestination();
+            }
+        }
+    }
 
-        // 거리가 탐지 반경 안에 들어왔을 때
+    // 추격 상태일 때 처리
+    private void HandleChasing(float distanceToPlayer)
+    {
+        if (distanceToPlayer > detectionRadius)
+        {
+            SwitchState(State.Returning);
+            return;
+        }
+        agent.destination = player.position;
+    }
+
+    // 복귀 상태일 때 처리
+    private void HandleReturning(float distanceToPlayer)
+    {
         if (distanceToPlayer <= detectionRadius)
         {
-            // 추격을 시작하고, 눈 색깔을 변경
-            agent.isStopped = false;
-            agent.destination = player.position;
-            SetEyeColor(chaseColor);
+            SwitchState(State.Chasing);
+            return;
         }
-        else // 거리가 탐지 반경 밖에 있을 때
+
+        // 시작 위치에 거의 도착했으면 순찰 상태로 전환
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            // 추격을 멈추고, 눈 색깔을 원래대로
-            agent.isStopped = true;
-            SetEyeColor(idleColor);
+            SwitchState(State.Patrolling);
+        }
+    }
+
+    // 상태를 전환하는 함수
+    private void SwitchState(State newState)
+    {
+        // 상태가 같으면 중복 실행 방지
+        if (currentState == newState) return;
+
+        currentState = newState;
+        switch (currentState)
+        {
+            case State.Patrolling:
+                agent.speed = patrolSpeed;
+                SetEyeColor(idleColor);
+                SetNewRandomDestination();
+                break;
+            case State.Chasing:
+                agent.speed = chaseSpeed;
+                SetEyeColor(chaseColor);
+                break;
+            case State.Returning:
+                agent.speed = patrolSpeed; // 복귀는 순찰 속도로
+                SetEyeColor(idleColor);
+                agent.destination = startingPosition;
+                break;
+        }
+    }
+
+    // 새로운 랜덤 목적지를 설정하는 함수
+    void SetNewRandomDestination()
+    {
+        waitTimer = 0f;
+        Vector3 randomDirection = Random.insideUnitSphere * patrolRadius;
+        randomDirection += startingPosition;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, patrolRadius, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
         }
     }
 
     // 눈 색깔을 바꾸는 함수
     void SetEyeColor(Color color)
     {
-        // 현재 색과 바꾸려는 색이 다를 때만 변경 (최적화)
         if (eyesRenderer != null && eyesRenderer.material.color != color)
         {
             eyesRenderer.material.color = color;
