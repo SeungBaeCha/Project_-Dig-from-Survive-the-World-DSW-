@@ -52,8 +52,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        // 플레이어가 탐지 범위 안에 있는지 항상 확인
-        float distanceToPlayer = (player != null) ? Vector3.Distance(transform.position, player.position) : float.MaxValue;
+        // 플레이어가 없으면 아무것도 하지 않음
+        if (player == null) return;
+
+        // 플레이어와의 거리 계산
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         // 상태에 따라 행동 결정
         switch (currentState)
@@ -73,7 +76,8 @@ public class Enemy : MonoBehaviour
     // 순찰 상태일 때 처리
     private void HandlePatrolling(float distanceToPlayer)
     {
-        if (distanceToPlayer <= detectionRadius)
+        // 밤이고 플레이어가 탐지 범위 안에 있으면 추격 상태로 전환
+        if (GameManager.Instance.IsNight && distanceToPlayer <= detectionRadius)
         {
             SwitchState(State.Chasing);
             return;
@@ -93,7 +97,8 @@ public class Enemy : MonoBehaviour
     // 추격 상태일 때 처리
     private void HandleChasing(float distanceToPlayer)
     {
-        if (distanceToPlayer > detectionRadius)
+        // 밤이 아니거나 플레이어가 탐지 범위를 벗어나면 복귀 상태로 전환
+        if (!GameManager.Instance.IsNight || distanceToPlayer > detectionRadius)
         {
             SwitchState(State.Returning);
             return;
@@ -104,7 +109,8 @@ public class Enemy : MonoBehaviour
     // 복귀 상태일 때 처리
     private void HandleReturning(float distanceToPlayer)
     {
-        if (distanceToPlayer <= detectionRadius)
+        // 밤이고 플레이어가 탐지 범위 안에 있으면 다시 추격
+        if (GameManager.Instance.IsNight && distanceToPlayer <= detectionRadius)
         {
             SwitchState(State.Chasing);
             return;
