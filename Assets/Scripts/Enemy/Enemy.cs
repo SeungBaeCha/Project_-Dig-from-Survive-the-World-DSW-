@@ -52,8 +52,34 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        // 플레이어가 없으면 아무것도 하지 않음
-        if (player == null) return;
+        // 플레이어 Transform이 할당되지 않았다면 다시 탐색
+        if (player == null)
+        {
+            // "Player" 태그를 가진 게임 오브젝트를 찾아 Transform을 할당
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+            {
+                player = playerObject.transform;
+            }
+            else
+            {
+                // 아직 플레이어를 찾을 수 없으면 Update 로직을 더 이상 진행하지 않음
+                return;
+            }
+        }
+
+        // 밤이면 무조건 플레이어 추격
+        if (GameManager.Instance.IsNight)
+        {
+            if (currentState != State.Chasing)
+            {
+                SwitchState(State.Chasing);
+            }
+            agent.destination = player.position;
+            return; // 밤에는 아래의 낮 시간 로직을 실행하지 않음
+        }
+
+        // --- 아래는 낮 시간 로직 ---
 
         // 플레이어와의 거리 계산
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -62,64 +88,48 @@ public class Enemy : MonoBehaviour
         switch (currentState)
         {
             case State.Patrolling:
-                HandlePatrolling(distanceToPlayer);
+                // 플레이어가 탐지 범위 안에 들어오면 추격 상태로 전환
+                if (distanceToPlayer <= detectionRadius)
+                {
+                    SwitchState(State.Chasing);
+                    break;
+                }
+
+                // 목적지에 도착했으면 잠시 대기 후 새로운 목적지 설정
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                {
+                    waitTimer += Time.deltaTime;
+                    if (waitTimer >= patrolWaitTime)
+                    {
+                        SetNewRandomDestination();
+                    }
+                }
                 break;
+
             case State.Chasing:
-                HandleChasing(distanceToPlayer);
+                // 플레이어가 탐지 범위를 벗어나면 복귀 상태로 전환
+                if (distanceToPlayer > detectionRadius)
+                {
+                    SwitchState(State.Returning);
+                    break;
+                }
+                agent.destination = player.position;
                 break;
+
             case State.Returning:
-                HandleReturning(distanceToPlayer);
+                // 복귀 중 플레이어가 다시 탐지 범위에 들어오면 추격
+                if (distanceToPlayer <= detectionRadius)
+                {
+                    SwitchState(State.Chasing);
+                    break;
+                }
+
+                // 시작 위치에 거의 도착했으면 순찰 상태로 전환
+                if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                {
+                    SwitchState(State.Patrolling);
+                }
                 break;
-        }
-    }
-
-    // 순찰 상태일 때 처리
-    private void HandlePatrolling(float distanceToPlayer)
-    {
-        // 밤이고 플레이어가 탐지 범위 안에 있으면 추격 상태로 전환
-        if (GameManager.Instance.IsNight && distanceToPlayer <= detectionRadius)
-        {
-            SwitchState(State.Chasing);
-            return;
-        }
-
-        // 목적지에 도착했으면 잠시 대기 후 새로운 목적지 설정
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-        {
-            waitTimer += Time.deltaTime;
-            if (waitTimer >= patrolWaitTime)
-            {
-                SetNewRandomDestination();
-            }
-        }
-    }
-
-    // 추격 상태일 때 처리
-    private void HandleChasing(float distanceToPlayer)
-    {
-        // 밤이 아니거나 플레이어가 탐지 범위를 벗어나면 복귀 상태로 전환
-        if (!GameManager.Instance.IsNight || distanceToPlayer > detectionRadius)
-        {
-            SwitchState(State.Returning);
-            return;
-        }
-        agent.destination = player.position;
-    }
-
-    // 복귀 상태일 때 처리
-    private void HandleReturning(float distanceToPlayer)
-    {
-        // 밤이고 플레이어가 탐지 범위 안에 있으면 다시 추격
-        if (GameManager.Instance.IsNight && distanceToPlayer <= detectionRadius)
-        {
-            SwitchState(State.Chasing);
-            return;
-        }
-
-        // 시작 위치에 거의 도착했으면 순찰 상태로 전환
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-        {
-            SwitchState(State.Patrolling);
         }
     }
 
@@ -168,6 +178,12 @@ public class Enemy : MonoBehaviour
         if (eyesRenderer != null && eyesRenderer.material.color != color)
         {
             eyesRenderer.material.color = color;
+        }
+        // 유니티 에디터에서 오브젝트 선택 시 디버그 시각화
+        void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.yellow; // 기즈모 색상을 노란색으로 설정
+            Gizmos.DrawWireSphere(transform.position, detectionRadius); // detectionRadius 크기의 구체를 그림
         }
     }
 }
