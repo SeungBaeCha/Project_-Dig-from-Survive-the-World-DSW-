@@ -3,6 +3,16 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("체력 설정")]
+    public float maxHealth = 100f;
+    private float currentHealth;
+    public HPBar hpBar; // HP바 UI 참조
+
+
+    // Enemy의 사망상태 파악
+    bool isDead = false;
+
+
     // AI 상태를 구분하기 위한 열거형
     private enum State
     {
@@ -39,6 +49,13 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         startingPosition = transform.position; // 시작 위치 저장
 
+        // 체력 초기화 및 HP바 업데이트
+        currentHealth = maxHealth;
+        if (hpBar != null)
+        {
+            hpBar.UpdateHP(currentHealth, maxHealth);
+        }
+
         // 'Eyes' 자식 오브젝트의 렌더러 찾기
         Transform eyesTransform = transform.Find("Eyes");
         if (eyesTransform != null)
@@ -52,6 +69,21 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        // 죽으면 Enemy의 모든행동이 실행하지 않는다
+        if (isDead)
+        {
+           return; 
+        }
+        // --- 테스트용 데미지 코드 ---
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TakeDamage(20);
+        }
+#endif
+        // -------------------------
+
+
         // 플레이어 Transform이 할당되지 않았다면 다시 탐색
         if (player == null)
         {
@@ -133,11 +165,45 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // 데미지를 받는 함수
+    public void TakeDamage(float damage)
+    {
+        // 죽었으면 데미지 받지 않음
+        if (isDead) return;
+
+        currentHealth -= damage;
+        if (hpBar != null)
+        {
+            hpBar.UpdateHP(currentHealth, maxHealth);
+        }
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    // 사망 처리 함수
+    private void Die()
+    {
+        isDead = true;
+
+        // NavMeshAgent의 움직임을 즉시 중지
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+
+        // 간단하게 오브젝트를 N 초 뒤 파괴. 나중에 여기에 파티클이나 사운드 효과를 추가할 수 있다.
+        Destroy(gameObject, 1f);
+    }
+
     // 상태를 전환하는 함수
     private void SwitchState(State newState)
     {
-        // 상태가 같으면 중복 실행 방지
-        if (currentState == newState) return;
+        //// 상태가 같으면 중복 실행 방지
+        if (currentState == newState || isDead) return;
 
         currentState = newState;
         switch (currentState)
@@ -179,11 +245,12 @@ public class Enemy : MonoBehaviour
         {
             eyesRenderer.material.color = color;
         }
-        // 유니티 에디터에서 오브젝트 선택 시 디버그 시각화
-        void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow; // 기즈모 색상을 노란색으로 설정
-            Gizmos.DrawWireSphere(transform.position, detectionRadius); // detectionRadius 크기의 구체를 그림
-        }
+    }
+
+    // 유니티 에디터에서 오브젝트 선택 시 디버그 시각화
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow; // 기즈모 색상을 노란색으로 설정
+        Gizmos.DrawWireSphere(transform.position, detectionRadius); // detectionRadius 크기의 구체를 그림
     }
 }
