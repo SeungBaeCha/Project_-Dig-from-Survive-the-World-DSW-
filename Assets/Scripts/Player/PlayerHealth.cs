@@ -7,14 +7,33 @@ public class PlayerHealth : MonoBehaviour
     private float currentHealth;
     public HPBar hpBar; // HP바 UI 참조
 
+    [Header("게임 오버 설정")]
+    public GameObject gameoverPanel;
+
+
+
+
     void Start()
     {
+
+        // 게임이 재시작 될 수 있어 시작할 떄 항상 시간을 원래대로 놓는다. (게임실행)
+        Time.timeScale = 1f;
+
         // 체력 초기화 및 HP바 업데이트
         currentHealth = maxHealth;
         if (hpBar != null)
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
         }
+
+
+        // 시작할때 gameoverPanel이 꺼져있도록 처리
+        if (gameoverPanel != null)
+        {
+            gameoverPanel.SetActive(false);
+        }
+
+
     }
 
     void Update()
@@ -49,7 +68,16 @@ public class PlayerHealth : MonoBehaviour
     // 사망 처리 함수
     private void Die()
     {
+        // 나중에 여기에 게임 오버 로직이나 부활 로직을 추가.
         Debug.Log("플레이어가 사망했습니다.");
-        // 나중에 여기에 게임 오버 로직이나 부활 로직을 추가할 수 있습니다.
+
+        if (gameoverPanel != null)
+        {
+            gameoverPanel.SetActive(true);
+        }
+
+
+        // 게임시간을 멈추기
+        Time.timeScale = 0f;
     }
 }
