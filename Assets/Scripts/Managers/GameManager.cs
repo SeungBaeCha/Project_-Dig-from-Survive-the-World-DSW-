@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Vector3 nightSunRotation = new Vector3(-90, -30, 0);
 
     [Header("배고픔 설정")]
-    [SerializeField] private float hungerDecreaseInterval = 5f; // 배고픔 감소 체크 주기 (초)
-    [SerializeField, Range(0, 1)] private float hungerDecreaseChance = 0.5f; // 배고픔 감소 확률
-    [SerializeField] private float hungerDecreaseAmount = 2f; // 배고픔 감소량
+    [SerializeField] private float hungerDecreaseInterval; // 배고픔 감소 체크 주기 (초)
+    [SerializeField, Range(0, 1)] private float hungerDecreaseChance; // 배고픔 감소 확률
+    [SerializeField] private float hungerDecreaseAmount; // 배고픔 감소량
     private float hungerTimer;
 
     // 참조
