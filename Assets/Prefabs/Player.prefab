@@ -200,6 +200,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  maxHunger: 100
+  currentHunger: 0
   hpBar: {fileID: 0}
   gameoverPanel: {fileID: 0}
 --- !u!54 &2145120264612405676

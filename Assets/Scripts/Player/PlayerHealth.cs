@@ -5,6 +5,11 @@ public class PlayerHealth : MonoBehaviour
     [Header("체력 설정")]
     public float maxHealth = 100f;
     private float currentHealth;
+
+    [Header("배고픔 설정")]
+    public float maxHunger = 100f;
+    public float currentHunger;
+
     public HPBar hpBar; // HP바 UI 참조
 
     [Header("게임 오버 설정")]
@@ -21,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
 
         // 체력 초기화 및 HP바 업데이트
         currentHealth = maxHealth;
+        //currentHunger = maxHunger; // 배고픔 초기화
         if (hpBar != null)
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
@@ -62,6 +68,18 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             Die();
+        }
+    }
+
+    // 배고픔을 감소시키는 함수
+    public void DecreaseHunger(float amount)
+    {
+        if (currentHunger <= 0) return;
+
+        currentHunger -= amount;
+        if (currentHunger < 0)
+        {
+            currentHunger = 0;
         }
     }
 

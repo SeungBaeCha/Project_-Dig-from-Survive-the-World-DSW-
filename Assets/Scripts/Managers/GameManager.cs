@@ -24,8 +24,17 @@ public class GameManager : MonoBehaviour
     [Header("밤 조명")]
     [SerializeField] private Color nightAmbientColor = new Color(0.1f, 0.1f, 0.2f);
     [SerializeField] private Color nightSunColor = new Color(0.8f, 0.8f, 1f);
-    [SerializeField] private float nightSunIntensity = 0.2f;
+    [SerializeField] private float nightSunIntensity = 0.2f;        // 밤의 밝기 조정
     [SerializeField] private Vector3 nightSunRotation = new Vector3(-90, -30, 0);
+
+    [Header("배고픔 설정")]
+    [SerializeField] private float hungerDecreaseInterval = 5f; // 배고픔 감소 체크 주기 (초)
+    [SerializeField, Range(0, 1)] private float hungerDecreaseChance = 0.5f; // 배고픔 감소 확률
+    [SerializeField] private float hungerDecreaseAmount = 2f; // 배고픔 감소량
+    private float hungerTimer;
+
+    // 참조
+    private PlayerHealth playerHealth;
 
     // 현재 시간대와 타이머
     public bool IsNight { get; private set; }
@@ -64,9 +73,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // 플레이어 참조 찾기
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            playerHealth = playerObject.GetComponent<PlayerHealth>();
+        }
+
         // 낮부터 시작
         IsNight = false;
         timer = dayDuration;
+        hungerTimer = hungerDecreaseInterval; // 배고픔 타이머 초기화
         SetLightingImmediate(false); // 시작 시 낮 조명 즉시 설정
         Debug.Log("Day has started.");
         OnDayStart?.Invoke();
@@ -75,6 +92,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         timer -= Time.deltaTime;
+        HandleHunger(); // 배고픔 처리 로직 호출
 
         // 1초마다 타이머 값을 정수로 출력
         logTimer -= Time.deltaTime;
@@ -100,6 +118,23 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Day has started.");
                 OnDayStart?.Invoke();
             }
+        }
+    }
+
+    private void HandleHunger()
+    {
+        if (playerHealth == null) return;
+
+        hungerTimer -= Time.deltaTime;
+        if (hungerTimer <= 0f)
+        {
+            // 확률 체크
+            if (UnityEngine.Random.value < hungerDecreaseChance)
+            {
+                playerHealth.DecreaseHunger(hungerDecreaseAmount);
+                Debug.Log($"Hunger decreased by {hungerDecreaseAmount}. Current Hunger: {playerHealth.currentHunger}");
+            }
+            hungerTimer = hungerDecreaseInterval; // 타이머 리셋
         }
     }
 
