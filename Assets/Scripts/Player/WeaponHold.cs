@@ -17,6 +17,11 @@ public class WeaponHold : MonoBehaviour
     // 스웨이 부드러움. 무기가 원래 위치로 돌아오는 속도.
     [SerializeField] private float smoothAmount = 6f;
 
+    [Header("무기 드랍 설정")]
+    // 무기를 떨어뜨릴 때 던지는 힘의 크기
+    [SerializeField] private float dropForce = 3f;
+
+
     // 무기 레이어의 인덱스. 유니티 에디터의 Tags and Layers에서 8번째 레이어를 'Weapon'으로 설정해야 해.
     private const int WEAPON_LAYER_INDEX = 8;
 
@@ -88,12 +93,32 @@ public class WeaponHold : MonoBehaviour
         // 주울 수 있는 무기가 있을 때만 로직 실행
         if (nearbyWeapon != null)
         {
-            // 만약 이미 다른 무기를 들고 있다면, 교체를 위해 기존 무기 파괴
+            // 만약 이미 다른 무기를 들고 있다면, 교체를 위해 기존 무기 떨어뜨리기
             if (isEquipped)
             {
                 Debug.Log(equippedWeapon.name + "을(를) 버리고 " + nearbyWeapon.name + "을(를) 장착합니다.");
-                // 현재 들고있는 무기 오브젝트를 파괴한다.
-                Destroy(equippedWeapon);
+                
+                // --- 무기 떨어뜨리기 로직 ---
+                GameObject oldWeapon = equippedWeapon;
+
+                // 1. 부모 관계 해제해서 독립된 오브젝트로 만들기
+                oldWeapon.transform.SetParent(null);
+
+                // 2. 콜라이더 다시 활성화
+                Collider oldWeaponCollider = oldWeapon.GetComponent<Collider>();
+                if (oldWeaponCollider != null)
+                {
+                    oldWeaponCollider.enabled = true;
+                }
+
+                // 3. Rigidbody가 있다면 물리 효과 활성화
+                Rigidbody oldWeaponRb = oldWeapon.GetComponent<Rigidbody>();
+                if (oldWeaponRb != null)
+                {
+                    oldWeaponRb.isKinematic = false;
+                    // 카메라 정면 방향으로 약간의 힘을 가해서 던지기
+                    oldWeaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
+                }
             }
 
             // --- 여기부터는 새로운 무기를 장착하는 공통 로직 ---
@@ -118,6 +143,13 @@ public class WeaponHold : MonoBehaviour
             if (weaponCollider != null)
             {
                 weaponCollider.enabled = false;
+            }
+            
+            // 만약 Rigidbody가 있다면 isKinematic으로 설정하여 물리효과 끔
+            Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
+            if (weaponRb != null)
+            {
+                weaponRb.isKinematic = true;
             }
 
             // 무기를 장착했으므로 상태를 true로 변경 (이미 true였어도 상관없음)
