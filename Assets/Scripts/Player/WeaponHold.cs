@@ -85,13 +85,21 @@ public class WeaponHold : MonoBehaviour
             return;
         }
 
-        // 1. 아직 무기를 들고 있지 않고 (isEquipped == false)
-        // 2. 주변에 주울 무기가 있다면 (nearbyWeapon != null)
-        if (!isEquipped && nearbyWeapon != null)
+        // 주울 수 있는 무기가 있을 때만 로직 실행
+        if (nearbyWeapon != null)
         {
-            // Arm 오브젝트 활성화하고 레이어 설정
-            holdPoint.gameObject.SetActive(true);
+            // 만약 이미 다른 무기를 들고 있다면, 교체를 위해 기존 무기 파괴
+            if (isEquipped)
+            {
+                Debug.Log(equippedWeapon.name + "을(를) 버리고 " + nearbyWeapon.name + "을(를) 장착합니다.");
+                // 현재 들고있는 무기 오브젝트를 파괴한다.
+                Destroy(equippedWeapon);
+            }
 
+            // --- 여기부터는 새로운 무기를 장착하는 공통 로직 ---
+
+            // Arm 오브젝트 활성화
+            holdPoint.gameObject.SetActive(true);
 
             // 주울 무기를 equippedWeapon 변수에 저장
             equippedWeapon = nearbyWeapon;
@@ -104,9 +112,6 @@ public class WeaponHold : MonoBehaviour
 
             // 주운 무기의 회전 값을 초기화해서 플레이어와 같은 방향을 보게 함
             equippedWeapon.transform.localRotation = Quaternion.identity;
-            
-            // 무기 오브젝트와 그 모든 자식들의 레이어를 'Weapon'으로 변경
-            //SetLayerRecursively(equippedWeapon, WEAPON_LAYER_INDEX); // This line is commented out as the user cancelled the previous operation
 
             // 주운 무기의 콜라이더를 비활성화해서 물리적 충돌을 막음
             Collider weaponCollider = equippedWeapon.GetComponent<Collider>();
@@ -115,27 +120,27 @@ public class WeaponHold : MonoBehaviour
                 weaponCollider.enabled = false;
             }
 
-            // 무기를 장착했으므로 상태를 true로 변경
+            // 무기를 장착했으므로 상태를 true로 변경 (이미 true였어도 상관없음)
             isEquipped = true;
             // 주변에 있던 무기는 이제 내가 들었으므로 null로 초기화
             nearbyWeapon = null;
 
             Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
         }
-        // 이미 다른 무기를 들고 있는 경우
-        else if (isEquipped)
+        // 주울 수 있는 무기가 없을 때 (참고용)
+        else if(isEquipped)
         {
-            Debug.Log("이미 무기를 들고 있어 다른 무기를 장착할 수 없다.");
-            // 여기에 나중에 무기를 버리거나 교체하는 로직을 추가
+            // 이 부분은 '무기 버리기' 로직을 넣을 수 있는 공간
+             Debug.Log("주변에 교체할 무기가 없습니다.");
         }
     }
 
     // isTrigger가 켜진 다른 콜라이더 안에 들어갔을 때 호출되는 함수
     private void OnTriggerEnter(Collider other)
     {
-        // 1. 들어온 오브젝트의 태그가 "Weapon"이고
-        // 2. 아직 내가 무기를 들고 있지 않다면
-        if (other.CompareTag("Weapon") && !isEquipped)
+        // 1. 들어온 오브젝트의 태그가 "Weapon"이라면
+        // 무기를 들고 있는 상태에서도 다른 무기를 감지해야 교체할 수 있으므로, !isEquipped 조건을 제거
+        if (other.CompareTag("Weapon"))
         {
             // 그 오브젝트를 '주울 수 있는 무기'로 저장
             nearbyWeapon = other.gameObject;
