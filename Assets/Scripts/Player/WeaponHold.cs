@@ -13,17 +13,17 @@ public class WeaponHold : MonoBehaviour
 
     [Header("무기 스웨이(Sway) 설정")]
     // 스웨이 강도. 마우스 움직임에 얼마나 민감하게 반응할지 결정.
-    [SerializeField] private float swayAmount = 0.02f;
+    [SerializeField] private float swayAmount;
     // 스웨이 부드러움. 무기가 원래 위치로 돌아오는 속도.
-    [SerializeField] private float smoothAmount = 6f;
+    [SerializeField] private float smoothAmount;
 
     [Header("무기 드랍 설정")]
     // 무기를 떨어뜨릴 때 던지는 힘의 크기
-    [SerializeField] private float dropForce = 3f;
+    [SerializeField] private float dropForce;
 
 
-    // 무기 레이어의 인덱스. 유니티 에디터의 Tags and Layers에서 8번째 레이어를 'Weapon'으로 설정해야 해.
-    private const int WEAPON_LAYER_INDEX = 8;
+    //// 무기 레이어의 인덱스. 유니티 에디터의 Tags and Layers에서 8번째 레이어를 'Weapon'으로 설정
+    //private const int WEAPON_LAYER_INDEX = 8;
 
 
     // 플레이어 근처에 있는 무기 오브젝트 (트리거 안에 들어왔을 때 저장)
@@ -105,10 +105,10 @@ public class WeaponHold : MonoBehaviour
                 oldWeapon.transform.SetParent(null);
 
                 // 2. 콜라이더 다시 활성화
-                Collider oldWeaponCollider = oldWeapon.GetComponent<Collider>();
-                if (oldWeaponCollider != null)
+                MeshCollider oldWeaponMeshCollider = oldWeapon.GetComponent<MeshCollider>();
+                if (oldWeaponMeshCollider != null)
                 {
-                    oldWeaponCollider.enabled = true;
+                    oldWeaponMeshCollider.enabled = true;
                 }
 
                 // 3. Rigidbody가 있다면 물리 효과 활성화
@@ -138,11 +138,10 @@ public class WeaponHold : MonoBehaviour
             // 주운 무기의 회전 값을 초기화해서 플레이어와 같은 방향을 보게 함
             equippedWeapon.transform.localRotation = Quaternion.identity;
 
-            // 주운 무기의 콜라이더를 비활성화해서 물리적 충돌을 막음
-            Collider weaponCollider = equippedWeapon.GetComponent<Collider>();
-            if (weaponCollider != null)
+            MeshCollider weaponMeshCollider = equippedWeapon.GetComponent<MeshCollider>();
+            if (weaponMeshCollider != null)
             {
-                weaponCollider.enabled = false;
+                weaponMeshCollider.enabled = false;
             }
             
             // 만약 Rigidbody가 있다면 isKinematic으로 설정하여 물리효과 끔
@@ -167,26 +166,19 @@ public class WeaponHold : MonoBehaviour
         }
     }
 
-    // isTrigger가 켜진 다른 콜라이더 안에 들어갔을 때 호출되는 함수
-    private void OnTriggerEnter(Collider other)
+    // Weapon.cs에서 호출할 함수: 주울 수 있는 무기를 설정한다.
+    public void SetNearbyWeapon(GameObject weapon)
     {
-        // 1. 들어온 오브젝트의 태그가 "Weapon"이라면
-        // 무기를 들고 있는 상태에서도 다른 무기를 감지해야 교체할 수 있으므로, !isEquipped 조건을 제거
-        if (other.CompareTag("Weapon"))
-        {
-            // 그 오브젝트를 '주울 수 있는 무기'로 저장
-            nearbyWeapon = other.gameObject;
-            Debug.Log("주울 수 있는 무기 발견: " + nearbyWeapon.name);
-        }
+        nearbyWeapon = weapon;
+        Debug.Log("주울 수 있는 무기 발견: " + nearbyWeapon.name);
     }
 
-    // 콜라이더 안에서 빠져나왔을 때 호출되는 함수
-    private void OnTriggerExit(Collider other)
+    // Weapon.cs에서 호출할 함수: 주울 수 있는 무기를 초기화한다.
+    public void ClearNearbyWeapon(GameObject weapon)
     {
-        // 빠져나온 오브젝트가 내가 '주울 수 있는 무기'로 저장해뒀던 바로 그 오브젝트라면
-        if (other.gameObject == nearbyWeapon)
+        // 현재 설정된 주울 무기가 나가는 그 무기가 맞는지 확인 (여러 무기 근처에 있을 경우를 대비)
+        if (nearbyWeapon == weapon)
         {
-            // '주울 수 있는 무기'를 null로 초기화해서 더 이상 주울 수 없게 함
             nearbyWeapon = null;
             Debug.Log("무기 범위에서 벗어났다.");
         }
