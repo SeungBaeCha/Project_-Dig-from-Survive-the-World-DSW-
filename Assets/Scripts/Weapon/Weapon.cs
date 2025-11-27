@@ -17,7 +17,7 @@ public class Weapon : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
 
-        // 무기가 어색하게 서 있는 현상을 방지하고 자연스럽게 넘어지게 하기 위해 무게 중심을 위로 살짝 올린다.
+        // 무기가 어색하게 서 있는 현상을 방지하고 자연스럽게 넘어지게 하기 위해 무게 중심을 조정한다 y축
         rb.centerOfMass = new Vector3(0, -0.1f, 0);
     }
 

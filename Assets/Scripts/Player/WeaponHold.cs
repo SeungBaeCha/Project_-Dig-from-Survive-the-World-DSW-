@@ -21,9 +21,11 @@ public class WeaponHold : MonoBehaviour
     // 무기를 떨어뜨릴 때 던지는 힘의 크기
     [SerializeField] private float dropForce;
 
+    [Header("UI 설정")]
+    // 크로스헤어 UI 오브젝트를 연결할 변수
+    public GameObject crosshair;
 
-    //// 무기 레이어의 인덱스. 유니티 에디터의 Tags and Layers에서 8번째 레이어를 'Weapon'으로 설정
-    //private const int WEAPON_LAYER_INDEX = 8;
+
 
 
     // 플레이어 근처에 있는 무기 오브젝트 (트리거 안에 들어왔을 때 저장)
@@ -58,6 +60,12 @@ public class WeaponHold : MonoBehaviour
         else
         {
             Debug.LogError("Main Camera를 찾을 수 없습니다! Main Camera에 'MainCamera' 태그가 설정되어 있는지 확인해주세요.");
+        }
+
+        // 크로스헤어가 할당되어 있다면, 게임 시작 시 비활성화
+        if (crosshair != null)
+        {
+            crosshair.SetActive(false);
         }
     }
 
@@ -156,6 +164,12 @@ public class WeaponHold : MonoBehaviour
             // 주변에 있던 무기는 이제 내가 들었으므로 null로 초기화
             nearbyWeapon = null;
 
+            // 크로스헤어 활성화
+            if (crosshair != null)
+            {
+                crosshair.SetActive(true);
+            }
+
             Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
         }
         // 주울 수 있는 무기가 없을 때 (참고용)
@@ -181,6 +195,50 @@ public class WeaponHold : MonoBehaviour
         {
             nearbyWeapon = null;
             Debug.Log("무기 범위에서 벗어났다.");
+        }
+    }
+
+    // PlayerInput 컴포넌트에서 호출될 무기 버리기 함수
+    public void OnDrop(InputAction.CallbackContext context)
+    {
+        // 키가 '눌렸을 때'만 반응하도록 설정
+        if (!context.performed || !isEquipped)
+        {
+            return;
+        }
+
+        Debug.Log(equippedWeapon.name + "을(를) 버렸습니다.");
+
+        // --- 무기 떨어뜨리기 로직 ---
+        GameObject droppedWeapon = equippedWeapon;
+
+        // 1. 부모 관계 해제해서 독립된 오브젝트로 만들기
+        droppedWeapon.transform.SetParent(null);
+
+        // 2. 콜라이더 다시 활성화
+        MeshCollider weaponMeshCollider = droppedWeapon.GetComponent<MeshCollider>();
+        if (weaponMeshCollider != null)
+        {
+            weaponMeshCollider.enabled = true;
+        }
+
+        // 3. Rigidbody가 있다면 물리 효과 활성화
+        Rigidbody weaponRb = droppedWeapon.GetComponent<Rigidbody>();
+        if (weaponRb != null)
+        {
+            weaponRb.isKinematic = false;
+            // 카메라 정면 방향으로 약간의 힘을 가해서 던지기
+            weaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
+        }
+
+        // 4. 상태 변수 업데이트
+        equippedWeapon = null;
+        isEquipped = false;
+
+        // 5. 크로스헤어 비활성화
+        if (crosshair != null)
+        {
+            crosshair.SetActive(false);
         }
     }
 
