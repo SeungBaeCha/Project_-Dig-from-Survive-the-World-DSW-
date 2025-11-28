@@ -20,13 +20,16 @@ public class WeaponHold : MonoBehaviour
     [Header("무기 드랍 설정")]
     // 무기를 떨어뜨릴 때 던지는 힘의 크기
     [SerializeField] private float dropForce;
+    // 무기를 버린 후 플레이어와 물리적 충돌을 무시할 시간 (초)
+    [SerializeField] private float ignoreCollisionTime;
+
+    [Header("무기 줍기 설정")]
+    // 무기를 버린 후 다시 주울 수 있을 때까지의 쿨다운 시간
+    [SerializeField] private float pickupCooldown;
 
     [Header("UI 설정")]
     // 크로스헤어 UI 오브젝트를 연결할 변수
     public GameObject crosshair;
-
-
-
 
     // 플레이어 근처에 있는 무기 오브젝트 (트리거 안에 들어왔을 때 저장)
     private GameObject nearbyWeapon;
@@ -36,25 +39,22 @@ public class WeaponHold : MonoBehaviour
     private Camera mainCamera;
     // 무기의 초기 회전값 (모델 방향을 맞추기 위함)
     private Quaternion originRotation;
+    // 플레이어 자신의 콜라이더
+    private Collider playerCollider;
 
     void Start()
     {
         // 성능을 위해 메인 카메라를 미리 찾아 저장
         mainCamera = Camera.main;
+        // 플레이어 콜라이더를 찾아 저장
+        playerCollider = GetComponent<Collider>();
 
         // --- 뷰모델(ViewModel) 설정: Arm을 카메라의 자식으로 만들어 화면에 고정 ---
         if (mainCamera != null)
         {
-            // 1. Arm(holdPoint)을 메인 카메라의 자식으로 설정
             holdPoint.SetParent(mainCamera.transform);
-
-            // 2. Arm의 위치를 카메라 기준으로 오른쪽 아래로 조정 (이 값들을 직접 수정해서 위치 조정 가능)
             holdPoint.localPosition = new Vector3(0.3f, -0.2f, 0.5f);
-
-            // 3. 무기 모델이 앞을 보도록 하는 초기 회전값을 저장
             originRotation = Quaternion.Euler(0, 180f, 0);
-
-            // 4. 무기가 카메라에 잘려보이지 않도록 nearClipPlane 값을 조정
             mainCamera.nearClipPlane = 0.01f;
         }
         else
@@ -74,173 +74,130 @@ public class WeaponHold : MonoBehaviour
         // 무기를 들고 있을 때만 스웨이 로직 실행
         if (isEquipped)
         {
-            // 1. 마우스 움직임 값 읽어오기
             float mouseX = Mouse.current.delta.x.ReadValue() * swayAmount;
             float mouseY = Mouse.current.delta.y.ReadValue() * swayAmount;
-
-            // 2. 마우스 움직임에 따른 목표 회전값 계산
             Quaternion rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
             Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
             Quaternion targetRotation = originRotation * rotationX * rotationY;
-
-            // 3. 무기의 현재 회전값을 목표 회전값으로 부드럽게 변경 (Slerp)
-            // 총이 도는애니메이션
             holdPoint.localRotation = Quaternion.Slerp(holdPoint.localRotation, targetRotation, smoothAmount * Time.deltaTime);
         }
     }
 
-    // PlayerInput 컴포넌트의 'Invoke Unity Events'에서 호출될 함수
     public void OnEquip(InputAction.CallbackContext context)
     {
-        // 키가 '눌렸을 때'만 반응하도록 설정
-        if (!context.performed)
-        {
-            return;
-        }
+        if (!context.performed) return;
 
-        // 주울 수 있는 무기가 있을 때만 로직 실행
         if (nearbyWeapon != null)
         {
-            // 만약 이미 다른 무기를 들고 있다면, 교체를 위해 기존 무기 떨어뜨리기
             if (isEquipped)
             {
                 Debug.Log(equippedWeapon.name + "을(를) 버리고 " + nearbyWeapon.name + "을(를) 장착합니다.");
-                
-                // --- 무기 떨어뜨리기 로직 ---
-                GameObject oldWeapon = equippedWeapon;
-
-                // 1. 부모 관계 해제해서 독립된 오브젝트로 만들기
-                oldWeapon.transform.SetParent(null);
-
-                // 2. 콜라이더 다시 활성화
-                MeshCollider oldWeaponMeshCollider = oldWeapon.GetComponent<MeshCollider>();
-                if (oldWeaponMeshCollider != null)
-                {
-                    oldWeaponMeshCollider.enabled = true;
-                }
-
-                // 3. Rigidbody가 있다면 물리 효과 활성화
-                Rigidbody oldWeaponRb = oldWeapon.GetComponent<Rigidbody>();
-                if (oldWeaponRb != null)
-                {
-                    oldWeaponRb.isKinematic = false;
-                    // 카메라 정면 방향으로 약간의 힘을 가해서 던지기
-                    oldWeaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
-                }
+                DropWeapon(equippedWeapon); // 기존 무기 버리기
             }
 
-            // --- 여기부터는 새로운 무기를 장착하는 공통 로직 ---
-
-            // Arm 오브젝트 활성화
-            holdPoint.gameObject.SetActive(true);
-
-            // 주울 무기를 equippedWeapon 변수에 저장
-            equippedWeapon = nearbyWeapon;
-
-            // 주운 무기의 부모를 holdPoint로 설정해서 손에 따라다니게 만듦
-            equippedWeapon.transform.SetParent(holdPoint);
-
-            // 주운 무기의 위치를 손 위치와 정확히 일치시킴
-            equippedWeapon.transform.localPosition = Vector3.zero;
-
-            // 주운 무기의 회전 값을 초기화해서 플레이어와 같은 방향을 보게 함
-            equippedWeapon.transform.localRotation = Quaternion.identity;
-
-            MeshCollider weaponMeshCollider = equippedWeapon.GetComponent<MeshCollider>();
-            if (weaponMeshCollider != null)
-            {
-                weaponMeshCollider.enabled = false;
-            }
-            
-            // 만약 Rigidbody가 있다면 isKinematic으로 설정하여 물리효과 끔
-            Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
-            if (weaponRb != null)
-            {
-                weaponRb.isKinematic = true;
-            }
-
-            // 무기를 장착했으므로 상태를 true로 변경 (이미 true였어도 상관없음)
-            isEquipped = true;
-            // 주변에 있던 무기는 이제 내가 들었으므로 null로 초기화
-            nearbyWeapon = null;
-
-            // 크로스헤어 활성화
-            if (crosshair != null)
-            {
-                crosshair.SetActive(true);
-            }
-
-            Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
+            EquipWeapon(nearbyWeapon); // 새 무기 장착
         }
-        // 주울 수 있는 무기가 없을 때 (참고용)
-        else if(isEquipped)
+        else if (isEquipped)
         {
-            // 이 부분은 '무기 버리기' 로직을 넣을 수 있는 공간
-             Debug.Log("주변에 교체할 무기가 없습니다.");
+            Debug.Log("주변에 교체할 무기가 없습니다.");
         }
     }
-
-    // Weapon.cs에서 호출할 함수: 주울 수 있는 무기를 설정한다.
-    public void SetNearbyWeapon(GameObject weapon)
-    {
-        nearbyWeapon = weapon;
-        Debug.Log("주울 수 있는 무기 발견: " + nearbyWeapon.name);
-    }
-
-    // Weapon.cs에서 호출할 함수: 주울 수 있는 무기를 초기화한다.
-    public void ClearNearbyWeapon(GameObject weapon)
-    {
-        // 현재 설정된 주울 무기가 나가는 그 무기가 맞는지 확인 (여러 무기 근처에 있을 경우를 대비)
-        if (nearbyWeapon == weapon)
-        {
-            nearbyWeapon = null;
-            Debug.Log("무기 범위에서 벗어났다.");
-        }
-    }
-
-    // PlayerInput 컴포넌트에서 호출될 무기 버리기 함수
+    
     public void OnDrop(InputAction.CallbackContext context)
     {
-        // 키가 '눌렸을 때'만 반응하도록 설정
-        if (!context.performed || !isEquipped)
-        {
-            return;
-        }
+        if (!context.performed || !isEquipped) return;
 
         Debug.Log(equippedWeapon.name + "을(를) 버렸습니다.");
+        DropWeapon(equippedWeapon);
 
-        // --- 무기 떨어뜨리기 로직 ---
-        GameObject droppedWeapon = equippedWeapon;
-
-        // 1. 부모 관계 해제해서 독립된 오브젝트로 만들기
-        droppedWeapon.transform.SetParent(null);
-
-        // 2. 콜라이더 다시 활성화
-        MeshCollider weaponMeshCollider = droppedWeapon.GetComponent<MeshCollider>();
-        if (weaponMeshCollider != null)
-        {
-            weaponMeshCollider.enabled = true;
-        }
-
-        // 3. Rigidbody가 있다면 물리 효과 활성화
-        Rigidbody weaponRb = droppedWeapon.GetComponent<Rigidbody>();
-        if (weaponRb != null)
-        {
-            weaponRb.isKinematic = false;
-            // 카메라 정면 방향으로 약간의 힘을 가해서 던지기
-            weaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
-        }
-
-        // 4. 상태 변수 업데이트
         equippedWeapon = null;
         isEquipped = false;
 
-        // 5. 크로스헤어 비활성화
         if (crosshair != null)
         {
             crosshair.SetActive(false);
         }
     }
 
-    
+    private void EquipWeapon(GameObject weaponToEquip)
+    {
+        holdPoint.gameObject.SetActive(true);
+        equippedWeapon = weaponToEquip;
+        equippedWeapon.transform.SetParent(holdPoint);
+        equippedWeapon.transform.localPosition = Vector3.zero;
+        equippedWeapon.transform.localRotation = Quaternion.identity;
+
+        MeshCollider weaponMeshCollider = equippedWeapon.GetComponent<MeshCollider>();
+        if (weaponMeshCollider != null) weaponMeshCollider.enabled = false;
+
+        Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
+        if (weaponRb != null) weaponRb.isKinematic = true;
+
+        isEquipped = true;
+        nearbyWeapon = null;
+
+        if (crosshair != null) crosshair.SetActive(true);
+
+        Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
+    }
+
+    private void DropWeapon(GameObject weaponToDrop)
+    {
+        // 무기를 플레이어의 자식에서 해제
+        weaponToDrop.transform.SetParent(null);
+
+        // 무기의 물리적 속성 복원
+        MeshCollider weaponMeshCollider = weaponToDrop.GetComponent<MeshCollider>();
+        if (weaponMeshCollider != null) weaponMeshCollider.enabled = true;
+
+        Rigidbody weaponRb = weaponToDrop.GetComponent<Rigidbody>();
+        if (weaponRb != null)
+        {
+            weaponRb.isKinematic = false;
+            weaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
+        }
+
+        // --- 핵심 로직 수정 ---
+        // 1. 방금 버린 무기와 플레이어의 물리적 충돌을 잠시 무시
+        Collider droppedWeaponCollider = weaponToDrop.GetComponent<Collider>();
+        if (playerCollider != null && droppedWeaponCollider != null)
+        {
+            StartCoroutine(IgnoreCollisionTemporarily(droppedWeaponCollider));
+        }
+
+        // 2. 방금 버린 무기를 일정 시간 동안 주울 수 없도록 설정
+        Weapon weaponScript = weaponToDrop.GetComponent<Weapon>();
+        if (weaponScript != null)
+        {
+            // Weapon 스크립트의 코루틴을 호출하여 줍기 쿨다운을 시작
+            weaponScript.StartPickupCooldown(pickupCooldown);
+        }
+    }
+
+    private IEnumerator IgnoreCollisionTemporarily(Collider weaponCollider)
+    {
+        // 1. 충돌 무시 시작
+        Physics.IgnoreCollision(playerCollider, weaponCollider, true);
+        
+        // 2. 설정된 시간만큼 대기
+        yield return new WaitForSeconds(ignoreCollisionTime);
+        
+        // 3. 충돌 무시 해제
+        Physics.IgnoreCollision(playerCollider, weaponCollider, false);
+    }
+
+    public void SetNearbyWeapon(GameObject weapon)
+    {
+        nearbyWeapon = weapon;
+        Debug.Log("주울 수 있는 무기 발견: " + nearbyWeapon.name);
+    }
+
+    public void ClearNearbyWeapon(GameObject weapon)
+    {
+        if (nearbyWeapon == weapon)
+        {
+            nearbyWeapon = null;
+            Debug.Log("무기 범위에서 벗어났다.");
+        }
+    }
 }

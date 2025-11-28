@@ -414,6 +414,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 433230170}
   m_CullTransparentMesh: 1
+--- !u!1 &552926838 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6691233499152812588, guid: 5f041a0e07e8e7c45b19f88fa017528a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1179563093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &557874966 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6103290244909044047, guid: 98d974e321a330b418f3a3fe89e40a16,
+    type: 3}
+  m_PrefabInstance: {fileID: 1302922208}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &688236037
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +600,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713293434}
   m_CullTransparentMesh: 1
+--- !u!1 &736979703 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7949399506694567500, guid: 5642270c1e5c81845b9e022cf3021c70,
+    type: 3}
+  m_PrefabInstance: {fileID: 2114868142}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &853732209 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4618643319806815142, guid: 4e66d78d187e3514482d1effaf228550,
+    type: 3}
+  m_PrefabInstance: {fileID: 1102494424}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &939869496
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +687,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939869496}
   m_CullTransparentMesh: 1
+--- !u!1 &945990895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8205581665856932396, guid: 5538986d29140644b96889fa33447e84,
+    type: 3}
+  m_PrefabInstance: {fileID: 1398530108}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &961739749
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,6 +917,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 572379894976466881, guid: 4e66d78d187e3514482d1effaf228550,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 853732209}
     - target: {fileID: 1463329499631751822, guid: 4e66d78d187e3514482d1effaf228550,
         type: 3}
       propertyPath: m_Material
@@ -967,11 +1002,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13400000, guid: 1e8f19c086e0b914c9f149dd3971220b,
         type: 2}
+    - target: {fileID: 2764571069467651327, guid: 5f041a0e07e8e7c45b19f88fa017528a,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7024944904732415424, guid: 5f041a0e07e8e7c45b19f88fa017528a,
         type: 3}
       propertyPath: m_AngularDrag
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7494276024092330859, guid: 5f041a0e07e8e7c45b19f88fa017528a,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 552926838}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1022,6 +1067,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1242013278 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8436351596296252208, guid: ebaf31feecf1c1e4b9fbd778e3937c9c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1858598532}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1302922208
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1080,6 +1131,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13400000, guid: 1e8f19c086e0b914c9f149dd3971220b,
         type: 2}
+    - target: {fileID: 4195448237593264643, guid: 98d974e321a330b418f3a3fe89e40a16,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 557874966}
     - target: {fileID: 4479142754479658981, guid: 98d974e321a330b418f3a3fe89e40a16,
         type: 3}
       propertyPath: m_AngularDrag
@@ -1260,12 +1316,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 820120067308924159, guid: 5538986d29140644b96889fa33447e84,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3114582307581692086, guid: 5538986d29140644b96889fa33447e84,
         type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: 1e8f19c086e0b914c9f149dd3971220b,
         type: 2}
+    - target: {fileID: 6193465638251958069, guid: 5538986d29140644b96889fa33447e84,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 945990895}
     - target: {fileID: 8468979071266401700, guid: 5538986d29140644b96889fa33447e84,
         type: 3}
       propertyPath: m_AngularDrag
@@ -1414,6 +1480,11 @@ PrefabInstance:
         type: 3}
       propertyPath: smoothAmount
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 10108192628861714, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
+        type: 3}
+      propertyPath: pickupCooldown
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 319863145318272970, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
@@ -1801,6 +1872,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1122032665479597539, guid: ebaf31feecf1c1e4b9fbd778e3937c9c,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788578416796277742, guid: ebaf31feecf1c1e4b9fbd778e3937c9c,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 1242013278}
     - target: {fileID: 4627798814971406926, guid: ebaf31feecf1c1e4b9fbd778e3937c9c,
         type: 3}
       propertyPath: m_Material
@@ -1900,7 +1981,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1977,12 +2058,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1499772808055722143, guid: 5642270c1e5c81845b9e022cf3021c70,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1733365554162798889, guid: 5642270c1e5c81845b9e022cf3021c70,
         type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: 1e8f19c086e0b914c9f149dd3971220b,
         type: 2}
+    - target: {fileID: 7725408929291069342, guid: 5642270c1e5c81845b9e022cf3021c70,
+        type: 3}
+      propertyPath: interactionUI
+      value: 
+      objectReference: {fileID: 736979703}
     - target: {fileID: 9206808597556136320, guid: 5642270c1e5c81845b9e022cf3021c70,
         type: 3}
       propertyPath: m_AngularDrag
