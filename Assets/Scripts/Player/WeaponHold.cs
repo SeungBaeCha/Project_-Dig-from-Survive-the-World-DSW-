@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +42,8 @@ public class WeaponHold : MonoBehaviour
     private Quaternion originRotation;
     // 플레이어 자신의 콜라이더
     private Collider playerCollider;
+    // ShovelHold 스크립트 참조
+    private ShovelHold shovelHold;
 
     void Start()
     {
@@ -48,6 +51,8 @@ public class WeaponHold : MonoBehaviour
         mainCamera = Camera.main;
         // 플레이어 콜라이더를 찾아 저장
         playerCollider = GetComponent<Collider>();
+        // 플레이어에 붙어있는 ShovelHold 스크립트를 찾아 저장
+        shovelHold = GetComponent<ShovelHold>();
 
         // --- 뷰모델(ViewModel) 설정: Arm을 카메라의 자식으로 만들어 화면에 고정 ---
         if (mainCamera != null)
@@ -113,6 +118,9 @@ public class WeaponHold : MonoBehaviour
         equippedWeapon = null;
         isEquipped = false;
 
+        // 무기를 버렸으므로, 다시 삽 기능을 활성화
+        if (shovelHold != null) shovelHold.SetActive(true);
+
         if (crosshair != null)
         {
             crosshair.SetActive(false);
@@ -124,11 +132,25 @@ public class WeaponHold : MonoBehaviour
         holdPoint.gameObject.SetActive(true);
         equippedWeapon = weaponToEquip;
         equippedWeapon.transform.SetParent(holdPoint);
-        equippedWeapon.transform.localPosition = Vector3.zero;
-        equippedWeapon.transform.localRotation = Quaternion.identity;
 
-        MeshCollider weaponMeshCollider = equippedWeapon.GetComponent<MeshCollider>();
-        if (weaponMeshCollider != null) weaponMeshCollider.enabled = false;
+        // --- 아이템 위치 및 회전 설정 ---
+        ItemProperties properties = equippedWeapon.GetComponent<ItemProperties>();
+        if (properties != null)
+        {
+            // ItemProperties가 있으면 오프셋 적용
+            equippedWeapon.transform.localPosition = properties.positionOffset;
+            equippedWeapon.transform.localRotation = Quaternion.Euler(properties.rotationOffset);
+        }
+        else
+        {
+            // 없으면 기본값 적용
+            equippedWeapon.transform.localPosition = Vector3.zero;
+            equippedWeapon.transform.localRotation = Quaternion.identity;
+        }
+
+        // 아이템의 콜라이더를 비활성화 (어떤 종류의 콜라이더든 상관없이)
+        Collider weaponCollider = equippedWeapon.GetComponent<Collider>();
+        if (weaponCollider != null) weaponCollider.enabled = false;
 
         Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
         if (weaponRb != null) weaponRb.isKinematic = true;
@@ -137,6 +159,9 @@ public class WeaponHold : MonoBehaviour
         nearbyWeapon = null;
 
         if (crosshair != null) crosshair.SetActive(true);
+
+        // 무기를 장착했으므로, 삽 기능은 비활성화
+        if (shovelHold != null) shovelHold.SetActive(false);
 
         Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
     }
@@ -201,3 +226,4 @@ public class WeaponHold : MonoBehaviour
         }
     }
 }
+
