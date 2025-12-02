@@ -365,8 +365,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   digDistance: 3
   diggableTag: Diggable
-  crosshairGameObject: {fileID: 1610603459}
-  diggableCrosshairColor: {r: 0, g: 0, b: 0, a: 1}
+  diggableCrosshairColor: {r: 0, g: 1, b: 0, a: 1}
   digEffectPrefab: {fileID: 0}
 --- !u!114 &546578400
 MonoBehaviour:
@@ -874,7 +873,7 @@ PrefabInstance:
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnUse
+      value: OnFire
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}

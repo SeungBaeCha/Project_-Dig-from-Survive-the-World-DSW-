@@ -19,10 +19,8 @@ public class ShovelHold : MonoBehaviour
     [SerializeField] private string diggableTag = "Diggable";
 
     [Header("UI 설정")]
-    [Tooltip("크로스헤어 GameObject")]
-    public GameObject crosshairGameObject;
     [Tooltip("파기 가능한 대상을 조준했을 때의 크로스헤어 색상")]
-    public Color diggableCrosshairColor = Color.green;
+    public Color diggableCrosshairColor = Color.black;
 
     [Header("이펙트 설정")]
     [Tooltip("땅을 팔 때 생성될 파티클 이펙트")]
@@ -34,6 +32,8 @@ public class ShovelHold : MonoBehaviour
     private bool isTargetDiggable = false;
     // 현재 조준하고 있는 파기 가능한 오브젝트
     private GameObject diggableTarget;
+    // WeaponHold 스크립트 참조
+    private WeaponHold weaponHold;
     
     // 크로스헤어의 그래픽 컴포넌트와 원래 색상을 저장하기 위한 리스트
     private List<Graphic> crosshairGraphics;
@@ -43,15 +43,29 @@ public class ShovelHold : MonoBehaviour
     {
         // 성능을 위해 메인 카메라 참조를 미리 찾아 저장
         mainCamera = Camera.main;
+    }
 
-        if (crosshairGameObject == null)
+    private void OnEnable()
+    {
+        // Player 태그를 가진 게임 오브젝트에서 WeaponHold 컴포넌트를 찾음
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
         {
-            Debug.LogError("Crosshair GameObject가 할당되지 않았습니다!");
+            weaponHold = playerObject.GetComponent<WeaponHold>();
         }
-        else
+
+        if (weaponHold == null)
         {
+            Debug.LogError("WeaponHold 스크립트를 찾을 수 없습니다! 'Player' 태그가 있는 오브젝트에 WeaponHold가 있는지 확인해주세요.");
+            return;
+        }
+
+        // WeaponHold의 크로스헤어 오브젝트를 가져옴
+        if (weaponHold.crosshair != null)
+        {
+            weaponHold.crosshair.SetActive(true);
             // 크로스헤어 및 그 자식들로부터 모든 Graphic 컴포넌트를 찾아 리스트에 저장
-            crosshairGraphics = new List<Graphic>(crosshairGameObject.GetComponentsInChildren<Graphic>());
+            crosshairGraphics = new List<Graphic>(weaponHold.crosshair.GetComponentsInChildren<Graphic>());
             // 원래 색상들을 저장
             originalCrosshairColors = new List<Color>();
             foreach (var graphic in crosshairGraphics)
@@ -61,10 +75,20 @@ public class ShovelHold : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        // 이 스크립트가 비활성화될 때 크로스헤어를 끄고 색상을 리셋
+        if (weaponHold != null && weaponHold.crosshair != null)
+        {
+            ResetCrosshairColor();
+            weaponHold.crosshair.SetActive(false);
+        }
+    }
+
     void Update()
     {
         // 카메라나 크로스헤어가 없으면 로직을 실행하지 않음
-        if (mainCamera == null || crosshairGameObject == null) return;
+        if (mainCamera == null || weaponHold == null || weaponHold.crosshair == null) return;
         
         // 화면 정중앙에서 카메라 앞 방향으로 레이 생성
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -85,27 +109,35 @@ public class ShovelHold : MonoBehaviour
             {
                 // 파기 불가능한 대상이므로 원래 색상으로 복원
                 ResetCrosshairColor();
+                isTargetDiggable = false;
+                diggableTarget = null;
             }
         }
         else
         {
             // 레이에 아무것도 맞지 않았을 경우에도 원래 색상으로 복원
             ResetCrosshairColor();
+            isTargetDiggable = false;
+            diggableTarget = null;
         }
     }
     
     /// <summary>
     /// 플레이어 입력에 따라 호출되는 '사용' 함수. (Unity Input System의 Player Input 컴포넌트에서 연결 필요)
     /// </summary>
-    public void OnUse(InputAction.CallbackContext context)
+    public void OnFire(InputAction.CallbackContext context)
     {
         // 키를 눌렀다 떼는 순간에만 작동하도록 설정
         if (!context.performed) return;
 
-        // 조준한 대상이 파기 가능한 상태일 때만 파기 로직 실행
-        if (isTargetDiggable && diggableTarget != null)
+        // 삽을 들고 있는지 확인
+        if (weaponHold != null && weaponHold.equippedWeapon != null && weaponHold.equippedWeapon.name.Contains("Shovel"))
         {
-            Dig();
+            // 조준한 대상이 파기 가능한 상태일 때만 파기 로직 실행
+            if (isTargetDiggable && diggableTarget != null)
+            {
+                Dig();
+            }
         }
     }
     
@@ -132,7 +164,7 @@ public class ShovelHold : MonoBehaviour
         diggableTarget = null;
         ResetCrosshairColor();
     }
-
+    
     /// <summary>
     /// 크로스헤어의 모든 그래픽 요소 색상을 지정된 색으로 변경
     /// </summary>
@@ -155,30 +187,10 @@ public class ShovelHold : MonoBehaviour
         for (int i = 0; i < crosshairGraphics.Count; i++)
         {
             // 저장해둔 원래 색상으로 복원
-            if (crosshairGraphics[i].color != originalCrosshairColors[i])
+            if (i < crosshairGraphics.Count && crosshairGraphics[i].color != originalCrosshairColors[i])
             {
                 crosshairGraphics[i].color = originalCrosshairColors[i];
             }
-        }
-    }
-
-    // 삽을 장착/해제할 때 크로스헤어를 켜고 끄는 기능
-    // 이 함수는 WeaponHold와 같은 장비 관리 스크립트에서 호출해주어야 함
-    public void SetActive(bool isActive)
-    {
-        // 크로스헤어 게임 오브젝트 자체를 활성/비활성화
-        if (crosshairGameObject != null)
-        {
-            crosshairGameObject.SetActive(isActive);
-        }
-        
-        // 이 스크립트 자체도 활성/비활성화하여 Update 로직 제어
-        this.enabled = isActive;
-
-        // 비활성화될 때는 크로스헤어 상태를 리셋
-        if (!isActive)
-        {
-            ResetCrosshairColor();
         }
     }
 }
