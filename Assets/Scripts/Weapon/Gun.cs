@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Gun : MonoBehaviour
 {
     [SerializeField]
-    protected GunData gunData; // 이 총이 사용할 데이터 (위에서 만든 ScriptableObject)
+    public GunData gunData; // 이 총이 사용할 데이터 (외부에서 isAutomatic을 확인해야 하므로 public으로 변경)
 
     [SerializeField]
     protected Transform firePoint; // 총알이 발사될 위치. 이제 총마다 가지게 됨.

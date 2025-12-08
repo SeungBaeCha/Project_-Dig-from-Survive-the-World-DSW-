@@ -11,6 +11,7 @@ public class GunData : ScriptableObject
 
     [Header("Shooting")]
     public float fireRate; // 연사 속도 (초당 발사 수)
+    public bool isAutomatic = false; // 자동 발사 여부
     
     // 샷건 같은 무기를 위한 설정
     [Header("Shotgun Settings")]

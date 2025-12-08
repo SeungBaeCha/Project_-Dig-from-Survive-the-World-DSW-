@@ -13,7 +13,8 @@ public class PlayerMove : MonoBehaviour
     
     private Vector2 moveInput;
     private Rigidbody rb;
-    private WeaponHold weaponHold; // WeaponHold 변수 추가
+    private WeaponHold weaponHold;
+    private bool isFiring = false; // 발사 버튼이 눌리고 있는지 여부
 
     void Awake() // Start 대신 Awake 사용
     {
@@ -25,28 +26,32 @@ public class PlayerMove : MonoBehaviour
         {
             cameraTransform = Camera.main.transform;
         }
-
     }
 
     void Update()
     {
-        // 카메라의 정면과 오른쪽 방향을 가져옴
+        // --- 이동 로직 (기존과 동일) ---
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
-        
-        // 수평 움직임을 위해 y축 값은 0으로 설정
         forward.y = 0;
         right.y = 0;
-        
-        // 방향 벡터의 길이를 1로 만들어 속도를 일정하게 유지
         forward.Normalize();
         right.Normalize();
-        
-        // 입력값과 카메라 방향을 조합하여 최종 이동 방향을 계산
         Vector3 moveDirection = right * moveInput.x + forward * moveInput.y;
-        
-        // 계산된 방향으로 캐릭터를 이동시킴
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        // ------------------------------------
+        
+        // --- 자동 발사 로직 ---
+        // 발사 버튼을 누르고 있고, 무기를 들고 있을 때
+        if (isFiring && weaponHold != null && weaponHold.equippedWeapon != null)
+        {
+            Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
+            // 현재 총이 존재하고, '자동 발사'가 활성화된 총일 경우에만 매 프레임 발사 시도
+            if (currentGun != null && currentGun.gunData.isAutomatic)
+            {
+                currentGun.TryFire();
+            }
+        }
     }
     
     // InputActions의 Move 액션에서 호출
@@ -58,24 +63,24 @@ public class PlayerMove : MonoBehaviour
     // InputActions의 Fire 액션에서 호출
     public void OnFire(InputAction.CallbackContext context)
     {
-        if (context.performed) // 버튼을 누르는 순간 (Performd)
+        if (context.performed) // 버튼을 처음 눌렀을 때
         {
+            isFiring = true;
+
+            // --- 단발 무기 발사 로직 ---
             if (weaponHold != null && weaponHold.equippedWeapon != null)
             {
                 Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
-                if (currentGun != null)
+                // 현재 총이 존재하고, '자동 발사'가 아닌 총일 경우에만 여기서 한 번 발사
+                if (currentGun != null && !currentGun.gunData.isAutomatic)
                 {
                     currentGun.TryFire();
                 }
-                else
-                {
-                    // Debug.LogError("장착된 오브젝트는 Gun 스크립트를 가지고 있지 않습니다!");
-                }
             }
-            else
-            {
-                // Debug.Log("총을 장착하고 있지 않습니다.");
-            }
+        }
+        else if (context.canceled) // 버튼에서 손을 뗐을 때
+        {
+            isFiring = false;
         }
     }
 }
