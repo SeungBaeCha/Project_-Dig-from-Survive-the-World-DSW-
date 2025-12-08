@@ -13,15 +13,19 @@ public class PlayerMove : MonoBehaviour
     
     private Vector2 moveInput;
     private Rigidbody rb;
-    
-    void Start()
+    private WeaponHold weaponHold; // WeaponHold 변수 추가
+
+    void Awake() // Start 대신 Awake 사용
     {
         rb = GetComponent<Rigidbody>();
-        // 만약 cameraTransform이 Inspector에서 할당되지 않았다면, Main Camera를 찾아서 할당
+        weaponHold = GetComponent<WeaponHold>(); // WeaponHold 초기화
+
+        // cameraTransform 초기화 (기존 Start() 로직)
         if (cameraTransform == null)
         {
             cameraTransform = Camera.main.transform;
         }
+
     }
 
     void Update()
@@ -45,9 +49,33 @@ public class PlayerMove : MonoBehaviour
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
     }
     
-    // InputActions의 Move 액션에서 호출됩니다
+    // InputActions의 Move 액션에서 호출
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+    }
+
+    // InputActions의 Fire 액션에서 호출
+    public void OnFire(InputAction.CallbackContext context)
+    {
+        if (context.performed) // 버튼을 누르는 순간 (Performd)
+        {
+            if (weaponHold != null && weaponHold.equippedWeapon != null)
+            {
+                Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
+                if (currentGun != null)
+                {
+                    currentGun.TryFire();
+                }
+                else
+                {
+                    // Debug.LogError("장착된 오브젝트는 Gun 스크립트를 가지고 있지 않습니다!");
+                }
+            }
+            else
+            {
+                // Debug.Log("총을 장착하고 있지 않습니다.");
+            }
+        }
     }
 }

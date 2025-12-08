@@ -189,9 +189,69 @@ MonoBehaviour:
     m_ActionId: 1bc80ac0-8e30-4d92-bcba-3afe8b1675f3
     m_ActionName: Move/New action[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 10108192628861714}
+        m_TargetAssemblyTypeName: WeaponHold, Assembly-CSharp
+        m_MethodName: OnEquip
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: b1b19ce7-ccf9-47bd-8b02-10c99205ba27
     m_ActionName: Player/Equip[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 10108192628861714}
+        m_TargetAssemblyTypeName: WeaponHold, Assembly-CSharp
+        m_MethodName: OnDrop
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 18906a97-6ce1-48f2-b6b2-f47525094c78
+    m_ActionName: Player/Drop[/Keyboard/g]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4869954557409644594}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 90c68aaf-be33-49e0-800c-4b35075eab39
+    m_ActionName: Player/Fire[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: defd1b77-ceb7-4314-a9f2-a9ba03397cbb
+    m_ActionName: Player/Fill[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -237,8 +297,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  maxHunger: 100
-  currentHunger: 0
+  maxHunger: 50
+  currentHunger: 0.2
   hpBar: {fileID: 0}
   gameoverPanel: {fileID: 0}
 --- !u!114 &10108192628861714
@@ -255,6 +315,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
   holdPoint: {fileID: 319863145318272970}
+  swayAmount: 0
+  smoothAmount: 0
+  dropForce: 0
+  ignoreCollisionTime: 0
+  pickupCooldown: 0
+  crosshair: {fileID: 0}
 --- !u!54 &2145120264612405676
 Rigidbody:
   m_ObjectHideFlags: 0

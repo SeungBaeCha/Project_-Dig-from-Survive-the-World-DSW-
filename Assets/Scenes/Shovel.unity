@@ -419,7 +419,7 @@ PrefabInstance:
     - target: {fileID: 2040672677219600168, guid: 04d69416c959ef64cb4a6a861b95e5c2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2040672677219600168, guid: 04d69416c959ef64cb4a6a861b95e5c2,
         type: 3}
@@ -455,6 +455,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540391780149012714, guid: 04d69416c959ef64cb4a6a861b95e5c2,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540391780149012714, guid: 04d69416c959ef64cb4a6a861b95e5c2,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540391780149012714, guid: 04d69416c959ef64cb4a6a861b95e5c2,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540391780149012714, guid: 04d69416c959ef64cb4a6a861b95e5c2,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -517,9 +537,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba28b21bd87fdc543a9c8a20bd20d9d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 10
-  height: 5
-  depth: 10
+  width: 20
+  height: 10
+  depth: 20
   chunkPrefab: {fileID: 649906139070711462, guid: 45d4a6e39a0b5dc4cbe41584f13cb4cf,
     type: 3}
   chunkSize: 1

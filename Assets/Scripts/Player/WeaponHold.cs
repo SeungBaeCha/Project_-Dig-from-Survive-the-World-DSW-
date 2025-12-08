@@ -153,6 +153,18 @@ public class WeaponHold : MonoBehaviour
 
         if (crosshair != null) crosshair.SetActive(true);
 
+        // --- 새로 추가된 로직 ---
+        // 장착된 무기에서 Gun 컴포넌트를 찾는다.
+        Gun gun = equippedWeapon.GetComponent<Gun>();
+        if (gun != null)
+        {
+            // Gun 컴포넌트가 있다면, 플레이어의 콜라이더와 카메라를 넘겨준다.
+            gun.SetPlayerCollider(playerCollider);
+            gun.SetPlayerCamera(mainCamera);
+            Debug.Log("Gun 스크립트에 플레이어 정보 설정 완료.");
+        }
+        // ------------------------
+
         Debug.Log(equippedWeapon.name + " 무기를 장착했다!");
     }
 
