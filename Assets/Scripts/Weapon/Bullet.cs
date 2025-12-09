@@ -62,13 +62,13 @@ public class Bullet : MonoBehaviour
     }
 
     /// <summary>
-    /// 다른 Collider와 충돌했을 때 호출되는 함수
+    /// 다른 트리거 Collider에 진입했을 때 호출되는 함수
     /// </summary>
-    /// <param name="collision">충돌 정보</param>
-    void OnCollisionEnter(Collision collision)
+    /// <param name="other">진입한 Collider 정보</param>
+    void OnTriggerEnter(Collider other)
     {
         // 충돌한 오브젝트에서 Enemy 컴포넌트를 찾아본다.
-        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+        Enemy enemy = other.gameObject.GetComponent<Enemy>();
 
         // Enemy 컴포넌트가 있다면, 데미지를 입히고 총알을 파괴한다.
         if (enemy != null)

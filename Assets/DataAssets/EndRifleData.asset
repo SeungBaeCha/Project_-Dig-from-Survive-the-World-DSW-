@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunName: 'Assault  End Rifle '
   damage: 30
-  range: 10
-  fireRate: 7
+  range: 7
+  fireRate: 3
+  isAutomatic: 1
   pelletsPerShot: 1
   spreadAngle: 0
   bulletPrefab: {fileID: 5952692902546046483, guid: f14da2f334d3b4e4c9c865e04c11a89e,

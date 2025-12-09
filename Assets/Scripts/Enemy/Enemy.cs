@@ -32,6 +32,12 @@ public class Enemy : MonoBehaviour
     public float detectionRadius = 15f; // 플레이어를 탐지할 반경
     public float chaseSpeed = 6f;       // 추격 시 이동 속도
 
+    [Header("공격 설정")]
+    public float attackDamage = 10f;    // 플레이어에게 입힐 데미지 양
+    public float attackCooldown = 2f;   // 공격 사이의 최소 시간 간격 (초)
+    public float attackDistance = 2f;   // 플레이어를 공격할 수 있는 최대 거리
+    private float lastAttackTime;       // 마지막으로 공격한 시간을 저장하는 변수
+
     [Header("순찰 설정")]
     public float patrolRadius = 10f;    // 순찰 반경
     public float patrolSpeed = 3f;      // 순찰 시 이동 속도
@@ -74,14 +80,14 @@ public class Enemy : MonoBehaviour
         {
            return; 
         }
-        // --- 테스트용 데미지 코드 ---
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(20);
-        }
-#endif
-        // -------------------------
+//        // --- 테스트용 데미지 코드 ---
+//#if UNITY_EDITOR
+//        if (Input.GetKeyDown(KeyCode.Space))
+//        {
+//            TakeDamage(20);
+//        }
+//#endif
+//        // -------------------------
 
 
         // 플레이어 Transform이 할당되지 않았다면 다시 탐색
@@ -145,7 +151,18 @@ public class Enemy : MonoBehaviour
                     SwitchState(State.Returning);
                     break;
                 }
-                agent.destination = player.position;
+
+                // 플레이어가 공격 가능 거리 안에 있고 공격 쿨다운이 지났는지 확인
+                if (distanceToPlayer <= attackDistance && Time.time >= lastAttackTime + attackCooldown)
+                {
+                    // 플레이어 공격
+                    Attack();
+                }
+                else
+                {
+                    // 공격 중이 아닐 때는 계속 플레이어를 향해 이동
+                    agent.destination = player.position;
+                }
                 break;
 
             case State.Returning:
@@ -197,6 +214,37 @@ public class Enemy : MonoBehaviour
 
         // 간단하게 오브젝트를 N 초 뒤 파괴. 나중에 여기에 파티클이나 사운드 효과를 추가할 수 있다.
         Destroy(gameObject, 1f);
+    }
+
+    // 공격 처리 함수
+    private void Attack()
+    {
+        // 공격 애니메이션이나 효과를 위한 잠시 멈춤
+        agent.isStopped = true;
+
+        // 마지막 공격 시간을 현재 시간으로 기록
+        lastAttackTime = Time.time;
+        Debug.Log("적이 플레이어를 공격했습니다!");
+
+        // 플레이어의 PlayerHealth 컴포넌트를 가져와 데미지를 준다.
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(attackDamage);
+        }
+
+        // 0.5초 후에 ResumeMovement 함수를 호출하여 다시 움직이게 한다.
+        Invoke(nameof(ResumeMovement), 0.5f);
+    }
+
+    // NavMeshAgent의 이동을 다시 시작하는 함수
+    void ResumeMovement()
+    {
+        // 적이 죽지 않은 상태일 때만 이동을 재개한다.
+        if (!isDead)
+        {
+            agent.isStopped = false;
+        }
     }
 
     // 상태를 전환하는 함수

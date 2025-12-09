@@ -33,6 +33,8 @@ public class Shotgun : Gun
 
             if (bullet != null)
             {
+                bullet.SetDamage(gunData.damage); // 총알에 데미지 설정
+
                 // 플레이어와 충돌하지 않도록 설정
                 bullet.IgnorePlayerCollision(playerCollider);
                 
