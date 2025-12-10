@@ -18,6 +18,9 @@ public class GunData : ScriptableObject
     public int pelletsPerShot = 1; // 한 번에 발사되는 총알(펠릿) 수. 일반 총은 1.
     public float spreadAngle = 0f; // 총알이 퍼지는 각도. 일반 총은 0.
 
+    [Header("Ammo")]
+    public int maxAmmo = 30; // 최대 장탄 수
+
     [Header("Prefabs & VFX")]
     public GameObject bulletPrefab; // 총알 프리팹
     // public GameObject muzzleFlash; // 총구 화염 효과 (나중에 추가)

@@ -1,67 +1,138 @@
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.UI; 
+using UnityEngine;
+using TMPro; // TextMeshPro를 사용하기 위해 네임스페이스 추가
+using System; // Action 이벤트를 사용하기 위해 추가
+using System.Collections; // Coroutine을 사용하기 위해 추가
 
+/// <summary>
+/// 현재 장착된 무기의 UI (이름, 총알 수) 및 관련 피드백(총알 부족 등)을 화면에 표시하는 역할을 합니다.
+/// WeaponHold 스크립트와 연동하여 작동합니다.
+/// </summary>
+public class WeaponUI : MonoBehaviour
+{
+    // --- 이벤트 정의 ---
+    // Gun 스크립트에서 총알이 없을 때 발사를 시도하면 이 이벤트를 발생시킵니다.
+    public static Action OnFireWithEmptyAmmo;
 
-//// WeaponUI 클래스는 무기 교체 UI의 시각적 표현을 담당합니다.
-//public class WeaponUI : MonoBehaviour
-//{
-//    [Header("참조 설정")]
-//    // 어떤 무기 슬롯이 채워져 있는지 확인하기
-//    public WeaponHold weaponHold;
+    [Header("참조 설정")]
+    [Tooltip("플레이어에 붙어있는 WeaponHold 스크립트를 연결하세요.")]
+    public WeaponHold weaponHold;
+    [Tooltip("무기 이름을 표시할 TextMeshPro UI 오브젝트를 연결하세요.")]
+    public TextMeshProUGUI weaponNameText;
+    [Tooltip("총알 정보를 표시할 TextMeshPro UI 오브젝트를 연결하세요.")]
+    public TextMeshProUGUI ammoText;
+    [Tooltip("총알 부족 메시지를 표시할 TextMeshPro UI 오브젝트를 연결하세요.")]
+    public TextMeshProUGUI noAmmoText; // 총알 부족 텍스트 참조 추가
 
-//    [Header("UI 설정")]
-//    // 무기 슬롯 배경으로 사용될 Image 컴포넌트들의 배열.
-//    public Image[] weaponSlots;
+    // 현재 UI가 추적하고 있는 Gun 스크립트의 캐시
+    private Gun currentGun;
+    // 총알 부족 메시지 코루틴이 이미 실행 중인지 확인하기 위한 변수
+    private Coroutine noAmmoCoroutine;
 
-//    [Header("슬롯 색상 설정")]
-//    // 무기가 선택되었을 때 슬롯의 색상.
-//    public Color selectedColor = Color.white;
-//    // 무기가 있지만 선택되지 않았을 때의 색상.
-//    public Color unselectedColor = Color.gray;
-//    // 해당 슬롯에 무기가 없을 때의 색상.
-//    public Color emptyColor = new Color(0.2f, 0.2f, 0.2f, 0.5f); // 어둡고 반투명한 색
+    // 스크립트가 활성화될 때 호출
+    private void OnEnable()
+    {
+        // Gun에서 보낸 "총알 없음" 신호(이벤트)를 받았을 때 ShowNoAmmoMessage 함수를 실행하도록 등록
+        OnFireWithEmptyAmmo += ShowNoAmmoMessage;
+    }
 
-//    void Start()
-//    {
-//        // weaponHold 참조가 설정되었는지 확인
-//        if (weaponHold == null)
-//        {
-//            Debug.LogError("WeaponUI에 WeaponHold 참조가 연결되지 않았습니다!");
-//            return;
-//        }
-//        // 게임 시작 시, 선택된 무기가 없는 상태(-1)로 UI를 초기화
-//        UpdateSelectedWeaponUI(-1);
-//    }
+    // 스크립트가 비활성화될 때 호출
+    private void OnDisable()
+    {
+        // 등록했던 이벤트 리스너를 해제 (메모리 누수 방지)
+        OnFireWithEmptyAmmo -= ShowNoAmmoMessage;
+    }
 
-//    // 현재 선택된 무기 인덱스를 받아서 UI를 업데이트하는 함수.
-//    public void UpdateSelectedWeaponUI(int selectedIndex)
-//    {
-//        // 모든 UI 슬롯을 순회
-//        for (int i = 0; i < weaponSlots.Length; i++)
-//        {
-//            // i가 실제 무기 슬롯의 범위 안에 있고, 해당 슬롯에 무기가 존재하는지 확인
-//            if (i < weaponHold.weapons.Length && weaponHold.weapons[i] != null)
-//            {
-//                // 슬롯에 무기가 있는 경우
-//                if (i == selectedIndex)
-//                {
-//                    // 현재 선택된 무기 슬롯이면 'selectedColor'를 적용
-//                    weaponSlots[i].color = selectedColor;
-//                }
-//                else
-//                {
-//                    // 무기는 있지만 선택되지 않은 슬롯이면 'unselectedColor'를 적용
-//                    weaponSlots[i].color = unselectedColor;
-//                }
-//            }
-//            else
-//            {
-//                // 실제 무기 슬롯이 없거나, 슬롯이 비어있으면 'emptyColor'를 적용
-//                weaponSlots[i].color = emptyColor;
-//            }
-//        }
-//    }
-//}
+    void Start()
+    {
+        // 필수 참조들이 모두 연결되었는지 확인
+        if (weaponHold == null || weaponNameText == null || ammoText == null || noAmmoText == null)
+        {
+            Debug.LogError("WeaponUI: 필요한 모든 참조가 인스펙터에 연결되지 않았습니다!");
+            enabled = false; 
+            return;
+        }
+        
+        // 게임 시작 시 UI를 비무장 상태로 초기화
+        UpdateUI(null);
+        // 총알 부족 텍스트는 처음엔 보이지 않도록 비활성화
+        noAmmoText.gameObject.SetActive(false);
+    }
 
+    void LateUpdate()
+    {
+        GameObject equippedWeaponObject = weaponHold.equippedWeapon;
+        Gun equippedGun = null;
+
+        if (equippedWeaponObject != null)
+        {
+            equippedGun = equippedWeaponObject.GetComponent<Gun>();
+        }
+
+        if (currentGun != equippedGun)
+        {
+            UpdateUI(equippedGun);
+        }
+
+        if (currentGun != null && ammoText.enabled)
+        {
+            UpdateAmmoText();
+        }
+    }
+
+    private void UpdateUI(Gun newGun)
+    {
+        currentGun = newGun;
+
+        if (currentGun != null)
+        {
+            weaponNameText.gameObject.SetActive(true);
+            ammoText.gameObject.SetActive(true);
+            weaponNameText.text = currentGun.gunData.gunName;
+        }
+        else
+        {
+            weaponNameText.gameObject.SetActive(false);
+            ammoText.gameObject.SetActive(false);
+        }
+    }
+    
+    private void UpdateAmmoText()
+    {
+        ammoText.text = $"{currentGun.currentAmmo} / {currentGun.gunData.maxAmmo}";
+    }
+
+    // --- 총알 부족 메시지 관련 로직 ---
+
+    /// <summary>
+    /// "총알 없음" 신호를 받았을 때 호출되는 함수
+    /// </summary>
+    private void ShowNoAmmoMessage()
+    {
+        // 코루틴이 이미 실행 중이라면 중복 실행을 막는다. (따다닥 클릭 시 메시지가 여러 번 겹치는 것 방지)
+        if (noAmmoCoroutine != null)
+        {
+            // 기존 코루틴을 중지
+            StopCoroutine(noAmmoCoroutine);
+        }
+        // 새로운 코루틴을 시작하고, 나중에 중지할 수 있도록 변수에 저장
+        noAmmoCoroutine = StartCoroutine(ShowNoAmmoCoroutine());
+    }
+
+    /// <summary>
+    /// 총알 부족 텍스트를 잠시 보여줬다가 사라지게 하는 코루틴
+    /// </summary>
+    private IEnumerator ShowNoAmmoCoroutine()
+    {
+        // 1. 총알 부족 텍스트를 활성화
+        noAmmoText.gameObject.SetActive(true);
+        
+        // 2. 1.5초 동안 기다린다.
+        yield return new WaitForSeconds(1.5f);
+        
+        // 3. 텍스트를 다시 비활성화
+        noAmmoText.gameObject.SetActive(false);
+
+        // 4. 코루틴이 끝났으므로 변수를 null로 초기화
+        noAmmoCoroutine = null;
+    }
+}

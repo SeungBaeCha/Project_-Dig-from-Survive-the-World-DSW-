@@ -9,11 +9,23 @@ public abstract class Gun : MonoBehaviour
     [SerializeField]
     protected Transform firePoint; // 총알이 발사될 위치. 이제 총마다 가지게 됨.
 
+    // --- 총알 관련 변수 추가 ---
+    public int currentAmmo; // 현재 남은 총알 수. (UI 표시 등을 위해 public으로 설정)
+    // --------------------------
+
     protected Collider playerCollider; // 플레이어의 콜라이더 참조
     protected Camera playerCamera;   // 플레이어 카메라 참조
 
     // 발사 속도 제어를 위한 변수
     protected float nextFireTime;
+
+    // 컴포넌트가 활성화될 때 또는 게임 시작 시 호출
+    // 자식 클래스에서 재정의(override)할 수 있도록 virtual로 선언
+    protected virtual void Awake()
+    {
+        // 총이 처음 생성될 때, 최대 장탄 수만큼 현재 총알을 채워준다.
+        currentAmmo = gunData.maxAmmo;
+    }
 
     // 외부에서 플레이어 콜라이더를 설정하기 위한 메서드
     public void SetPlayerCollider(Collider collider)
@@ -30,11 +42,27 @@ public abstract class Gun : MonoBehaviour
     // 외부(Player)에서 발사를 시도할 때 호출할 메서드
     public void TryFire()
     {
+        // --- 총알 수 체크 추가 ---
+        // 현재 총알이 0발 이하면 발사 시도를 막는다.
+        if (currentAmmo <= 0)
+        {
+            // "총알 없음" UI 알림을 띄우도록 신호를 보낸다.
+            WeaponUI.OnFireWithEmptyAmmo?.Invoke();
+            // (추후 추가) "딸깍" 하는 소리를 내거나, 재장전 UI를 띄우는 등의 처리를 할 수 있다.
+            return; 
+        }
+        // --------------------------
+
         // 현재 시간이 다음 발사 가능 시간보다 크거나 같으면 발사
         if (Time.time >= nextFireTime)
         {
             // 다음 발사 시간 계산 (1 / 초당 발사 수)
             nextFireTime = Time.time + 1f / gunData.fireRate;
+            
+            // --- 총알 감소 로직 추가 ---
+            currentAmmo--; // 총알을 1발 소모한다.
+            // --------------------------
+
             Fire(); // 실제 발사 로직 실행
         }
     }
