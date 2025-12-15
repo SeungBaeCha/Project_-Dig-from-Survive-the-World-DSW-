@@ -113,11 +113,9 @@ public class Enemy : MonoBehaviour
             {
                 SwitchState(State.Chasing);
             }
-            agent.destination = player.position;
-            return; // 밤에는 아래의 낮 시간 로직을 실행하지 않음
         }
-
-        // --- 아래는 낮 시간 로직 ---
+        
+        // --- 아래는 낮 시간 로직 (밤에도 Chasing 상태 로직은 공유) ---
 
         // 플레이어와의 거리 계산
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -145,23 +143,21 @@ public class Enemy : MonoBehaviour
                 break;
 
             case State.Chasing:
-                // 플레이어가 탐지 범위를 벗어나면 복귀 상태로 전환
-                if (distanceToPlayer > detectionRadius)
+                // 낮에만 플레이어가 탐지 범위를 벗어나면 복귀하도록 수정
+                if (!GameManager.Instance.IsNight && distanceToPlayer > detectionRadius)
                 {
                     SwitchState(State.Returning);
                     break;
                 }
+
+                // Chasing 상태일 때는 항상 플레이어를 향해 이동
+                agent.destination = player.position;
 
                 // 플레이어가 공격 가능 거리 안에 있고 공격 쿨다운이 지났는지 확인
                 if (distanceToPlayer <= attackDistance && Time.time >= lastAttackTime + attackCooldown)
                 {
                     // 플레이어 공격
                     Attack();
-                }
-                else
-                {
-                    // 공격 중이 아닐 때는 계속 플레이어를 향해 이동
-                    agent.destination = player.position;
                 }
                 break;
 

@@ -1,173 +1,85 @@
-
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// 삽(Shovel) 장비의 기능을 관리하는 스크립트.
-/// WeaponHold에 의해 활성화/비활성화 상태가 제어된다.
-/// 레이캐스트를 이용해 'Diggable' 태그가 붙은 땅을 감지하고,
-/// 입력에 따라 해당 땅을 파괴하는 역할을 한다.
+/// 삽(Shovel)의 크로스헤어 UI를 관리하는 스크립트.
+/// 이 스크립트는 Shovel.cs와 함께 Shovel 게임 오브젝트에 부착되어야 한다.
 /// </summary>
 public class ShovelHold : MonoBehaviour
 {
-    [Header("삽 설정")]
-    [Tooltip("땅을 팔 수 있는 최대 사정거리")]
-    [SerializeField] private float digDistance = 3f;
-    [Tooltip("파기 가능한 땅을 식별하는 데 사용될 태그")]
-    [SerializeField] private string diggableTag = "Diggable";
-
     [Header("UI 설정")]
     [Tooltip("파기 가능한 대상을 조준했을 때의 크로스헤어 색상")]
-    public Color diggableCrosshairColor = Color.black;
+    [SerializeField] private Color diggableCrosshairColor = Color.green; // 기본값을 초록색으로 변경
 
-    [Header("이펙트 설정")]
-    [Tooltip("땅을 팔 때 생성될 파티클 이펙트")]
-    public ParticleSystem digEffectPrefab;
-
-    // 메인 카메라 참조
-    private Camera mainCamera;
-    // 현재 조준하고 있는 오브젝트가 파기 가능한지 여부
-    private bool isTargetDiggable = false;
-    // 현재 조준하고 있는 파기 가능한 오브젝트
-    private GameObject diggableTarget;
-    // WeaponHold 스크립트 참조
-    private WeaponHold weaponHold;
-    
-    // 크로스헤어의 그래픽 컴포넌트와 원래 색상을 저장하기 위한 리스트
+    // --- 내부 참조 변수 ---
+    private Shovel shovel; // 같은 오브젝트에 있는 Shovel 스크립트
+    private WeaponHold weaponHold; // Player에 있는 WeaponHold 스크립트
     private List<Graphic> crosshairGraphics;
     private List<Color> originalCrosshairColors;
-    
-    void Start()
+    private bool isInitialized = false;
+
+    void Awake()
     {
-        // 성능을 위해 메인 카메라 참조를 미리 찾아 저장
-        mainCamera = Camera.main;
+        // 같은 게임 오브젝트에 있는 Shovel 컴포넌트를 미리 찾아둔다.
+        shovel = GetComponent<Shovel>();
     }
 
-    private void OnEnable()
+    void Update()
     {
-        // Player 태그를 가진 게임 오브젝트에서 WeaponHold 컴포넌트를 찾음
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
+        // 초기화가 되지 않았거나, 필요한 참조가 없으면 아무 작업도 하지 않는다.
+        if (!isInitialized || shovel == null || weaponHold == null || weaponHold.crosshair == null)
         {
-            weaponHold = playerObject.GetComponent<WeaponHold>();
-        }
-
-        if (weaponHold == null)
-        {
-            Debug.LogError("WeaponHold 스크립트를 찾을 수 없습니다! 'Player' 태그가 있는 오브젝트에 WeaponHold가 있는지 확인해주세요.");
             return;
         }
 
-        // WeaponHold의 크로스헤어 오브젝트를 가져옴
+        // Shovel 스크립트가 대상을 감지했는지 여부에 따라 크로스헤어 색상을 변경한다.
+        if (shovel.IsTargetDiggable)
+        {
+            SetCrosshairColor(diggableCrosshairColor);
+        }
+        else
+        {
+            ResetCrosshairColor();
+        }
+    }
+
+    /// <summary>
+    /// WeaponHold에 의해 호출되어 필요한 정보를 설정하고 초기화를 진행한다.
+    /// </summary>
+    public void Initialize(WeaponHold wh)
+    {
+        weaponHold = wh;
+
         if (weaponHold.crosshair != null)
         {
-            weaponHold.crosshair.SetActive(true);
-            // 크로스헤어 및 그 자식들로부터 모든 Graphic 컴포넌트를 찾아 리스트에 저장
+            // 크로스헤어의 모든 그래픽 컴포넌트와 원래 색상을 저장한다.
             crosshairGraphics = new List<Graphic>(weaponHold.crosshair.GetComponentsInChildren<Graphic>());
-            // 원래 색상들을 저장
             originalCrosshairColors = new List<Color>();
             foreach (var graphic in crosshairGraphics)
             {
                 originalCrosshairColors.Add(graphic.color);
             }
         }
-    }
-
-    private void OnDisable()
-    {
-        // 이 스크립트가 비활성화될 때 크로스헤어를 끄고 색상을 리셋
-        if (weaponHold != null && weaponHold.crosshair != null)
-        {
-            ResetCrosshairColor();
-            weaponHold.crosshair.SetActive(false);
-        }
-    }
-
-    void Update()
-    {
-        // 카메라나 크로스헤어가 없으면 로직을 실행하지 않음
-        if (mainCamera == null || weaponHold == null || weaponHold.crosshair == null) return;
         
-        // 화면 정중앙에서 카메라 앞 방향으로 레이 생성
-        Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
+        isInitialized = true;
+    }
 
-        // 레이캐스트를 실행하여 충돌하는 오브젝트가 있는지 확인
-        if (Physics.Raycast(ray, out hit, digDistance))
+    /// <summary>
+    /// WeaponHold에 의해 호출되어 크로스헤어를 원래 상태로 되돌린다.
+    /// </summary>
+    public void Deinitialize()
+    {
+        if (isInitialized)
         {
-            // 충돌한 오브젝트에 'Diggable' 태그가 있는지 확인
-            if (hit.collider.CompareTag(diggableTag))
-            {
-                // 파기 가능한 대상이므로 크로스헤어 색상을 변경하고 상태를 저장
-                SetCrosshairColor(diggableCrosshairColor);
-                isTargetDiggable = true;
-                diggableTarget = hit.collider.gameObject;
-            }
-            else
-            {
-                // 파기 불가능한 대상이므로 원래 색상으로 복원
-                ResetCrosshairColor();
-                isTargetDiggable = false;
-                diggableTarget = null;
-            }
-        }
-        else
-        {
-            // 레이에 아무것도 맞지 않았을 경우에도 원래 색상으로 복원
             ResetCrosshairColor();
-            isTargetDiggable = false;
-            diggableTarget = null;
         }
+        isInitialized = false;
+        weaponHold = null;
+        crosshairGraphics = null;
+        originalCrosshairColors = null;
     }
     
-    /// <summary>
-    /// 플레이어 입력에 따라 호출되는 '사용' 함수. (Unity Input System의 Player Input 컴포넌트에서 연결 필요)
-    /// </summary>
-    public void OnFire(InputAction.CallbackContext context)
-    {
-        // 키를 눌렀다 떼는 순간에만 작동하도록 설정
-        if (!context.performed) return;
-
-        // 삽을 들고 있는지 확인
-        if (weaponHold != null && weaponHold.equippedWeapon != null && weaponHold.equippedWeapon.name.Contains("Shovel"))
-        {
-            // 조준한 대상이 파기 가능한 상태일 때만 파기 로직 실행
-            if (isTargetDiggable && diggableTarget != null)
-            {
-                Dig();
-            }
-        }
-    }
-    
-    /// <summary>
-    /// 땅 파기 로직을 수행하는 함수
-    /// </summary>
-    private void Dig()
-    {
-        Debug.Log(diggableTarget.name + "을(를) 팠습니다!");
-
-        // 파티클 이펙트가 할당되었다면, 땅을 판 위치에 생성
-        if (digEffectPrefab != null)
-        {
-            // 이펙트를 생성하고, 잠시 후 자동으로 파괴되도록 처리
-            ParticleSystem effectInstance = Instantiate(digEffectPrefab, diggableTarget.transform.position, Quaternion.identity);
-            Destroy(effectInstance.gameObject, effectInstance.main.duration);
-        }
-
-        // 대상 오브젝트 파괴
-        Destroy(diggableTarget);
-
-        // 파괴 후 상태 초기화
-        isTargetDiggable = false;
-        diggableTarget = null;
-        ResetCrosshairColor();
-    }
-    
-    /// <summary>
-    /// 크로스헤어의 모든 그래픽 요소 색상을 지정된 색으로 변경
-    /// </summary>
     private void SetCrosshairColor(Color color)
     {
         if (crosshairGraphics == null) return;
@@ -177,17 +89,12 @@ public class ShovelHold : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 크로스헤어 색상을 원래 색상으로 되돌리는 함수
-    /// </summary>
     private void ResetCrosshairColor()
     {
         if (crosshairGraphics == null || originalCrosshairColors == null) return;
-
         for (int i = 0; i < crosshairGraphics.Count; i++)
         {
-            // 저장해둔 원래 색상으로 복원
-            if (i < crosshairGraphics.Count && crosshairGraphics[i].color != originalCrosshairColors[i])
+            if (i < crosshairGraphics.Count && crosshairGraphics[i] != null)
             {
                 crosshairGraphics[i].color = originalCrosshairColors[i];
             }
