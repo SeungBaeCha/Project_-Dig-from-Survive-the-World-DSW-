@@ -67,6 +67,24 @@ public abstract class Gun : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 총을 재장전합니다.
+    /// </summary>
+    public void Reload()
+    {
+        // 이미 총알이 가득 차 있다면 재장전할 필요가 없다.
+        if (currentAmmo >= gunData.maxAmmo)
+        {
+            // Debug.Log("총알이 이미 가득 차 있습니다."); // 필요하다면 이 로그를 활성화
+            return;
+        }
+
+        Debug.Log("재장전 완료!");
+        // 현재 총알을 최대치로 채운다.
+        currentAmmo = gunData.maxAmmo;
+        // (추후 추가) 재장전 사운드 재생, 애니메이션 실행 등의 로직을 여기에 추가할 수 있다.
+    }
+
     // 각 총의 종류마다 다르게 구현될 실제 발사 로직 (추상 메서드)
     protected abstract void Fire();
 

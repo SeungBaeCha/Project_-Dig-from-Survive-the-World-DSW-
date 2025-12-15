@@ -83,4 +83,26 @@ public class PlayerMove : MonoBehaviour
             isFiring = false;
         }
     }
+
+    // InputActions의 Reload 액션에서 호출
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        // 키가 눌리는 순간에만 실행 (꾹 누르고 있을 때 계속 실행되는 것 방지)
+        if (!context.performed)
+        {
+            return;
+        }
+
+        // WeaponHold 스크립트와 장착된 무기가 있는지 확인
+        if (weaponHold != null && weaponHold.equippedWeapon != null)
+        {
+            // 현재 들고 있는 무기에서 Gun 컴포넌트를 가져온다.
+            Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
+            if (currentGun != null)
+            {
+                // Gun 컴포넌트가 있다면, 재장전 함수를 호출한다.
+                currentGun.Reload();
+            }
+        }
+    }
 }
