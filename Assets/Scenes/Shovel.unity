@@ -345,18 +345,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &546578394 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3310327834236764918, guid: 04d69416c959ef64cb4a6a861b95e5c2,
-    type: 3}
-  m_PrefabInstance: {fileID: 701672619}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029839249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b0bb88cf2940b44a968d8c7a7a4809c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &701672619
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -419,6 +407,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310327834236764918, guid: 04d69416c959ef64cb4a6a861b95e5c2,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -620,8 +613,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   digDistance: 3
-  digDamage: 1
-  digCooldown: 0.5
+  diggableTag: Diggable
+  digEffectPrefab: {fileID: 0}
 --- !u!114 &1203329103 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 10108192628861714, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
@@ -650,7 +643,7 @@ PrefabInstance:
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
@@ -664,6 +657,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionId
+      value: 3d8aac0c-54be-4944-b876-d3e82a9b856e
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_ActionName
       value: Player/Drop[/Keyboard/g]
       objectReference: {fileID: 0}
@@ -671,6 +669,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_ActionName
       value: Player/Fire[/Mouse/leftButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionName
+      value: Player/Reload[/Keyboard/r]
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
@@ -716,7 +719,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 546578394}
+      objectReference: {fileID: 1029839258}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -760,7 +763,7 @@ PrefabInstance:
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: ShovelHold, Assembly-CSharp
+      value: Shovel, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}

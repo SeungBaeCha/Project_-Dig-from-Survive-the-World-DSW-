@@ -76,17 +76,29 @@ public class Shovel : MonoBehaviour
     /// </summary>
     private void Dig()
     {
-        // 파티클 이펙트가 할당되었다면, 땅을 판 위치에 생성한다.
+        // 파티클 이펙트 생성을 위해 위치를 미리 저장.
+        Vector3 targetPosition = diggableTarget.transform.position;
         if (digEffectPrefab != null)
         {
-            ParticleSystem effectInstance = Instantiate(digEffectPrefab, diggableTarget.transform.position, Quaternion.identity);
+            ParticleSystem effectInstance = Instantiate(digEffectPrefab, targetPosition, Quaternion.identity);
             Destroy(effectInstance.gameObject, effectInstance.main.duration);
         }
 
-        // 대상 오브젝트를 파괴한다.
-        Destroy(diggableTarget);
+        // 대상에서 Chunk 컴포넌트를 가져옴.
+        Chunk chunk = diggableTarget.GetComponent<Chunk>();
+        if (chunk != null)
+        {
+            // Chunk 컴포넌트가 있으면 TakeDamage를 호출.
+            // 아이템 생성 및 파괴는 Chunk 스크립트가 담당.
+            chunk.TakeDamage(1);
+        }
+        else
+        {
+            // Chunk 컴포넌트가 없는 경우를 대비해 기존 파괴 로직 유지.
+            Destroy(diggableTarget);
+        }
 
-        // 파괴 후 상태를 초기화한다.
+        // 상태 초기화.
         diggableTarget = null;
         IsTargetDiggable = false;
     }

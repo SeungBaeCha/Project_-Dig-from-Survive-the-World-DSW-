@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 142794575851544171}
   - component: {fileID: 8720475522266974788}
   - component: {fileID: 748119315822597420}
+  - component: {fileID: -7642285817864197321}
   m_Layer: 6
   m_Name: PartofWeapon
   m_TagString: Item
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -131,5 +132,18 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 32
   m_CollisionDetection: 1
+--- !u!114 &-7642285817864197321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7869236433036158562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d946981c25c06340ae3731f5a210bfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnForce: 0.05
