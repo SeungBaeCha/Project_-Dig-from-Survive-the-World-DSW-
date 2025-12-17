@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37ef8e4beedcb74a8eaf79e5c9c8a4b, type: 3}
   m_Name: ShotGunData
   m_EditorClassIdentifier: 
-  gunName: ShotGun
-  damage: 15
+  itemName: Shotgun
+  description: "\uADFC\uAC70\uB9AC \uACF5\uACA9\uC744 \uD558\uB294 \uAC83\uC744 \uCD94\uCC9C\uD558\uB294
+    \uBB34\uAE30"
+  icon: {fileID: 0}
+  damage: 17
   range: 3
   fireRate: 2
   isAutomatic: 0
   pelletsPerShot: 5
   spreadAngle: 15
+  maxAmmo: 30
   bulletPrefab: {fileID: 5952692902546046483, guid: f14da2f334d3b4e4c9c865e04c11a89e,
     type: 3}

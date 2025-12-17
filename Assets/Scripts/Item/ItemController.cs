@@ -8,6 +8,10 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class ItemController : MonoBehaviour
 {
+    [Header("아이템 데이터")]
+    [Tooltip("이 아이템의 정보를 담고 있는 ScriptableObject")]
+    public ItemData itemData;
+
     [Header("아이템 생성 효과")]
     [Tooltip("아이템이 생성될 때 튀어 오르는 힘. 0이면 효과 없음.")]
     [SerializeField] private float spawnForce = 2.5f;
@@ -61,17 +65,34 @@ public class ItemController : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        // --- 3. 아이템 줍기 기능 ---
         // 들어온 오브젝트가 'Player' 태그를 가지고 있는지 확인.
         if (other.CompareTag("Player"))
         {
-            // 여기에 플레이어의 인벤토리에 아이템을 추가하는 로직을 넣을 수 있음.
-            // 예: other.GetComponent<Inventory>().AddItem(this.itemData);
-            
-            Debug.Log(gameObject.name + " 아이템을 주웠습니다.");
+            // 이 아이템에 데이터가 할당되어 있는지 확인
+            if (itemData != null)
+            {
+                // 플레이어에게 Inventory 컴포넌트가 있는지 확인
+                Inventory inventory = other.GetComponent<Inventory>();
+                if (inventory != null)
+                {
+                    // 인벤토리에 아이템 추가
+                    inventory.AddItem(itemData);
+                }
+                else
+                {
+                    Debug.LogWarning("Player에 Inventory 컴포넌트가 없습니다!");
+                }
 
-            // 아이템 오브젝트를 파괴.
-            Destroy(gameObject);
+                // 아이템 오브젝트를 파괴.
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.LogWarning(gameObject.name + "에 ItemData가 할당되지 않았습니다!");
+                
+                // 데이터가 없어도 일단 사라지게는 하자.
+                Destroy(gameObject);
+            }
         }
     }
 }

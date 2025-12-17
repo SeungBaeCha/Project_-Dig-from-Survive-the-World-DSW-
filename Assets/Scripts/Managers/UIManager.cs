@@ -13,6 +13,12 @@ public class UIManager : MonoBehaviour
     // 상호작용 텍스트를 표시할 TextMeshPro UI 요소. Unity 에디터에서 연결해줘야 해.
     [SerializeField] private TextMeshProUGUI interactionText;
 
+    [Header("UI Windows")]
+    [Tooltip("인벤토리 UI")]
+    [SerializeField] private InventoryUI inventoryUI;
+    [Tooltip("조합창 UI")]
+    [SerializeField] private CraftingWindow craftingWindow;
+
     private void Awake()
     {
         // --- 싱글톤 패턴 구현 ---
@@ -38,6 +44,27 @@ public class UIManager : MonoBehaviour
         if (interactionText != null)
         {
             interactionText.gameObject.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        // Tab 키를 누르면 인벤토리 창을 토글
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (inventoryUI != null)
+            {
+                inventoryUI.ToggleWindow();
+            }
+        }
+
+        // C 키를 누르면 조합 창을 토글
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (craftingWindow != null)
+            {
+                craftingWindow.ToggleWindow();
+            }
         }
     }
 

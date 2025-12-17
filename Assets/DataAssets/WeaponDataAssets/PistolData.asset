@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37ef8e4beedcb74a8eaf79e5c9c8a4b, type: 3}
   m_Name: PistolData
   m_EditorClassIdentifier: 
-  gunName: Pistol
+  itemName: Pistol
+  description: "\uC801\uC744 \uD574\uCE58\uC6B0\uB294 \uBB34\uAE30"
+  icon: {fileID: 0}
   damage: 20
   range: 5
   fireRate: 3

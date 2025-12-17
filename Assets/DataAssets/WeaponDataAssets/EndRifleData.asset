@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37ef8e4beedcb74a8eaf79e5c9c8a4b, type: 3}
   m_Name: EndRifleData
   m_EditorClassIdentifier: 
-  gunName: 'Assault  End Rifle '
-  damage: 40
+  itemName: EndAssultRifle
+  description: "SSS \uAD6D\uAC00\uAD8C\uB825\uAE09 \uBB34\uAE30 "
+  icon: {fileID: 0}
+  damage: 45
   range: 7
   fireRate: 3
   isAutomatic: 1

@@ -111,7 +111,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 32
+  m_Constraints: 48
   m_CollisionDetection: 1
 --- !u!65 &5493682384952762009
 BoxCollider:
@@ -146,4 +146,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d946981c25c06340ae3731f5a210bfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: a0b1c6d73d9fb9349b95081f71d02c4d, type: 2}
   spawnForce: 0.05

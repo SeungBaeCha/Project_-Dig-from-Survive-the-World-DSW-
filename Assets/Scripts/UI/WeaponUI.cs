@@ -87,7 +87,8 @@ public class WeaponUI : MonoBehaviour
         {
             weaponNameText.gameObject.SetActive(true);
             ammoText.gameObject.SetActive(true);
-            weaponNameText.text = currentGun.gunData.gunName;
+            // 이거 오류뜸
+            //weaponNameText.text = currentGun.gunData.gunName;
         }
         else
         {
