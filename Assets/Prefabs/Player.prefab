@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 1542846793718272188}
   - component: {fileID: 3921448946749956849}
   - component: {fileID: 10108192628861714}
+  - component: {fileID: 3866574583624594974}
   - component: {fileID: 2145120264612405676}
   m_Layer: 0
   m_Name: Player
@@ -223,8 +224,8 @@ MonoBehaviour:
     m_ActionName: Player/Drop[/Keyboard/g]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3700335597105694361}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Shovel, Assembly-CSharp
         m_MethodName: OnFire
         m_Mode: 0
         m_Arguments:
@@ -241,6 +242,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: defd1b77-ceb7-4314-a9f2-a9ba03397cbb
     m_ActionName: Player/Fill[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3d8aac0c-54be-4944-b876-d3e82a9b856e
+    m_ActionName: Player/Reload[/Keyboard/r]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -323,6 +328,19 @@ MonoBehaviour:
   ignoreCollisionTime: 0
   pickupCooldown: 1
   crosshair: {fileID: 0}
+--- !u!114 &3866574583624594974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4869954557409644594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 018e24c9f4bf934438d2cf706cada5d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxCapacity: 24
 --- !u!54 &2145120264612405676
 Rigidbody:
   m_ObjectHideFlags: 0

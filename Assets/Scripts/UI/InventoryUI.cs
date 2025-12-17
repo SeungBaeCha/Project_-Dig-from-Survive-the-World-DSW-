@@ -3,6 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// 플레이어의 인벤토리를 시각적으로 보여주고 상호작용하는 UI.
+/// 고정된 개수의 슬롯을 미리 생성하고 관리한다.
 /// </summary>
 public class InventoryUI : MonoBehaviour
 {
@@ -26,9 +27,18 @@ public class InventoryUI : MonoBehaviour
 
     void Start()
     {
-        // playerInventory가 할당되었다면, 인벤토리 변경 이벤트가 발생할 때마다 RefreshUI가 호출되도록 등록
         if (playerInventory != null)
         {
+            // 인벤토리 최대 용량만큼 슬롯을 미리 생성한다.
+            for (int i = 0; i < playerInventory.MaxCapacity; i++)
+            {
+                GameObject newSlotGO = Instantiate(slotPrefab, slotsParent);
+                InventorySlot newSlot = newSlotGO.GetComponent<InventorySlot>();
+                newSlot.Initialize(this);
+                inventorySlots.Add(newSlot);
+            }
+            
+            // 인벤토리 변경 이벤트가 발생할 때마다 UI를 새로고침하도록 등록
             playerInventory.onInventoryChanged += RefreshUI;
         }
 
@@ -40,7 +50,6 @@ public class InventoryUI : MonoBehaviour
         inventoryPanel.SetActive(false);
     }
     
-    // 오브젝트가 파괴될 때 이벤트 구독을 취소해야 메모리 누수를 막을 수 있어.
     private void OnDestroy()
     {
         if (playerInventory != null)
@@ -72,30 +81,22 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     private void RefreshUI()
     {
-        // playerInventory가 연결 안되어 있으면 아무것도 하지 않는다.
         if (playerInventory == null) return;
 
-        // 실제 인벤토리의 아이템 목록을 가져온다.
-        List<ItemData> items = playerInventory.GetItems();
+        // 실제 인벤토리의 아이템 스택 목록을 가져온다.
+        List<InventoryStack> stacks = playerInventory.GetStacks();
 
-        // 슬롯 개수 맞추기: 현재 아이템 수보다 슬롯이 적으면 더 만들고, 많으면 일단 냅둔다.
-        while (inventorySlots.Count < items.Count)
-        {
-            GameObject newSlotGO = Instantiate(slotPrefab, slotsParent);
-            InventorySlot newSlot = newSlotGO.GetComponent<InventorySlot>();
-            newSlot.Initialize(this);
-            inventorySlots.Add(newSlot);
-        }
-
-        // 모든 슬롯에 아이템을 채워넣거나, 비운다.
+        // 모든 슬롯을 순회하며 내용을 업데이트한다.
         for (int i = 0; i < inventorySlots.Count; i++)
         {
-            if (i < items.Count)
+            if (i < stacks.Count)
             {
-                inventorySlots[i].SetItem(items[i]);
+                // 아이템이 있는 경우: 슬롯에 스택 정보 설정
+                inventorySlots[i].SetStack(stacks[i]);
             }
             else
             {
+                // 아이템이 없는 경우: 슬롯을 비운다.
                 inventorySlots[i].ClearSlot();
             }
         }
@@ -106,16 +107,17 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     public void OnSlotClicked(InventorySlot clickedSlot)
     {
-        if (craftingWindow != null && craftingWindow.gameObject.activeInHierarchy)
+        // 조합창이 열려있고, 클릭한 슬롯에 아이템이 있을 때
+        if (craftingWindow != null && craftingWindow.gameObject.activeInHierarchy && clickedSlot.currentStack != null)
         {
             // 클릭된 슬롯의 아이템을 조합창의 재료 슬롯에 추가 시도
-            bool added = craftingWindow.AddMaterial(clickedSlot.currentItem);
+            bool added = craftingWindow.AddMaterial(clickedSlot.currentStack.item);
 
             // 조합창에 재료가 성공적으로 추가되었다면,
-            // 플레이어의 인벤토리에서 해당 아이템을 제거한다. (UI는 이벤트로 자동 갱신됨)
+            // 플레이어의 인벤토리에서 해당 아이템을 1개 제거한다.
             if (added)
             {
-                playerInventory.RemoveItem(clickedSlot.currentItem);
+                playerInventory.RemoveItem(clickedSlot.currentStack.item);
             }
         }
     }
