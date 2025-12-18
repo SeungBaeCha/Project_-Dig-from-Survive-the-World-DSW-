@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b97fedce601653b4d9eab27f68fa7533, type: 3}
+  m_Name: EnemyLootTable
+  m_EditorClassIdentifier: 
+  items:
+  - itemPrefab: {fileID: 7187320824981851257, guid: 9583d194449b4744d874b377263f6fc6,
+      type: 3}
+    dropChance: 0.05
+    minQuantity: 1
+    maxQuantity: 1
+  - itemPrefab: {fileID: 7187320824981851257, guid: b7f7f2d7cd2cc634883a3998d85e790c,
+      type: 3}
+    dropChance: 0.01
+    minQuantity: 1
+    maxQuantity: 1
+  - itemPrefab: {fileID: 7187320824981851257, guid: 241efff6892ad70458e105bd3cf24280,
+      type: 3}
+    dropChance: 0.01
+    minQuantity: 1
+    maxQuantity: 1
+  - itemPrefab: {fileID: 7187320824981851257, guid: 7646c8f57dc21b64fa59ef9f02cbbdb8,
+      type: 3}
+    dropChance: 0.009
+    minQuantity: 1
+    maxQuantity: 1
+  - itemPrefab: {fileID: 7187320824981851257, guid: 188c49c9b60c1ea4ab56b0da722d918e,
+      type: 3}
+    dropChance: 0.001
+    minQuantity: 1
+    maxQuantity: 1

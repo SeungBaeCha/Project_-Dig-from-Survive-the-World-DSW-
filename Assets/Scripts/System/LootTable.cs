@@ -40,6 +40,19 @@ public class LootTable : ScriptableObject
             // 드랍 확률 체크 (Random.value는 0.0과 1.0 사이의 값을 반환)
             if (Random.value <= lootItem.dropChance)
             {
+                // --- 레시피 중복 드랍 방지 로직 ---
+                // 만약 드랍할 아이템이 '레시피'라면, 이미 발견한 레시피인지 확인한다.
+                RecipePickupController recipePickup = lootItem.itemPrefab.GetComponent<RecipePickupController>();
+                if (recipePickup != null)
+                {
+                    // RecipeBook에 접근하여 해당 레시피의 발견 상태를 체크
+                    if (recipePickup.recipeToUnlock != null && recipePickup.recipeToUnlock.isDiscovered)
+                    {
+                        // 이미 발견된 레시피라면, 이 아이템을 드랍하지 않고 건너뛴다.
+                        continue; 
+                    }
+                }
+
                 // 드랍될 개수를 최소/최대값 사이에서 랜덤으로 결정
                 int quantity = Random.Range(lootItem.minQuantity, lootItem.maxQuantity + 1);
 

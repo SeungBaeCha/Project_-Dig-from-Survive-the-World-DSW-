@@ -49,6 +49,10 @@ public class Enemy : MonoBehaviour
     public Color chaseColor;  // 추격 시 색
     private MeshRenderer eyesRenderer;
 
+    [Header("드랍 아이템 설정")]
+    [Tooltip("적이 사망했을 때 아이템을 드랍할 LootTable")]
+    public LootTable enemyLootTable;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -208,6 +212,12 @@ public class Enemy : MonoBehaviour
             agent.velocity = Vector3.zero;
         }
 
+        // 아이템 드랍
+        if (enemyLootTable != null)
+        {
+            enemyLootTable.SpawnLoot(transform.position);
+        }
+
         // 간단하게 오브젝트를 N 초 뒤 파괴. 나중에 여기에 파티클이나 사운드 효과를 추가할 수 있다.
         Destroy(gameObject, 1f);
     }
@@ -298,3 +308,4 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, detectionRadius); // detectionRadius 크기의 구체를 그림
     }
 }
+

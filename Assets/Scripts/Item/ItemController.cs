@@ -12,13 +12,24 @@ public class ItemController : MonoBehaviour
     [Tooltip("이 아이템의 정보를 담고 있는 ScriptableObject")]
     public ItemData itemData;
 
+    [Header("아이템 소멸 설정")]
+    [Tooltip("아이템이 사라지기까지의 시간 (초). 0이면 사라지지 않음.")]
+    [SerializeField] private float lifeTime = 5.0f;
+
     [Header("아이템 생성 효과")]
     [Tooltip("아이템이 생성될 때 튀어 오르는 힘. 0이면 효과 없음.")]
     [SerializeField] private float spawnForce = 2.5f;
 
     void Start()
     {
-        // --- 1. 물리 충돌 문제 해결 ---
+        // --- 1. 일정 시간 뒤 아이템 자동 파괴 ---
+        // lifeTime이 0보다 크면, 해당 시간(초) 후에 아이템 게임 오브젝트를 파괴.
+        if (lifeTime > 0)
+        {
+            Destroy(gameObject, lifeTime);
+        }
+
+        // --- 2. 물리 충돌 문제 해결 ---
         // 아이템이 땅을 뚫고 떨어지지 않도록, 물리 충돌 전용 콜라이더를 추가한다.
 
         // 기존의 BoxCollider는 플레이어 감지를 위한 'Trigger'로 사용.
@@ -45,7 +56,7 @@ public class ItemController : MonoBehaviour
             physicsCollider.isTrigger = false;
         }
 
-        // --- 2. 자연스러운 드랍 효과 ---
+        // --- 3. 자연스러운 드랍 효과 ---
         // Rigidbody를 찾아 흩뿌려지는 힘을 적용.
         if (spawnForce > 0)
         {

@@ -136,7 +136,8 @@ public class CraftingWindow : MonoBehaviour
 
         CraftingRecipe recipe = craftingSystem.FindRecipe(currentMaterials);
 
-        if (recipe != null)
+        // 레시피를 찾았고, '발견된' 레시피일 경우에만 결과 슬롯에 아이템을 표시한다.
+        if (recipe != null && recipe.isDiscovered)
         {
             resultSlot.SetItem(recipe.result);
         }

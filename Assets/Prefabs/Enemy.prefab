@@ -397,11 +397,15 @@ MonoBehaviour:
   hpBar: {fileID: 1212911363011628960}
   detectionRadius: 15
   chaseSpeed: 5.5
+  attackDamage: 10
+  attackCooldown: 2
+  attackDistance: 2
   patrolRadius: 10
   patrolSpeed: 3
   patrolWaitTime: 3
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   chaseColor: {r: 1, g: 0, b: 0, a: 1}
+  enemyLootTable: {fileID: 11400000, guid: 44135b6a415598d4db0665513380ebf1, type: 2}
 --- !u!1001 &8805401633030919836
 PrefabInstance:
   m_ObjectHideFlags: 0
