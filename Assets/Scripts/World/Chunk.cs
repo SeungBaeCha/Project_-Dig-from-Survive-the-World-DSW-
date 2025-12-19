@@ -14,6 +14,15 @@ public class Chunk : MonoBehaviour
     [Tooltip("청크가 파괴될 때 사용할 아이템 드랍 테이블입니다.")]
     public LootTable lootTable;
 
+    [Header("Unique Recipe Drop")]
+    [Tooltip("이 청크가 낮은 확률로 드랍할 수 있는 고유 레시피")]
+    public CraftingRecipe uniqueRecipeToUnlock;
+    [Tooltip("위 '고유 레시피'의 아이템 프리팹")]
+    public GameObject recipeItemPrefab;
+    [Tooltip("고유 레시피가 드랍될 확률 (0.0 ~ 1.0)")]
+    [Range(0f, 1f)]
+    public float uniqueRecipeDropChance = 0.05f; // 5% 확률
+
     /// <summary>
     /// 외부에서 이 청크에 데미지를 주기 위해 호출하는 함수
     /// </summary>
@@ -36,7 +45,38 @@ public class Chunk : MonoBehaviour
     /// </summary>
     private void Die()
     {
-        // 주석: 할당된 드랍 테이블이 있는지 확인
+        // --- 유니크 레시피 드랍 로직 ---
+        // 조건 1: 유니크 레시피와 프리팹이 할당되어 있고,
+        // 조건 2: 아직 발견되지 않은 레시피이며,
+        // 조건 3: 드랍 확률을 통과했을 때
+        if (uniqueRecipeToUnlock != null &&
+            recipeItemPrefab != null &&
+            !uniqueRecipeToUnlock.isDiscovered &&
+            Random.value < uniqueRecipeDropChance)
+        {
+            // 월드에 동일한 아이템이 이미 있는지 마지막으로 확인
+            ItemController itemInPrefab = recipeItemPrefab.GetComponent<ItemController>();
+            if (itemInPrefab != null && itemInPrefab.itemData != null)
+            {
+                bool isAlreadyInWorld = false;
+                foreach (var activeItem in FindObjectsOfType<ItemController>())
+                {
+                    if (activeItem.itemData == itemInPrefab.itemData)
+                    {
+                        isAlreadyInWorld = true;
+                        break;
+                    }
+                }
+
+                // 월드에 없다면 드랍!
+                if (!isAlreadyInWorld)
+                {
+                    Instantiate(recipeItemPrefab, transform.position, Quaternion.identity);
+                }
+            }
+        }
+
+        // --- 기존 재료 드랍 로직 ---
         if (lootTable != null)
         {
             // 주석: 현재 청크의 위치에 아이템을 드랍

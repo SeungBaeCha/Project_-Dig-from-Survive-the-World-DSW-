@@ -120,3 +120,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   lootTable: {fileID: 11400000, guid: 4693ab65120250f48a3160cd6551ea0c, type: 2}
+  uniqueRecipeToUnlock: {fileID: 11400000, guid: 76c60a76cf1f7944b8194acf2f9f86fb,
+    type: 2}
+  recipeItemPrefab: {fileID: 7187320824981851257, guid: 568734ef56a92b7459962f2f6d9c4045,
+    type: 3}
+  uniqueRecipeDropChance: 0.05

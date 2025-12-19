@@ -16,4 +16,5 @@ public class ItemData : ScriptableObject
 
     [Tooltip("인벤토리나 UI에 표시될 아이템 아이콘")]
     public Sprite icon;
+
 }
