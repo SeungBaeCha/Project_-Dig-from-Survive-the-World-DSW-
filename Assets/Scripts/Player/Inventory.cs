@@ -72,8 +72,8 @@ public class Inventory : MonoBehaviour
             // 사용한 레시피 아이템을 인벤토리에서 제거
             RemoveItem(itemToUse);
             
-            // 유저가 요청한 메시지 표시
-            Debug.Log("조합이 활성화되었습니다!");
+            // UIManager를 통해 게임 내 알림 메시지를 표시
+            UIManager.Instance.ShowNotification($"'{itemToUse.recipeToUnlock.result.itemName}' 레시피 활성화!");
         }
         else
         {
@@ -144,5 +144,16 @@ public class Inventory : MonoBehaviour
         // 원본 리스트를 직접 주지 않고, 복사본을 만들어서 주면
         // 다른 스크립트에서 실수로 인벤토리를 망가뜨리는 것을 방지할 수 있어.
         return new List<InventoryStack>(_stacks);
+    }
+
+    /// <summary>
+    /// 인벤토리에서 특정 아이템의 현재 개수를 반환한다.
+    /// </summary>
+    /// <param name="item">개수를 확인할 아이템 데이터</param>
+    /// <returns>인벤토리 내 해당 아이템의 개수 (없으면 0)</returns>
+    public int GetItemQuantity(ItemData item)
+    {
+        InventoryStack stack = _stacks.FirstOrDefault(s => s.item == item);
+        return stack?.quantity ?? 0; // 스택이 있으면 수량 반환, 없으면 0 반환
     }
 }

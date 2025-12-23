@@ -46,6 +46,7 @@ public class Chunk : MonoBehaviour
     private void Die()
     {
         // --- 유니크 레시피 드랍 로직 ---
+        // 월드 중복 체크 로직을 제거하여 더 직관적이고 효율적으로 변경합니다.
         // 조건 1: 유니크 레시피와 프리팹이 할당되어 있고,
         // 조건 2: 아직 발견되지 않은 레시피이며,
         // 조건 3: 드랍 확률을 통과했을 때
@@ -54,29 +55,11 @@ public class Chunk : MonoBehaviour
             !uniqueRecipeToUnlock.isDiscovered &&
             Random.value < uniqueRecipeDropChance)
         {
-            // 월드에 동일한 아이템이 이미 있는지 마지막으로 확인
-            ItemController itemInPrefab = recipeItemPrefab.GetComponent<ItemController>();
-            if (itemInPrefab != null && itemInPrefab.itemData != null)
-            {
-                bool isAlreadyInWorld = false;
-                foreach (var activeItem in FindObjectsOfType<ItemController>())
-                {
-                    if (activeItem.itemData == itemInPrefab.itemData)
-                    {
-                        isAlreadyInWorld = true;
-                        break;
-                    }
-                }
-
-                // 월드에 없다면 드랍!
-                if (!isAlreadyInWorld)
-                {
-                    Instantiate(recipeItemPrefab, transform.position, Quaternion.identity);
-                }
-            }
+            // 위 조건을 통과하면 바로 아이템을 생성합니다.
+            Instantiate(recipeItemPrefab, transform.position, Quaternion.identity);
         }
-
-        // --- 기존 재료 드랍 로직 ---
+        
+        // --- 기존 재료 드랍 로직 (유니크 드랍과 별개로 실행되도록 수정) ---
         if (lootTable != null)
         {
             // 주석: 현재 청크의 위치에 아이템을 드랍

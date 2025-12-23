@@ -124,13 +124,10 @@ public class InventoryUI : MonoBehaviour
         ItemData clickedItem = clickedSlot.currentStack.item;
 
         // 클릭된 아이템이 '해금할 레시피(레시피 북)'를 가지고 있는 경우,
-        // 해당 레시피를 CraftingSystem의 '활성 레시피'로 설정한다.
+        // Inventory 스크립트의 UseItem 메서드를 호출하여 아이템 사용 로직을 처리한다.
         if (clickedItem.recipeToUnlock != null)
         {
-            CraftingSystem.Instance.SetActiveRecipe(clickedItem.recipeToUnlock);
-            
-            // 참고: 기존의 아이템 사용(소모) 로직은 제거됨.
-            // playerInventory.UseItem(clickedItem); 
+            playerInventory.UseItem(clickedItem); 
         }
     }
 }

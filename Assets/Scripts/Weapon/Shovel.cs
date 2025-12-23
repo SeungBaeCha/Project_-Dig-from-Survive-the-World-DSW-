@@ -60,52 +60,38 @@ public class Shovel : MonoBehaviour
     }
     
     /// <summary>
-    /// Player Input에 의해 호출되는 '발사' 액션.
+    /// 삽을 사용해 땅을 파는 동작을 시도한다. PlayerMove 스크립트에서 호출된다.
     /// </summary>
-    public void OnFire(InputAction.CallbackContext context)
+    public void Use()
     {
-        // UI가 열려있으면 입력을 무시한다.
-        if (UIManager.IsUIOpen)
+        // 파기 가능한 대상이 있을 때만 땅파기 로직을 실행한다.
+        if (IsTargetDiggable && diggableTarget != null)
         {
-            return;
-        }
+            // 파티클 이펙트 생성을 위해 위치를 미리 저장.
+            Vector3 targetPosition = diggableTarget.transform.position;
+            if (digEffectPrefab != null)
+            {
+                ParticleSystem effectInstance = Instantiate(digEffectPrefab, targetPosition, Quaternion.identity);
+                Destroy(effectInstance.gameObject, effectInstance.main.duration);
+            }
 
-        // 키를 눌렀다 떼는 순간에만 작동하고, 파기 가능한 대상이 있을 때만 Dig()를 호출한다.
-        if (context.performed && IsTargetDiggable && diggableTarget != null)
-        {
-            Dig();
-        }
-    }
-    
-    /// <summary>
-    /// 땅 파기 로직을 수행하는 함수
-    /// </summary>
-    private void Dig()
-    {
-        // 파티클 이펙트 생성을 위해 위치를 미리 저장.
-        Vector3 targetPosition = diggableTarget.transform.position;
-        if (digEffectPrefab != null)
-        {
-            ParticleSystem effectInstance = Instantiate(digEffectPrefab, targetPosition, Quaternion.identity);
-            Destroy(effectInstance.gameObject, effectInstance.main.duration);
-        }
+            // 대상에서 Chunk 컴포넌트를 가져옴.
+            Chunk chunk = diggableTarget.GetComponent<Chunk>();
+            if (chunk != null)
+            {
+                // Chunk 컴포넌트가 있으면 TakeDamage를 호출.
+                // 아이템 생성 및 파괴는 Chunk 스크립트가 담당.
+                chunk.TakeDamage(1);
+            }
+            else
+            {
+                // Chunk 컴포넌트가 없는 경우를 대비해 기존 파괴 로직 유지.
+                Destroy(diggableTarget);
+            }
 
-        // 대상에서 Chunk 컴포넌트를 가져옴.
-        Chunk chunk = diggableTarget.GetComponent<Chunk>();
-        if (chunk != null)
-        {
-            // Chunk 컴포넌트가 있으면 TakeDamage를 호출.
-            // 아이템 생성 및 파괴는 Chunk 스크립트가 담당.
-            chunk.TakeDamage(1);
+            // 상태 초기화.
+            diggableTarget = null;
+            IsTargetDiggable = false;
         }
-        else
-        {
-            // Chunk 컴포넌트가 없는 경우를 대비해 기존 파괴 로직 유지.
-            Destroy(diggableTarget);
-        }
-
-        // 상태 초기화.
-        diggableTarget = null;
-        IsTargetDiggable = false;
     }
 }

@@ -76,24 +76,44 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        if (context.performed) // 버튼을 처음 눌렀을 때
+        // --- 입력 상태에 따른 isFiring 플래그 설정 ---
+        if (context.performed)
         {
             isFiring = true;
-
-            // --- 단발 무기 발사 로직 ---
-            if (weaponHold != null && weaponHold.equippedWeapon != null)
+        }
+        else if (context.canceled)
+        {
+            isFiring = false;
+        }
+        
+        // --- 버튼을 처음 누른 순간(context.performed)에만 작동하는 로직 ---
+        if (context.performed)
+        {
+            if (weaponHold == null || weaponHold.equippedWeapon == null)
             {
-                Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
-                // 현재 총이 존재하고, '자동 발사'가 아닌 총일 경우에만 여기서 한 번 발사
-                if (currentGun != null && !currentGun.gunData.isAutomatic)
+                // 들고 있는 무기가 없으면 아무것도 하지 않음
+                return;
+            }
+
+            // 1. 들고있는 무기에서 Gun 컴포넌트를 찾아본다.
+            Gun currentGun = weaponHold.equippedWeapon.GetComponent<Gun>();
+            if (currentGun != null)
+            {
+                // Gun 컴포넌트가 있다면: 단발 총일 경우에만 즉시 발사
+                if (!currentGun.gunData.isAutomatic)
                 {
                     currentGun.TryFire();
                 }
+                return; // 총을 쐈으므로, 아래 삽 로직은 실행하지 않음
             }
-        }
-        else if (context.canceled) // 버튼에서 손을 뗐을 때
-        {
-            isFiring = false;
+
+            // 2. Gun이 아니라면, Shovel 컴포넌트를 찾아본다.
+            Shovel currentShovel = weaponHold.equippedWeapon.GetComponent<Shovel>();
+            if (currentShovel != null)
+            {
+                // Shovel 컴포넌트가 있다면: 삽 사용
+                currentShovel.Use();
+            }
         }
     }
 

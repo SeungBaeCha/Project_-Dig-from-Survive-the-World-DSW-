@@ -9,99 +9,256 @@ public class CraftingSystem : MonoBehaviour
     // 싱글턴 인스턴스
     public static CraftingSystem Instance { get; private set; }
 
-    // 플레이어 인벤토리 참조
-    private Inventory playerInventory;
+                // 플레이어 인벤토리 참조
 
-    // 현재 활성화된(UI에 표시될) 레시피
-    public CraftingRecipe ActiveRecipe { get; private set; }
+                private Inventory _playerInventory;
 
-    private void Awake()
-    {
-        // 싱글턴 패턴 구현
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            // 게임 내에 계속 유지되도록 설정
-            DontDestroyOnLoad(gameObject);
-        }
-    }
+                public Inventory PlayerInventory => _playerInventory;
 
-    private void Start()
-    {
-        // 플레이어 인벤토리 참조를 찾아서 할당
-        // Player 태그를 가진 오브젝트에서 Inventory 컴포넌트를 찾는다.
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            playerInventory = player.GetComponent<Inventory>();
-        }
+                // 플레이어 Transform 참조 (효율성을 위해 캐싱)
 
-        if (playerInventory == null)
-        {
-            Debug.LogError("CraftingSystem이 플레이어의 Inventory를 찾을 수 없습니다!");
-        }
-    }
+                private Transform playerTransform;
 
-    /// <summary>
-    /// 제작 창에 표시할 레시피를 설정합니다.
-    /// </summary>
-    public void SetActiveRecipe(CraftingRecipe recipe)
-    {
-        ActiveRecipe = recipe;
-        Debug.Log($"활성화된 레시피: {recipe.name}");
-    }
+                    // 메인 카메라 참조 (효율성을 위해 캐싱)
 
-    /// <summary>
-    /// 특정 레시피로 아이템 제작을 시도하는 함수.
-    /// </summary>
-    /// <param name="recipeToCraft">제작할 레시피</param>
-    /// <returns>제작 성공 시 true, 실패 시 false</returns>
-    public bool CraftItem(CraftingRecipe recipeToCraft)
-    {
-        if (recipeToCraft == null)
-        {
-            Debug.LogError("제작하려는 레시피가 null입니다.");
-            return false;
-        }
+                    private Camera mainCamera;
 
-        // 1. 재료 확인
-        if (!playerInventory.HasMaterials(recipeToCraft.materials))
-        {
-            Debug.Log("제작 재료가 부족합니다.");
-            return false;
-        }
+                
 
-        // 2. 재료 소모
-        playerInventory.RemoveMaterials(recipeToCraft.materials);
+                    [Header("Recipe Management")]
 
-        // 3. 결과물 아이템을 월드에 생성 (인벤토리가 아닌 플레이어 근처에)
-        if (recipeToCraft.result.itemPrefab != null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                // 플레이어의 위치를 기준으로 약간 앞에 생성
-                Vector3 spawnPosition = player.transform.position + player.transform.forward * 1.5f;
-                Instantiate(recipeToCraft.result.itemPrefab, spawnPosition, Quaternion.identity);
-                Debug.Log($"{recipeToCraft.result.itemName} 제작 성공! 월드에 생성되었습니다.");
-                return true;
-            }
-            else
-            {
-                Debug.LogError("플레이어 오브젝트를 찾을 수 없습니다. 아이템을 월드에 생성할 수 없습니다.");
-                // TODO: 이 경우 재료를 다시 돌려주는 로직 고려
-                return false;
-            }
-        }
-        else
-        {
-            Debug.LogError($"{recipeToCraft.result.itemName}에 연결된 프리팹이 없습니다. 월드에 생성할 수 없습니다.");
-            // TODO: 이 경우 재료를 다시 돌려주는 로직 고려
-            return false;
-        }
-    }
-}
+                    [Tooltip("게임에 존재하는 모든 레시피 목록. 게임 시작 시 '미발견' 상태로 초기화됩니다.")]
+
+                    [SerializeField] private List<CraftingRecipe> allRecipes;
+
+                
+
+                    // 현재 활성화된(UI에 표시될) 레시피
+
+                    public CraftingRecipe ActiveRecipe { get; private set; }
+
+                
+
+                    private void Awake()
+
+                    {
+
+                        // 싱글턴 패턴 구현
+
+                        if (Instance != null && Instance != this)
+
+                        {
+
+                            Destroy(gameObject);
+
+                        }
+
+                        else
+
+                        {
+
+                            Instance = this;
+
+                            // 게임 내에 계속 유지되도록 설정
+
+                            DontDestroyOnLoad(gameObject);
+
+                        }
+
+                
+
+                        // --- 모든 레시피의 '발견' 상태를 '미발견'으로 초기화 ---
+
+                        // ScriptableObject는 에디터에서 플레이 세션 간의 변경사항을 저장하기 때문에,
+
+                        // 게임을 시작할 때마다 이 초기화 과정이 필요합니다.
+
+                        foreach (var recipe in allRecipes)
+
+                        {
+
+                            if (recipe != null)
+
+                            {
+
+                                recipe.ResetDiscovery();
+
+                            }
+
+                        }
+
+                    }
+
+                
+
+                    private void Start()
+
+                    {
+
+                        // 플레이어 참조를 찾아서 할당 (한 번만)
+
+                        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+                        if (player != null)
+
+                        {
+
+                            _playerInventory = player.GetComponent<Inventory>();
+
+                            playerTransform = player.transform;
+
+                        }
+
+                
+
+                        if (_playerInventory == null)
+
+                        {
+
+                            Debug.LogError("CraftingSystem이 플레이어의 Inventory를 찾을 수 없습니다!");
+
+                        }
+
+                        if (playerTransform == null)
+
+                        {
+
+                            Debug.LogError("CraftingSystem이 플레이어의 Transform을 찾을 수 없습니다!");
+
+                        }
+
+                
+
+                        // 메인 카메라 참조 (한 번만)
+
+                        mainCamera = Camera.main;
+
+                        if (mainCamera == null)
+
+                        {
+
+                            Debug.LogError("CraftingSystem: Main Camera를 찾을 수 없습니다! 'MainCamera' 태그가 설정되어 있는지 확인해주세요.");
+
+                        }
+
+                    }
+
+            
+
+                /// <summary>
+
+                /// 제작 창에 표시할 레시피를 설정합니다.
+
+                /// </summary>
+
+                public void SetActiveRecipe(CraftingRecipe recipe)
+
+                {
+
+                    ActiveRecipe = recipe;
+
+                    // Debug.Log($"활성화된 레시피: {recipe.name}"); // 너무 자주 호출될 수 있으므로 주석 처리
+
+                }
+
+            
+
+                /// <summary>
+
+                /// 특정 레시피로 아이템 제작을 시도하는 함수.
+
+                /// </summary>
+
+                /// <param name="recipeToCraft">제작할 레시피</param>
+
+                /// <returns>제작 성공 시 true, 실패 시 false</returns>
+
+                public bool CraftItem(CraftingRecipe recipeToCraft)
+
+                {
+
+                    if (recipeToCraft == null)
+
+                    {
+
+                        Debug.LogError("제작하려는 레시피가 null입니다.");
+
+                        return false;
+
+                    }
+
+            
+
+                    // 1. 재료 확인
+
+                    if (!_playerInventory.HasMaterials(recipeToCraft.materials))
+
+                    {
+
+                        UIManager.Instance.ShowNotification("재료가 부족합니다!", 1.5f);
+
+                        return false;
+
+                    }
+
+            
+
+                    // 2. 재료 소모
+
+                    _playerInventory.RemoveMaterials(recipeToCraft.materials);
+
+            
+
+                    // 3. 결과물 아이템을 월드에 생성 (인벤토리가 아닌 플레이어 근처에)
+
+                    if (recipeToCraft.result.itemPrefab != null)
+
+                    {
+
+                        if (mainCamera != null)
+
+                        {
+
+                            // 카메라의 위치와 바라보는 방향을 기준으로 1단위 앞, 그리고 0.2단위 위에 생성
+
+                            // (카메라 또는 플레이어 모델에 끼는 것을 방지)
+
+                            Vector3 spawnPosition = mainCamera.transform.position + mainCamera.transform.forward * 1f + Vector3.up * 0.2f;
+
+                            Instantiate(recipeToCraft.result.itemPrefab, spawnPosition, Quaternion.identity);
+
+                            
+
+                            UIManager.Instance.ShowNotification($"'{recipeToCraft.result.itemName}' 제작 성공!");
+
+                            return true;
+
+                        }
+
+                        else
+
+                        {
+
+                            Debug.LogError("메인 카메라 참조가 없습니다. 아이템을 월드에 생성할 수 없습니다.");
+
+                            // TODO: 이 경우 재료를 다시 돌려주는 로직 고려
+
+                            return false;
+
+                        }
+
+                    }
+
+                    else
+
+                    {
+
+                        Debug.LogError($"'{recipeToCraft.result.itemName}'에 연결된 프리팹이 없습니다. 월드에 생성할 수 없습니다.");
+
+                        // TODO: 이 경우 재료를 다시 돌려주는 로직 고려
+
+                        return false;
+
+                    }
+
+                }}

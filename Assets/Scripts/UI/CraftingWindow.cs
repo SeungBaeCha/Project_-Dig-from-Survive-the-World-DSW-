@@ -144,8 +144,56 @@ public class CraftingWindow : MonoBehaviour
             }
         }
         
-        // 3. 제작 버튼 활성화
-        craftButton.interactable = true; 
+        // 2. 재료 정보 업데이트
+        for (int i = 0; i < materialIcons.Count; i++)
+        {
+            if (i < activeRecipe.materials.Count)
+            {
+                RequiredMaterial material = activeRecipe.materials[i];
+                // 재료 및 아이템 데이터가 유효한지 확인
+                if (material != null && material.item != null && material.item.icon != null)
+                {
+                    materialIcons[i].sprite = material.item.icon;
+                    materialIcons[i].gameObject.SetActive(true);
+
+                    // 현재 가지고 있는 재료 개수를 인벤토리에서 가져온다.
+                    int currentQuantity = CraftingSystem.Instance.PlayerInventory.GetItemQuantity(material.item);
+                    int requiredQuantity = material.quantity;
+
+                    materialQuantities[i].text = $"{currentQuantity} / {requiredQuantity}";
+
+                    // 재료가 부족하면 텍스트 색상을 빨간색으로 변경
+                    if (currentQuantity < requiredQuantity)
+                    {
+                        materialQuantities[i].color = Color.red;
+                    }
+                    else
+                    {
+                        materialQuantities[i].color = Color.white;
+                    }
+                }
+                else
+                {
+                    materialIcons[i].gameObject.SetActive(false);
+                    materialQuantities[i].text = "";
+                    if(material == null)
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료가 비어있습니다.");
+                    else if(material.item == null)
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료에 아이템이 설정되지 않았습니다.");
+                    else if(material.item.icon == null)
+                        Debug.LogWarning($"[CraftingWindow] 재료 아이템 '{material.item.itemName}'에 아이콘이 설정되지 않았습니다.");
+                }
+            }
+            else
+            {
+                // 표시할 재료가 더 이상 없는 경우, 해당 슬롯은 비운다.
+                materialIcons[i].gameObject.SetActive(false);
+                materialQuantities[i].text = "";
+            }
+        }
+        
+        // 3. 제작 버튼 활성화 (이 부분은 재료 충족 여부에 따라 다르게 할 수도 있음)
+        craftButton.interactable = CraftingSystem.Instance.PlayerInventory.HasMaterials(activeRecipe.materials); 
     }
 
     /// <summary>
