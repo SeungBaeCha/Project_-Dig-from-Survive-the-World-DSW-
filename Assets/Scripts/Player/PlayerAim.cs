@@ -9,9 +9,6 @@ public class PlayerAim : MonoBehaviour
 
     void Start()
     {
-        // 시작되면 마우스 커서를 중앙으로 고정하고 숨김
-        Cursor.lockState = CursorLockMode.Locked;
-
         // 시네머신이 축 값을 가져갈 때, 우리가 만든 함수를 대신 사용하도록 설정
         CinemachineCore.GetInputAxis = GetAxisCustom;
     }

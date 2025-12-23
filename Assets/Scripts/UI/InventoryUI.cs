@@ -77,6 +77,14 @@ public class InventoryUI : MonoBehaviour
     }
 
     /// <summary>
+    /// 인벤토리 창이 현재 열려있는지 여부를 반환한다.
+    /// </summary>
+    public bool IsOpen()
+    {
+        return isOpen;
+    }
+
+    /// <summary>
     /// 인벤토리 데이터를 기반으로 UI를 다시 그린다.
     /// </summary>
     private void RefreshUI()
@@ -107,18 +115,23 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     public void OnSlotClicked(InventorySlot clickedSlot)
     {
-        // 조합창이 열려있고, 클릭한 슬롯에 아이템이 있을 때
-        if (craftingWindow != null && craftingWindow.gameObject.activeInHierarchy && clickedSlot.currentStack != null)
+        // 클릭된 슬롯이 비어있거나, 아이템이 없으면 아무것도 하지 않는다.
+        if (clickedSlot.currentStack == null || clickedSlot.currentStack.item == null)
         {
-            // 클릭된 슬롯의 아이템을 조합창의 재료 슬롯에 추가 시도
-            bool added = craftingWindow.AddMaterial(clickedSlot.currentStack.item);
+            return;
+        }
 
-            // 조합창에 재료가 성공적으로 추가되었다면,
-            // 플레이어의 인벤토리에서 해당 아이템을 1개 제거한다.
-            if (added)
-            {
-                playerInventory.RemoveItem(clickedSlot.currentStack.item);
-            }
+        ItemData clickedItem = clickedSlot.currentStack.item;
+
+        // 클릭된 아이템이 '해금할 레시피(레시피 북)'를 가지고 있는 경우,
+        // 해당 레시피를 CraftingSystem의 '활성 레시피'로 설정한다.
+        if (clickedItem.recipeToUnlock != null)
+        {
+            CraftingSystem.Instance.SetActiveRecipe(clickedItem.recipeToUnlock);
+            Debug.Log($"'{clickedItem.itemName}' 아이템 클릭. '{clickedItem.recipeToUnlock.name}' 레시피를 활성화합니다.");
+            
+            // 참고: 기존의 아이템 사용(소모) 로직은 제거됨.
+            // playerInventory.UseItem(clickedItem); 
         }
     }
 }

@@ -64,6 +64,12 @@ public class Shovel : MonoBehaviour
     /// </summary>
     public void OnFire(InputAction.CallbackContext context)
     {
+        // UI가 열려있으면 입력을 무시한다.
+        if (UIManager.IsUIOpen)
+        {
+            return;
+        }
+
         // 키를 눌렀다 떼는 순간에만 작동하고, 파기 가능한 대상이 있을 때만 Dig()를 호출한다.
         if (context.performed && IsTargetDiggable && diggableTarget != null)
         {

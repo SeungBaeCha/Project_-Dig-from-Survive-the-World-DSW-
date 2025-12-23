@@ -1,97 +1,112 @@
 using UnityEngine;
-using TMPro; // TextMeshPro를 사용하기 위해 꼭 추가해야 해!
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 게임의 모든 UI 요소를 관리하는 싱글톤 매니저
+/// 게임의 전반적인 UI (인벤토리, 제작 창 등)를 관리하고 입력을 처리하는 싱글턴 매니저.
 /// </summary>
 public class UIManager : MonoBehaviour
 {
-    // 싱글톤 인스턴스: 다른 스크립트에서 UIManager.Instance 로 쉽게 접근할 수 있게 해준다.
     public static UIManager Instance { get; private set; }
 
-    [Header("상호작용 UI")]
-    // 상호작용 텍스트를 표시할 TextMeshPro UI 요소. Unity 에디터에서 연결해줘야 해.
-    [SerializeField] private TextMeshProUGUI interactionText;
-
-    [Header("UI Windows")]
-    [Tooltip("인벤토리 UI")]
+    [Header("관리할 UI 창")]
+    [Tooltip("인벤토리 UI를 관리하는 InventoryUI 스크립트")]
     [SerializeField] private InventoryUI inventoryUI;
-    [Tooltip("조합창 UI")]
+    [Tooltip("제작 창 UI를 관리하는 CraftingWindow 스크립트")]
     [SerializeField] private CraftingWindow craftingWindow;
+
+    /// <summary>
+    /// UI 창(인벤토리, 제작 창 등)이 하나라도 열려있는지 여부를 나타냅니다.
+    /// 다른 스크립트에서 플레이어 입력 등을 막는 데 사용할 수 있습니다.
+    /// </summary>
+    public static bool IsUIOpen { get; private set; }
+
+    private PlayerInputActions inputActions;
 
     private void Awake()
     {
-        // --- 싱글톤 패턴 구현 ---
-        // 만약 인스턴스가 아직 없고, 이 UIManager가 첫 번째라면
-        if (Instance == null)
+        // 싱글턴 패턴
+        if (Instance != null && Instance != this)
         {
-            // 이 인스턴스를 static 변수에 할당
-            Instance = this;
-            // 씬이 바뀌어도 이 오브젝트가 파괴되지 않게 설정 (필요에 따라 주석 처리/해제)
-            // DontDestroyOnLoad(gameObject); 
-        }
-        // 만약 인스턴스가 이미 존재하는데, 또 다른 UIManager가 씬에 있다면
-        else
-        {
-            // 새로 생긴 UIManager를 파괴해서 단 하나의 인스턴스만 존재하도록 보장
             Destroy(gameObject);
         }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        inputActions = new PlayerInputActions();
+        inputActions.Player.Inventory.performed += _ => ToggleInventory();
+        inputActions.Player.Crafting.performed += _ => ToggleCrafting();
     }
 
     private void Start()
     {
-        // 게임 시작 시에는 상호작용 텍스트를 보이지 않게 초기화
-        if (interactionText != null)
-        {
-            interactionText.gameObject.SetActive(false);
-        }
+        // 게임 시작 시 커서를 숨기고 잠급니다.
+        UpdateCursorAndGameState();
+    }
+    
+    private void OnEnable()
+    {
+        inputActions.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Player.Disable();
+    }
+
+    private void ToggleInventory()
+    {
+        // Tab 키는 인벤토리만 토글한다.
+        inventoryUI.ToggleWindow(!inventoryUI.IsOpen());
+        UpdateCursorAndGameState();
+    }
+
+    private void ToggleCrafting()
+    {
+        // C 키는 제작창만 토글한다.
+        craftingWindow.ToggleWindow(!craftingWindow.IsOpen());
+        UpdateCursorAndGameState();
     }
 
     private void Update()
     {
-        // Tab 키를 누르면 인벤토리 창을 토글
-        if (Input.GetKeyDown(KeyCode.Tab))
+        // 'ESC' 키를 누르면 모든 창을 닫는다.
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (inventoryUI != null)
+            if (inventoryUI.IsOpen())
             {
-                inventoryUI.ToggleWindow();
+                inventoryUI.ToggleWindow(false);
             }
-        }
-
-        // C 키를 누르면 조합 창을 토글
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (craftingWindow != null)
+            if (craftingWindow.IsOpen())
             {
-                craftingWindow.ToggleWindow();
+                craftingWindow.ToggleWindow(false);
             }
+            UpdateCursorAndGameState();
         }
     }
 
     /// <summary>
-    /// 상호작용 텍스트를 화면에 보여주는 함수
+    /// UI 창의 열림 상태에 따라 게임 시간, 마우스 커서 상태를 업데이트합니다.
     /// </summary>
-    /// <param name="textToShow">화면에 표시할 문장</param>
-    public void ShowInteractionText(string textToShow)
+    private void UpdateCursorAndGameState()
     {
-        if (interactionText != null)
-        {
-            // 텍스트 내용을 설정하고
-            interactionText.text = textToShow;
-            // 텍스트 오브젝트를 활성화해서 화면에 보여준다
-            interactionText.gameObject.SetActive(true);
-        }
-    }
+        IsUIOpen = inventoryUI.IsOpen() || craftingWindow.IsOpen();
 
-    /// <summary>
-    /// 상호작용 텍스트를 화면에서 숨기는 함수
-    /// </summary>
-    public void HideInteractionText()
-    {
-        if (interactionText != null)
+        if (IsUIOpen)
         {
-            // 텍스트 오브젝트를 비활성화해서 화면에서 숨긴다
-            interactionText.gameObject.SetActive(false);
+            // 창이 하나라도 열려있으면: 게임 시간을 멈추고, 커서를 보이게 합니다.
+            Time.timeScale = 0f;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            // 모든 창이 닫혀있으면: 게임 시간을 원래대로 돌리고, 커서를 숨깁니다.
+            Time.timeScale = 1f;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 }

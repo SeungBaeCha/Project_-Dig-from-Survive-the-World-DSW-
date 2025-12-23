@@ -55,28 +55,84 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 인벤토리에서 특정 아이템을 1개 제거하는 함수.
+    /// 인벤토리에 있는 아이템을 '사용'하는 함수.
     /// </summary>
-    public void RemoveItem(ItemData itemToRemove)
+    /// <param name="itemToUse">사용할 아이템 데이터</param>
+    public void UseItem(ItemData itemToUse)
     {
-        // 제거할 아이템을 가진 스택을 찾는다.
+        // 사용할 아이템이 레시피를 해금하는 종류인지 확인
+        if (itemToUse != null && itemToUse.recipeToUnlock != null)
+        {
+            // 레시피를 '발견' 상태로 변경
+            itemToUse.recipeToUnlock.Discover();
+            
+            // CraftingSystem에 이 레시피를 활성 레시피로 설정하도록 알린다.
+            CraftingSystem.Instance.SetActiveRecipe(itemToUse.recipeToUnlock);
+            
+            // 사용한 레시피 아이템을 인벤토리에서 제거
+            RemoveItem(itemToUse);
+            
+            // 유저가 요청한 메시지 표시
+            Debug.Log("조합이 활성화되었습니다!");
+        }
+        else
+        {
+            Debug.LogWarning($"{itemToUse.name}은(는) 사용할 수 없는 아이템입니다.");
+        }
+    }
+
+    /// <summary>
+    /// 인벤토리에서 특정 아이템을 지정된 개수만큼 제거하는 함수.
+    /// </summary>
+    /// <param name="itemToRemove">제거할 아이템</param>
+    /// <param name="quantityToRemove">제거할 개수</param>
+    public void RemoveItem(ItemData itemToRemove, int quantityToRemove = 1)
+    {
         int index = _stacks.FindIndex(s => s.item == itemToRemove);
 
         if (index > -1)
         {
-            // 아이템을 찾았으면 개수를 1 줄인다.
-            _stacks[index].quantity--;
+            _stacks[index].quantity -= quantityToRemove;
             
-            // 만약 개수가 0이 되면, 리스트에서 스택 자체를 제거한다.
             if (_stacks[index].quantity <= 0)
             {
                 _stacks.RemoveAt(index);
             }
             
-            Debug.Log(itemToRemove.itemName + "을(를) 인벤토리에서 제거했습니다.");
-            
-            // 인벤토리가 변경되었다고 모두에게 알림!
+            Debug.Log($"{itemToRemove.itemName} {quantityToRemove}개를 인벤토리에서 제거했습니다.");
             onInventoryChanged?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// 제작에 필요한 재료들이 인벤토리에 충분히 있는지 확인하는 함수.
+    /// </summary>
+    /// <param name="requiredMaterials">필요한 재료 목록</param>
+    /// <returns>재료가 모두 충분하면 true, 아니면 false</returns>
+    public bool HasMaterials(List<RequiredMaterial> requiredMaterials)
+    {
+        foreach (var requiredMaterial in requiredMaterials)
+        {
+            int index = _stacks.FindIndex(s => s.item == requiredMaterial.item);
+
+            // 재료가 인벤토리에 아예 없거나, 있어도 개수가 부족한 경우
+            if (index == -1 || _stacks[index].quantity < requiredMaterial.quantity)
+            {
+                return false; // 재료 부족
+            }
+        }
+        return true; // 모든 재료가 충분함
+    }
+
+    /// <summary>
+    /// 제작에 사용된 재료들을 인벤토리에서 제거하는 함수.
+    /// </summary>
+    /// <param name="requiredMaterials">제거할 재료 목록</param>
+    public void RemoveMaterials(List<RequiredMaterial> requiredMaterials)
+    {
+        foreach (var requiredMaterial in requiredMaterials)
+        {
+            RemoveItem(requiredMaterial.item, requiredMaterial.quantity);
         }
     }
     

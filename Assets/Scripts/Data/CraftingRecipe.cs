@@ -2,14 +2,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
+/// 제작에 필요한 재료와 개수를 정의하는 클래스.
+/// </summary>
+[System.Serializable]
+public class RequiredMaterial
+{
+    [Tooltip("필요한 재료 아이템")]
+    public ItemData item;
+    [Tooltip("필요한 재료의 개수")]
+    [Range(1, 999)]
+    public int quantity = 1;
+}
+
+
+/// <summary>
 /// 아이템 조합법(레시피) 하나를 정의하는 ScriptableObject.
 /// </summary>
 [CreateAssetMenu(fileName = "New Recipe", menuName = "Data/Crafting Recipe")]
 public class CraftingRecipe : ScriptableObject
 {
     [Header("조합법 정보")]
-    [Tooltip("조합에 필요한 재료 아이템 목록")]
-    public List<ItemData> materials;
+    [Tooltip("조합에 필요한 재료와 개수 목록")]
+    public List<RequiredMaterial> materials;
 
     [Tooltip("조합 결과물 아이템")]
     public ItemData result;

@@ -57,12 +57,25 @@ public class PlayerMove : MonoBehaviour
     // InputActions의 Move 액션에서 호출
     public void OnMove(InputAction.CallbackContext context)
     {
+        // UI가 열려있으면 입력을 무시한다.
+        if (UIManager.IsUIOpen)
+        {
+            moveInput = Vector2.zero; // 움직임 입력을 0으로 초기화
+            return;
+        }
         moveInput = context.ReadValue<Vector2>();
     }
 
     // InputActions의 Fire 액션에서 호출
     public void OnFire(InputAction.CallbackContext context)
     {
+        // UI가 열려있으면 입력을 무시한다.
+        if (UIManager.IsUIOpen)
+        {
+            isFiring = false; // UI가 열리면 발사 상태를 강제로 해제
+            return;
+        }
+
         if (context.performed) // 버튼을 처음 눌렀을 때
         {
             isFiring = true;
@@ -87,8 +100,8 @@ public class PlayerMove : MonoBehaviour
     // InputActions의 Reload 액션에서 호출
     public void OnReload(InputAction.CallbackContext context)
     {
-        // 키가 눌리는 순간에만 실행 (꾹 누르고 있을 때 계속 실행되는 것 방지)
-        if (!context.performed)
+        // UI가 열려있거나, 키가 눌리는 순간이 아니면 실행하지 않는다.
+        if (UIManager.IsUIOpen || !context.performed)
         {
             return;
         }

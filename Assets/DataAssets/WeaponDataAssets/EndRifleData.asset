@@ -15,6 +15,9 @@ MonoBehaviour:
   itemName: EndAssultRifle
   description: "SSS \uAD6D\uAC00\uAD8C\uB825\uAE09 \uBB34\uAE30 "
   icon: {fileID: 21300000, guid: 4b9a12bc6d6c70745bedb1cadd9cea11, type: 3}
+  itemPrefab: {fileID: 2522372694526072791, guid: 5857258ff0934e84f842a689fce85a49,
+    type: 3}
+  recipeToUnlock: {fileID: 11400000, guid: c1f50c24d7fd6624e94e9c08c8014857, type: 2}
   damage: 45
   range: 7
   fireRate: 3

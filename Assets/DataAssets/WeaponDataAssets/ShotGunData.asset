@@ -16,6 +16,8 @@ MonoBehaviour:
   description: "\uADFC\uAC70\uB9AC \uACF5\uACA9\uC744 \uD558\uB294 \uAC83\uC744 \uCD94\uCC9C\uD558\uB294
     \uBB34\uAE30"
   icon: {fileID: 21300000, guid: 792dcc47bb646ff4c958d67be4a15cd2, type: 3}
+  itemPrefab: {fileID: 1236257789494122, guid: 5f041a0e07e8e7c45b19f88fa017528a, type: 3}
+  recipeToUnlock: {fileID: 11400000, guid: 696f208e95b410f4b8fce0f7085cd350, type: 2}
   damage: 17
   range: 3
   fireRate: 2

@@ -15,11 +15,11 @@ MonoBehaviour:
   items:
   - itemPrefab: {fileID: 1462059463079042528, guid: 43d148c17a0e1604185fabe53999664d,
       type: 3}
-    dropChance: 0.3
+    dropChance: 0.2
     minQuantity: 1
     maxQuantity: 1
   - itemPrefab: {fileID: 7869236433036158562, guid: 9a17632e7173a9f46b6d3cee4b09d833,
       type: 3}
-    dropChance: 0.5
+    dropChance: 0.3
     minQuantity: 1
     maxQuantity: 1

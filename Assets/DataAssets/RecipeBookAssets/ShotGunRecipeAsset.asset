@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ShotGunRecipeAsset
   m_EditorClassIdentifier: 
   materials:
-  - {fileID: 11400000, guid: a0b1c6d73d9fb9349b95081f71d02c4d, type: 2}
-  - {fileID: 11400000, guid: e2f17dfd9b7794f4d9caac3efc5b8537, type: 2}
+  - item: {fileID: 11400000, guid: a0b1c6d73d9fb9349b95081f71d02c4d, type: 2}
+    quantity: 70
+  - item: {fileID: 11400000, guid: e2f17dfd9b7794f4d9caac3efc5b8537, type: 2}
+    quantity: 50
   result: {fileID: 11400000, guid: f0badea20494eb04bb03bf7540610433, type: 2}
   isDiscovered: 0
