@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34641ec8c9ffc7c4db130ee6e9d25de7, type: 3}
+  m_Name: EndARMaterial
+  m_EditorClassIdentifier: 
+  itemName: EndAR
+  description: "\uAD6D\uAC00\uAD8C\uB825\uAE09 \uC5D4\uB4DC \uC18C\uCD1D"
+  icon: {fileID: 21300000, guid: 4b9a12bc6d6c70745bedb1cadd9cea11, type: 3}
+  itemPrefab: {fileID: 2522372694526072791, guid: 5857258ff0934e84f842a689fce85a49,
+    type: 3}
+  recipeToUnlock: {fileID: 11400000, guid: c1f50c24d7fd6624e94e9c08c8014857, type: 2}

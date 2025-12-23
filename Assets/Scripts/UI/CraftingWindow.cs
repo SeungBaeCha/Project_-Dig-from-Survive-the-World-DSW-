@@ -86,29 +86,55 @@ public class CraftingWindow : MonoBehaviour
         // CraftingSystem에서 현재 활성화된 레시피를 가져온다.
         CraftingRecipe activeRecipe = CraftingSystem.Instance.ActiveRecipe;
 
+        // 활성화된 레시피가 없으면 UI를 비운다.
         if (activeRecipe == null)
         {
-            // 활성화된 레시피가 없으면 모든 UI를 비운다.
             ClearUI();
             return;
         }
 
         // --- UI 업데이트 ---
 
-        // 1. 결과물 정보 업데이트
-        resultIcon.sprite = activeRecipe.result.icon;
-        resultIcon.gameObject.SetActive(true);
+        // 1. 결과물 정보 업데이트 (결과물 및 아이콘 데이터가 있는지 확인)
+        if (activeRecipe.result != null && activeRecipe.result.icon != null)
+        {
+            resultIcon.sprite = activeRecipe.result.icon;
+            resultIcon.gameObject.SetActive(true);
+        }
+        else
+        {
+            resultIcon.gameObject.SetActive(false);
+            if(activeRecipe.result == null) 
+                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피에 결과물(result)이 설정되지 않았습니다.");
+            else if(activeRecipe.result.icon == null) 
+                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.result.itemName}' 아이템에 아이콘이 설정되지 않았습니다.");
+        }
+
 
         // 2. 재료 정보 업데이트
         for (int i = 0; i < materialIcons.Count; i++)
         {
             if (i < activeRecipe.materials.Count)
             {
-                // 표시할 재료가 있는 경우
                 RequiredMaterial material = activeRecipe.materials[i];
-                materialIcons[i].sprite = material.item.icon;
-                materialIcons[i].gameObject.SetActive(true);
-                materialQuantities[i].text = material.quantity.ToString();
+                // 재료 및 아이템 데이터가 유효한지 확인
+                if (material != null && material.item != null && material.item.icon != null)
+                {
+                    materialIcons[i].sprite = material.item.icon;
+                    materialIcons[i].gameObject.SetActive(true);
+                    materialQuantities[i].text = material.quantity.ToString();
+                }
+                else
+                {
+                    materialIcons[i].gameObject.SetActive(false);
+                    materialQuantities[i].text = "";
+                    if(material == null)
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료가 비어있습니다.");
+                    else if(material.item == null)
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료에 아이템이 설정되지 않았습니다.");
+                    else if(material.item.icon == null)
+                        Debug.LogWarning($"[CraftingWindow] 재료 아이템 '{material.item.itemName}'에 아이콘이 설정되지 않았습니다.");
+                }
             }
             else
             {
@@ -118,7 +144,7 @@ public class CraftingWindow : MonoBehaviour
             }
         }
         
-        // 3. 제작 버튼 활성화 (이 부분은 재료 충족 여부에 따라 다르게 할 수도 있음)
+        // 3. 제작 버튼 활성화
         craftButton.interactable = true; 
     }
 

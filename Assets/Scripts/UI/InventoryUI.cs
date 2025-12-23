@@ -128,7 +128,6 @@ public class InventoryUI : MonoBehaviour
         if (clickedItem.recipeToUnlock != null)
         {
             CraftingSystem.Instance.SetActiveRecipe(clickedItem.recipeToUnlock);
-            Debug.Log($"'{clickedItem.itemName}' 아이템 클릭. '{clickedItem.recipeToUnlock.name}' 레시피를 활성화합니다.");
             
             // 참고: 기존의 아이템 사용(소모) 로직은 제거됨.
             // playerInventory.UseItem(clickedItem); 

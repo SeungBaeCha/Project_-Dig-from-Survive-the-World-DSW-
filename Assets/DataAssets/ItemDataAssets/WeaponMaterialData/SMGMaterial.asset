@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34641ec8c9ffc7c4db130ee6e9d25de7, type: 3}
+  m_Name: SMGMaterial
+  m_EditorClassIdentifier: 
+  itemName: SMG
+  description: "\uBE60\uB978 \uC5F0\uC0AC\uB97C \uC790\uB791\uD558\uB294 \uCD1D.\n\uD558\uC9C0\uB9CC
+    \uB370\uBBF8\uC9C0\uAC00 \uBD80\uC871\uD558\uB2E4"
+  icon: {fileID: 21300000, guid: 2a706ed18ce0e414981e46da81ec9c2b, type: 3}
+  itemPrefab: {fileID: 1095254202041702, guid: 5642270c1e5c81845b9e022cf3021c70, type: 3}
+  recipeToUnlock: {fileID: 11400000, guid: 09ba76ce007236c478d186a39a480da0, type: 2}
