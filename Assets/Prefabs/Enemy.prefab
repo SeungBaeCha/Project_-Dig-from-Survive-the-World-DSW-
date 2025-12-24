@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8341742973068699763}
   - component: {fileID: 6845302071803375008}
   - component: {fileID: 4145560799941847966}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 48936487922364337}
   - component: {fileID: 3558858815877330641}
   - component: {fileID: 2898853056567439022}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ GameObject:
   - component: {fileID: 7380385421253639835}
   - component: {fileID: 8694451168102502949}
   - component: {fileID: 3060307304472082741}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,6 +414,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1887598077184145108}
     m_Modifications:
+    - target: {fileID: 1596275783971552466, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2677427918973579582, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
         type: 3}
       propertyPath: m_FillCenter
@@ -539,6 +544,16 @@ PrefabInstance:
       propertyPath: m_PixelsPerUnitMultiplier
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5715761091708520040, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202013796099626124, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 6878875820794498061, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -578,6 +593,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HPSlider
+      objectReference: {fileID: 0}
+    - target: {fileID: 8213469235131668804, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8242507402563806250, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
         type: 3}

@@ -209,6 +209,7 @@ GameObject:
   - component: {fileID: 5573164260336429595}
   - component: {fileID: 3788578416796277742}
   - component: {fileID: 4627798814971406926}
+  - component: {fileID: 5958129541281746219}
   m_Layer: 0
   m_Name: M1911
   m_TagString: Weapon
@@ -299,6 +300,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: b812e42521a5a27499e76cc5ed56e3ac, type: 3}
+--- !u!114 &5958129541281746219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694449805434718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1056b0b2b5889146901068b53013b41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunData: {fileID: 11400000, guid: a1b9c8cc2197f2344a75e3137225aa60, type: 2}
+  firePoint: {fileID: 4121452769848210746}
+  currentAmmo: 0
 --- !u!1 &1748277932983872
 GameObject:
   m_ObjectHideFlags: 0

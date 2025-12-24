@@ -31,6 +31,10 @@ public class Enemy : MonoBehaviour
     [Header("추격 설정")]
     public float detectionRadius = 15f; // 플레이어를 탐지할 반경
     public float chaseSpeed = 6f;       // 추격 시 이동 속도
+    [Tooltip("추격 속도의 무작위성 범위. 최종 속도는 chaseSpeed ± speedRandomness/2 입니다.")]
+    public float speedRandomness = 1f;  // 추격 속도에 추가할 무작위성
+    [Tooltip("플레이어 주변에서 목표 지점을 찾을 반경. 값이 클수록 적들이 넓게 퍼집니다.")]
+    public float chaseDestinationRadius = 3f; // 추격 목표 지점 반경
 
     [Header("공격 설정")]
     public float attackDamage = 10f;    // 플레이어에게 입힐 데미지 양
@@ -43,6 +47,11 @@ public class Enemy : MonoBehaviour
     public float patrolSpeed = 3f;      // 순찰 시 이동 속도
     public float patrolWaitTime = 3f;   // 순찰 지점 도착 후 대기 시간
     private float waitTimer;
+    
+    // 추격 목표 지점 관리를 위한 변수들
+    private Vector3 currentChaseDestination;
+    private float destinationUpdateTimer;
+    private float destinationUpdateInterval = 0.5f; // 0.5초마다 목표 지점 갱신
 
     [Header("눈 색깔 설정")]
     public Color idleColor; // 평상시/순찰 시 색
@@ -154,8 +163,28 @@ public class Enemy : MonoBehaviour
                     break;
                 }
 
-                // Chasing 상태일 때는 항상 플레이어를 향해 이동
-                agent.destination = player.position;
+                
+                // 주기적으로 목표 지점을 플레이어 주변으로 갱신합니다.
+                destinationUpdateTimer += Time.deltaTime;
+                if (destinationUpdateTimer >= destinationUpdateInterval)
+                {
+                    destinationUpdateTimer = 0f;
+                    
+                    // 플레이어 주변의 랜덤 위치를 목표로 설정합니다.
+                    Vector3 randomDirection = Random.insideUnitSphere * chaseDestinationRadius;
+                    randomDirection += player.position;
+                    NavMeshHit hit;
+                    if (NavMesh.SamplePosition(randomDirection, out hit, chaseDestinationRadius, NavMesh.AllAreas))
+                    {
+                        currentChaseDestination = hit.position;
+                    }
+                    else
+                    {
+                        // 유효한 위치를 못찾으면 그냥 플레이어 위치를 사용합니다.
+                        currentChaseDestination = player.position;
+                    }
+                }
+                agent.destination = currentChaseDestination;
 
                 // 플레이어가 공격 가능 거리 안에 있고 공격 쿨다운이 지났는지 확인
                 if (distanceToPlayer <= attackDistance && Time.time >= lastAttackTime + attackCooldown)
@@ -268,7 +297,8 @@ public class Enemy : MonoBehaviour
                 SetNewRandomDestination();
                 break;
             case State.Chasing:
-                agent.speed = chaseSpeed;
+                // 추격 속도에 약간의 무작위성을 부여합니다.
+                agent.speed = chaseSpeed + Random.Range(-speedRandomness / 2, speedRandomness / 2);
                 SetEyeColor(chaseColor);
                 break;
             case State.Returning:

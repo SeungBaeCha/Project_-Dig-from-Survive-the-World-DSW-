@@ -121,14 +121,14 @@ public class UIManager : MonoBehaviour
     private void ToggleInventory()
     {
         // Tab 키는 인벤토리만 토글한다.
-        inventoryUI.ToggleWindow(!inventoryUI.IsOpen());
+        inventoryUI.ToggleWindow();
         UpdateCursorAndGameState();
     }
 
     private void ToggleCrafting()
     {
         // C 키는 제작창만 토글한다.
-        craftingWindow.ToggleWindow(!craftingWindow.IsOpen());
+        craftingWindow.Toggle();
         UpdateCursorAndGameState();
     }
 

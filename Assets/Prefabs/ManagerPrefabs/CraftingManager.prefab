@@ -46,6 +46,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f27f588e522b994dabe4ddf2694ef3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allRecipes:
+  - {fileID: 11400000, guid: 76c60a76cf1f7944b8194acf2f9f86fb, type: 2}
+  - {fileID: 11400000, guid: 09ba76ce007236c478d186a39a480da0, type: 2}
+  - {fileID: 11400000, guid: 1935bdfdb677ee94597c8aa039d72101, type: 2}
+  - {fileID: 11400000, guid: 668aced94d9c93447a2d745b2270ea38, type: 2}
+  - {fileID: 11400000, guid: 696f208e95b410f4b8fce0f7085cd350, type: 2}
+  - {fileID: 11400000, guid: c1f50c24d7fd6624e94e9c08c8014857, type: 2}
 --- !u!114 &5306552245824113951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,3 +85,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 5306552245824113951}
   craftingWindow: {fileID: 0}
+  notificationText: {fileID: 0}

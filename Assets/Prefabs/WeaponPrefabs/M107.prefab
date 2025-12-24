@@ -180,6 +180,7 @@ GameObject:
   - component: {fileID: 6966719032621066632}
   - component: {fileID: 1582536824887005688}
   - component: {fileID: 2122704217500020402}
+  - component: {fileID: 9022055765359911837}
   m_Layer: 0
   m_Name: M107
   m_TagString: Untagged
@@ -321,6 +322,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionUI: {fileID: 3291899252169052426}
   canBePickedUp: 1
+--- !u!114 &9022055765359911837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2522372694526072791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dda4dc4fb5cb1f498ab90c6fd395eb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunData: {fileID: 11400000, guid: 5fb402611d4db084d98d7f2db2466ec5, type: 2}
+  firePoint: {fileID: 5826549245705322698}
+  currentAmmo: 0
 --- !u!1 &4826335280306693231
 GameObject:
   m_ObjectHideFlags: 0

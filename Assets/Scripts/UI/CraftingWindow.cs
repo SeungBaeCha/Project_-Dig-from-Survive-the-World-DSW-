@@ -111,39 +111,7 @@ public class CraftingWindow : MonoBehaviour
         }
 
 
-        // 2. 재료 정보 업데이트
-        for (int i = 0; i < materialIcons.Count; i++)
-        {
-            if (i < activeRecipe.materials.Count)
-            {
-                RequiredMaterial material = activeRecipe.materials[i];
-                // 재료 및 아이템 데이터가 유효한지 확인
-                if (material != null && material.item != null && material.item.icon != null)
-                {
-                    materialIcons[i].sprite = material.item.icon;
-                    materialIcons[i].gameObject.SetActive(true);
-                    materialQuantities[i].text = material.quantity.ToString();
-                }
-                else
-                {
-                    materialIcons[i].gameObject.SetActive(false);
-                    materialQuantities[i].text = "";
-                    if(material == null)
-                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료가 비어있습니다.");
-                    else if(material.item == null)
-                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료에 아이템이 설정되지 않았습니다.");
-                    else if(material.item.icon == null)
-                        Debug.LogWarning($"[CraftingWindow] 재료 아이템 '{material.item.itemName}'에 아이콘이 설정되지 않았습니다.");
-                }
-            }
-            else
-            {
-                // 표시할 재료가 더 이상 없는 경우, 해당 슬롯은 비운다.
-                materialIcons[i].gameObject.SetActive(false);
-                materialQuantities[i].text = "";
-            }
-        }
-        
+
         // 2. 재료 정보 업데이트
         for (int i = 0; i < materialIcons.Count; i++)
         {

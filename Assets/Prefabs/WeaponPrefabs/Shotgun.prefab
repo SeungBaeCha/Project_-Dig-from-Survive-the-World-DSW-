@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7024944904732415424}
   - component: {fileID: 7494276024092330859}
   - component: {fileID: 2660124956684277277}
+  - component: {fileID: 3169332772015748349}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Weapon
@@ -154,6 +155,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: bf2593fe0c804b84688e307cfb1ddfae, type: 3}
+--- !u!114 &3169332772015748349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1236257789494122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79612e5102609a488f2321979cdfc73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunData: {fileID: 11400000, guid: f0badea20494eb04bb03bf7540610433, type: 2}
+  firePoint: {fileID: 3515790863202626440}
+  currentAmmo: 0
 --- !u!1 &1326079549577358
 GameObject:
   m_ObjectHideFlags: 0
