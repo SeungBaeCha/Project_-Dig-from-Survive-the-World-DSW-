@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -123,11 +123,52 @@ public class InventoryUI : MonoBehaviour
 
         ItemData clickedItem = clickedSlot.currentStack.item;
 
-        // 클릭된 아이템이 '해금할 레시피(레시피 북)'를 가지고 있는 경우,
+        // 클릭된 아이템이 '해금할 레시피(레시피 북)'를 가진 경우,
         // Inventory 스크립트의 UseItem 메서드를 호출하여 아이템 사용 로직을 처리한다.
         if (clickedItem.recipeToUnlock != null)
         {
             playerInventory.UseItem(clickedItem); 
         }
+    }
+
+    /// <summary>
+    /// 인벤토리 슬롯이 오른쪽 클릭되었을 때 아이템을 버리는 함수.
+    /// </summary>
+    public void OnSlotRightClicked(InventorySlot clickedSlot)
+    {
+        // 클릭된 슬롯, 아이템, 아이템 프리팹이 유효한지 확인
+        if (clickedSlot.currentStack == null || clickedSlot.currentStack.item == null) return;
+        
+        ItemData itemToDrop = clickedSlot.currentStack.item;
+        if (itemToDrop.itemPrefab == null)
+        {
+            Debug.LogWarning($"'{itemToDrop.itemName}' 아이템은 월드에 버릴 수 있는 프리팹이 없다.");
+            return;
+        }
+
+        // --- 아이템을 월드에 생성 ---
+        // 플레이어의 위치를 기준으로 아이템을 생성. 약간 앞쪽에 생성하여 플레이어와 겹치지 않게 한다.
+        Transform playerTransform = playerInventory.transform;
+        Vector3 spawnPosition = playerTransform.position + playerTransform.forward * 1.5f;
+
+        // 1. 프리팹으로부터 아이템 게임오브젝트를 생성한다.
+        GameObject droppedItemGO = Instantiate(itemToDrop.itemPrefab, spawnPosition, Quaternion.identity);
+        
+        // 2. 생성된 아이템의 이름표(Billboard)를 활성화한다.
+        Billboard billboard = droppedItemGO.GetComponentInChildren<Billboard>(true);
+        if (billboard != null)
+        {
+            billboard.gameObject.SetActive(true);
+        }
+
+        // 3. 생성된 아이템의 'ItemRotator' 컴포넌트를 찾아 활성화한다.
+        ItemRotator rotator = droppedItemGO.GetComponent<ItemRotator>();
+        if (rotator != null)
+        {
+            rotator.enabled = true;
+        }
+
+        // --- 인벤토리에서 아이템 제거 ---
+        playerInventory.RemoveItem(itemToDrop, 1);
     }
 }

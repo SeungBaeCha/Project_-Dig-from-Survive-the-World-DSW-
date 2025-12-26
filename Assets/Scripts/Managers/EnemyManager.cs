@@ -11,7 +11,6 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints; // 적 생성 위치
     [SerializeField] private int dayEnemyCount = 3; // 낮에 생성할 적의 수
     [SerializeField] private int nightEnemyCount = 10; // 밤에 생성할 적의 수
-
     private List<GameObject> activeEnemies = new List<GameObject>();
 
     void Awake()
@@ -60,13 +59,13 @@ public class EnemyManager : MonoBehaviour
     {
         if (enemyPrefab == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("적 프리팹 또는 스폰 포인트가 설정되지 않았습니다.");
+            Debug.LogError("적 프리팹 또는 스폰 포인트가 설정되지 않았다.");
             return;
         }
 
         for (int i = 0; i < count; i++)
         {
-            // 랜덤한 스폰 포인트 선택
+            // 랜덤한 스폰 포인트를 선택
             Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
             // 적 생성 및 리스트에 추가
             GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);

@@ -26,7 +26,7 @@ public class Pistol : Gun
         // Bullet 스크립트가 있는지 확인
         if (bullet != null)
         {
-            bullet.SetDamage(gunData.damage); // 총알에 데미지 설정
+            bullet.SetDamage(gunData.damage); // 총알의 데미지 설정
 
             // 총알이 플레이어와 충돌하지 않도록 설정
             bullet.IgnorePlayerCollision(playerCollider);

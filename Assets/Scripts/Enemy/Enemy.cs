@@ -31,9 +31,9 @@ public class Enemy : MonoBehaviour
     [Header("추격 설정")]
     public float detectionRadius = 15f; // 플레이어를 탐지할 반경
     public float chaseSpeed = 6f;       // 추격 시 이동 속도
-    [Tooltip("추격 속도의 무작위성 범위. 최종 속도는 chaseSpeed ± speedRandomness/2 입니다.")]
+    [Tooltip("추격 속도의 무작위성 범위. 최종 속도는 chaseSpeed ± speedRandomness/2 이다.")]
     public float speedRandomness = 1f;  // 추격 속도에 추가할 무작위성
-    [Tooltip("플레이어 주변에서 목표 지점을 찾을 반경. 값이 클수록 적들이 넓게 퍼집니다.")]
+    [Tooltip("플레이어 주변에서 목표 지점을 찾을 반경. 값이 클수록 적들이 넓게 퍼진다.")]
     public float chaseDestinationRadius = 3f; // 추격 목표 지점 반경
 
     [Header("공격 설정")]
@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour
     // 추격 목표 지점 관리를 위한 변수들
     private Vector3 currentChaseDestination;
     private float destinationUpdateTimer;
-    private float destinationUpdateInterval = 0.5f; // 0.5초마다 목표 지점 갱신
+    private float destinationUpdateInterval = 0.1f; // 0.1초마다 목표 지점 갱신 (반응성 향상)
 
     [Header("눈 색깔 설정")]
     public Color idleColor; // 평상시/순찰 시 색
@@ -88,7 +88,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        // 죽으면 Enemy의 모든행동이 실행하지 않는다
+        // 죽으면 Enemy의 모든 행동이 실행되지 않는다
         if (isDead)
         {
            return; 
@@ -164,29 +164,25 @@ public class Enemy : MonoBehaviour
                 }
 
                 
-                // 주기적으로 목표 지점을 플레이어 주변으로 갱신합니다.
+                // 주기적으로 목표 지점을 플레이어 주변으로 갱신한다.
                 destinationUpdateTimer += Time.deltaTime;
                 if (destinationUpdateTimer >= destinationUpdateInterval)
                 {
                     destinationUpdateTimer = 0f;
                     
-                    // 플레이어 주변의 랜덤 위치를 목표로 설정합니다.
-                    Vector3 randomDirection = Random.insideUnitSphere * chaseDestinationRadius;
-                    randomDirection += player.position;
-                    NavMeshHit hit;
-                    if (NavMesh.SamplePosition(randomDirection, out hit, chaseDestinationRadius, NavMesh.AllAreas))
-                    {
-                        currentChaseDestination = hit.position;
-                    }
-                    else
-                    {
-                        // 유효한 위치를 못찾으면 그냥 플레이어 위치를 사용합니다.
-                        currentChaseDestination = player.position;
-                    }
+                    // 목표 지점 설정 개선 (더 똑똑한 추적 로직)
+                    SetChaseDestination();
                 }
-                agent.destination = currentChaseDestination;
 
-                // 플레이어가 공격 가능 거리 안에 있고 공격 쿨다운이 지났는지 확인
+                // 에이전트의 목적지를 설정한다.
+                // agent.destination은 비용이 높은 편이므로, 꼭 필요할 때만 설정하는 것이 좋다.
+                if (agent.destination != currentChaseDestination)
+                {
+                    agent.SetDestination(currentChaseDestination);
+                }
+
+
+                // 플레이어가 공격 가능 거리 안에 있고 공격 쿨다운이 지났는지 확인하여
                 if (distanceToPlayer <= attackDistance && Time.time >= lastAttackTime + attackCooldown)
                 {
                     // 플레이어 공격
@@ -259,7 +255,7 @@ public class Enemy : MonoBehaviour
 
         // 마지막 공격 시간을 현재 시간으로 기록
         lastAttackTime = Time.time;
-        Debug.Log("적이 플레이어를 공격했습니다!");
+        Debug.Log("적이 플레이어를 공격했다!");
 
         // 플레이어의 PlayerHealth 컴포넌트를 가져와 데미지를 준다.
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
@@ -285,7 +281,7 @@ public class Enemy : MonoBehaviour
     // 상태를 전환하는 함수
     private void SwitchState(State newState)
     {
-        //// 상태가 같으면 중복 실행 방지
+        //// 상태가 같으면 중복 실행을 방지한다.
         if (currentState == newState || isDead) return;
 
         currentState = newState;
@@ -297,7 +293,7 @@ public class Enemy : MonoBehaviour
                 SetNewRandomDestination();
                 break;
             case State.Chasing:
-                // 추격 속도에 약간의 무작위성을 부여합니다.
+                // 추격 속도에 약간의 무작위성을 부여한다.
                 agent.speed = chaseSpeed + Random.Range(-speedRandomness / 2, speedRandomness / 2);
                 SetEyeColor(chaseColor);
                 break;
@@ -322,6 +318,38 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // 더 지능적인 추격 목적지를 설정하는 함수
+    void SetChaseDestination()
+    {
+        NavMeshPath path = new NavMeshPath();
+        
+        // 플레이어에게 직접 도달 가능한 경로가 있는지 먼저 확인한다.
+        if (agent.CalculatePath(player.position, path) && path.status == NavMeshPathStatus.PathComplete)
+        {
+            // 직접 경로가 있다면, 플레이어를 직접 목표로 삼아 경로의 마지막 지점으로 설정한다.
+            // 이렇게 하면 플레이어가 움직이더라도 가장 효율적인 경로를 따라간다.
+            currentChaseDestination = path.corners[path.corners.Length - 1];
+        }
+        else
+        {
+            // 직접 경로가 없다면 (벽, 장애물 등), 플레이어 주변의 유효한 위치를 찾는다.
+            // 이는 AI가 막혔을 때 플레이어 주변을 탐색하게 하여 더 똑똑하게 보이게 한다.
+            Vector3 randomDirection = Random.insideUnitSphere * chaseDestinationRadius;
+            randomDirection += player.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomDirection, out hit, chaseDestinationRadius, NavMesh.AllAreas))
+            {
+                currentChaseDestination = hit.position;
+            }
+            else
+            {
+                // 주변 위치도 못찾으면 최후의 수단으로 플레이어 위치를 사용한다.
+                // 이 경우 에이전트가 벽에 막힐 수도 있지만, 다음 업데이트에서 새 경로를 찾을 기회가 있다.
+                currentChaseDestination = player.position;
+            }
+        }
+    }
+
     // 눈 색깔을 바꾸는 함수
     void SetEyeColor(Color color)
     {
@@ -338,4 +366,3 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, detectionRadius); // detectionRadius 크기의 구체를 그림
     }
 }
-

@@ -12,7 +12,7 @@ public class RecipeBook : ScriptableObject
     public List<CraftingRecipe> allRecipes;
 
     /// <summary>
-    /// 모든 레시피의 '발견' 상태를 초기화합니다. (테스트 및 게임 초기화용)
+    /// 모든 레시피의 '발견' 상태를 초기화한다. (테스트 및 게임 초기화용)
     /// </summary>
     public void ResetAllDiscoveries()
     {
@@ -20,6 +20,6 @@ public class RecipeBook : ScriptableObject
         {
             recipe.ResetDiscovery();
         }
-        Debug.Log("모든 레시피의 '발견' 상태가 초기화되었습니다.");
+        Debug.Log("모든 레시피의 '발견' 상태가 초기화되었다.");
     }
 }

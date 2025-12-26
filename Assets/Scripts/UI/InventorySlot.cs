@@ -88,11 +88,20 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        // 슬롯이 비어있지 않고, 왼쪽 클릭을 했을 때
-        if (currentStack != null && currentStack.item != null && eventData.button == PointerEventData.InputButton.Left)
+        // 슬롯이 비어있지 않은지 먼저 확인
+        if (currentStack == null || currentStack.item == null) return;
+
+        // 왼쪽 클릭: 아이템 사용 (레시피 북 등)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // InventoryUI에 '나(이 슬롯) 클릭됐어!' 라고 알린다.
+            // InventoryUI에 '나(이 슬롯) 왼쪽 클릭됐어!' 라고 알린다.
             inventoryUI.OnSlotClicked(this);
+        }
+        // 오른쪽 클릭: 아이템 버리기
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            // InventoryUI에 '나(이 슬롯) 오른쪽 클릭됐어!' 라고 알린다.
+            inventoryUI.OnSlotRightClicked(this);
         }
     }
 }

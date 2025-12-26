@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 /// <summary>
 /// 삽(Shovel)의 크로스헤어 UI를 관리하는 스크립트.
@@ -11,7 +11,6 @@ public class ShovelHold : MonoBehaviour
     [Header("UI 설정")]
     [Tooltip("파기 가능한 대상을 조준했을 때의 크로스헤어 색상")]
     [SerializeField] private Color diggableCrosshairColor = Color.green; // 기본값을 초록색으로 변경
-
     // --- 내부 참조 변수 ---
     private Shovel shovel; // 같은 오브젝트에 있는 Shovel 스크립트
     private WeaponHold weaponHold; // Player에 있는 WeaponHold 스크립트

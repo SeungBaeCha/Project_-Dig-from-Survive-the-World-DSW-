@@ -15,7 +15,7 @@ public class Shotgun : Gun
         // gunData에 설정된 펠릿 수만큼 반복
         for (int i = 0; i < gunData.pelletsPerShot; i++)
         {
-            // 중앙 방향을 기준으로 랜덤한 편차(spread)를 적용
+            // 중앙 방향 기준으로 랜덤한 오차(spread)를 적용
             Quaternion spreadRotation = Quaternion.Euler(
                 Random.Range(-gunData.spreadAngle, gunData.spreadAngle),
                 Random.Range(-gunData.spreadAngle, gunData.spreadAngle),
@@ -33,7 +33,7 @@ public class Shotgun : Gun
 
             if (bullet != null)
             {
-                bullet.SetDamage(gunData.damage); // 총알에 데미지 설정
+                bullet.SetDamage(gunData.damage); // 총알의 데미지 설정
 
                 // 플레이어와 충돌하지 않도록 설정
                 bullet.IgnorePlayerCollision(playerCollider);

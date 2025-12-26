@@ -91,7 +91,7 @@ public class ItemController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning("Player에 Inventory 컴포넌트가 없습니다!");
+                    Debug.LogWarning("Player에 Inventory 컴포넌트가 없다!");
                 }
 
                 // 아이템 오브젝트를 파괴.
@@ -99,7 +99,7 @@ public class ItemController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning(gameObject.name + "에 ItemData가 할당되지 않았습니다!");
+                Debug.LogWarning(gameObject.name + "에 ItemData가 할당되지 않았다!");
                 
                 // 데이터가 없어도 일단 사라지게는 하자.
                 Destroy(gameObject);

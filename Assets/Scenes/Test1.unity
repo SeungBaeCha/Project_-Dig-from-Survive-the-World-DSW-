@@ -461,6 +461,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: a1b9c8cc2197f2344a75e3137225aa60, type: 2}
   firePoint: {fileID: 489378357}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &294029247
 GameObject:
   m_ObjectHideFlags: 0
@@ -995,18 +996,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9741b953f555d5542a685b5da96f6a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &630478797 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3700335597105694361, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
-    type: 3}
-  m_PrefabInstance: {fileID: 1461166915}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68359485df13a9a47ba5fb6b118df3e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &642119727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1343,6 +1332,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 2e51fdd7dd81e9049aaf97785ee37380, type: 2}
   firePoint: {fileID: 882287903}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!4 &882287903 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7426327187921001203, guid: 5642270c1e5c81845b9e022cf3021c70,
@@ -1834,6 +1824,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 5fb402611d4db084d98d7f2db2466ec5, type: 2}
   firePoint: {fileID: 1358907556}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &1317845378 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1117582899397640, guid: 98d974e321a330b418f3a3fe89e40a16,
@@ -1861,6 +1852,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 62224f4a3c11dce4e83ef71e51182e0d, type: 2}
   firePoint: {fileID: 1944298051}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!4 &1334754844 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7543014865819710379, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
@@ -2074,7 +2066,7 @@ PrefabInstance:
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
@@ -2098,9 +2090,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 630478793}
+    - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 630478797}
+      objectReference: {fileID: 630478793}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2113,8 +2110,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WeaponHold, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlayerMove, Assembly-CSharp
+      value: WeaponHold, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2464458985622599494, guid: 161f7d5a09a4e364d82091ae64e5d6ba,
         type: 3}
@@ -2477,6 +2479,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: f0badea20494eb04bb03bf7540610433, type: 2}
   firePoint: {fileID: 2121751424}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &1832199121 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1487774384131766, guid: 5538986d29140644b96889fa33447e84,
@@ -2504,6 +2507,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 62224f4a3c11dce4e83ef71e51182e0d, type: 2}
   firePoint: {fileID: 1876053153}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &1833777217 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8436351596296252208, guid: ebaf31feecf1c1e4b9fbd778e3937c9c,

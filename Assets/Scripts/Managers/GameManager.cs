@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // 싱글톤 인스턴스
+    // 싱글턴 인스턴스
     public static GameManager Instance { get; private set; }
 
     [Header("시간 설정")]
@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float nightDuration = 60f; // 밤 지속 시간 (초)
 
     [Header("조명 및 하늘 설정")]
-    [SerializeField] private Light sun; // 씬의 주 조명 (Directional Light)
+    [SerializeField] private Light sun; // 태양의 주 조명 (Directional Light)
     [SerializeField] private float transitionDuration = 5f; // 조명 전환 시간
 
     [Header("낮 조명")]
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     [Header("밤 조명")]
     [SerializeField] private Color nightAmbientColor = new Color(0.1f, 0.1f, 0.2f);
     [SerializeField] private Color nightSunColor = new Color(0.8f, 0.8f, 1f);
-    [SerializeField] private float nightSunIntensity = 0.2f;        // 밤의 밝기 조정
+    [SerializeField] private float nightSunIntensity = 0.2f;        // 밤의 밝기 조절
     [SerializeField] private Vector3 nightSunRotation = new Vector3(-90, -30, 0);
 
     [Header("배고픔 설정")]
@@ -36,13 +36,13 @@ public class GameManager : MonoBehaviour
     // 참조
     private PlayerHealth playerHealth;
 
-    // 현재 시간대와 타이머
+    // 현재 시간과 타이머
     public bool IsNight { get; private set; }
     private float timer;
     private Coroutine lightingCoroutine;
     private float logTimer = 1f; // 1초마다 로그를 출력하기 위한 타이머
 
-    // 시간대 변경 시 호출될 이벤트
+    // 시간이 변경될 때 호출될 이벤트
     public static event Action OnDayStart;
     public static event Action OnNightStart;
 
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
             playerHealth = playerObject.GetComponent<PlayerHealth>();
         }
 
-        // 낮부터 시작
+        // 낮으로 시작
         IsNight = false;
         timer = dayDuration;
         hungerTimer = hungerDecreaseInterval; // 배고픔 타이머 초기화
@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // 전환이 끝나면 목표 값으로 정확히 설정
+        // 전환이 끝나면 목표 값으로 정확하게 설정
         SetLightingImmediate(isNight);
     }
 

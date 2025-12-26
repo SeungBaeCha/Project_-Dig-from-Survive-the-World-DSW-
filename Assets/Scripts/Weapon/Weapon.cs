@@ -9,7 +9,7 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [Header("상호작용 UI")]
-    // 무기 위에 표시될 월드 스페이스 UI 오브젝트 
+    // 무기 위에 표시할 월드 스페이스 UI 오브젝트 
     [SerializeField] private GameObject interactionUI;
 
     // 무기의 물리적 상태를 제어하기 위한 컴포넌트
@@ -21,11 +21,11 @@ public class Weapon : MonoBehaviour
 
     void Awake()
     {
-        // 컴포넌트들을 미리 찾아놓는다
+        // 컴포넌트들을 미리 찾아놓는다.
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
 
-        // 무기가 어색하게 서 있는 현상을 방지하고 자연스럽게 넘어지게 하기 위해 무게 중심을 조정한다 y축
+        // 무기가 이상하게 서 있는 현상을 방지하고 자연스럽게 떨어지게 하기 위해 무게 중심을 조절한다 (y축)
         rb.centerOfMass = new Vector3(0, -0.1f, 0);
 
         // 시작할 때 상호작용 UI는 꺼둔다.
@@ -38,11 +38,11 @@ public class Weapon : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // 충돌 로그를 통해 어떤 오브젝트와 부딪혔는지 확인
-        Debug.Log(gameObject.name + "이(가) " + collision.gameObject.name + " (태그: " + collision.gameObject.tag + ") 와 충돌했습니다!", collision.gameObject);
+        Debug.Log(gameObject.name + "이(가) " + collision.gameObject.name + " (태그: " + collision.gameObject.tag + ") 와 충돌했다!", collision.gameObject);
     }
 
     /// <summary>
-    /// 이 무기의 (넓은) 트리거 콜라이더에 다른 오브젝트가 들어왔을 때 호출된다.
+    /// 이 무기(의 트리거 콜라이더)에 다른 오브젝트가 들어왔을 때 호출된다.
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
@@ -55,7 +55,7 @@ public class Weapon : MonoBehaviour
             // 플레이어에게서 WeaponHold 스크립트를 찾는다.
             WeaponHold weaponHold = other.GetComponent<WeaponHold>();
 
-            // 스크립트를 찾았다면, 이 무기를 '주울 수 있는 무기'로 설정하라고 알려준다.
+            // 스크립트를 찾았다면, 이 무기를 '주울 수 있는 무기'로 설정하라고 알려줌.
             if (weaponHold != null)
             {
                 weaponHold.SetNearbyWeapon(this.gameObject);
@@ -80,7 +80,7 @@ public class Weapon : MonoBehaviour
             // 플레이어에게서 WeaponHold 스크립트를 찾는다.
             WeaponHold weaponHold = other.GetComponent<WeaponHold>();
 
-            // 스크립트를 찾았다면, 이 무기가 더 이상 근처에 없다고 알려준다.
+            // 스크립트를 찾았다면, 이 무기가 더 이상 근처에 없다고 알려줌.
             if (weaponHold != null)
             {
                 weaponHold.ClearNearbyWeapon(this.gameObject);

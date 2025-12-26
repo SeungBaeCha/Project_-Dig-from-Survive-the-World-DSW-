@@ -255,6 +255,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 2e51fdd7dd81e9049aaf97785ee37380, type: 2}
   firePoint: {fileID: 7426327187921001203}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &1382682361031114
 GameObject:
   m_ObjectHideFlags: 0

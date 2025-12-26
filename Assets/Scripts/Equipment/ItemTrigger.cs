@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 /// <summary>
@@ -13,7 +12,7 @@ public class ItemTrigger : MonoBehaviour
         // 플레이어와 부딪혔는지 태그로 확인
         if (other.CompareTag("Player"))
         {
-            // 플레이어의 WeaponHold 스크립트를 찾아서 '주울 수 있는 무기'로 자신을 등록
+            // 플레이어의 WeaponHold 스크립트를 찾아 '주울 수 있는 무기'로 자신을 등록
             WeaponHold weaponHold = other.GetComponent<WeaponHold>();
             if (weaponHold != null)
             {
@@ -27,7 +26,7 @@ public class ItemTrigger : MonoBehaviour
         // 플레이어와 충돌이 끝났는지 태그로 확인
         if (other.CompareTag("Player"))
         {
-            // 플레이어의 WeaponHold 스크립트를 찾아서 '주울 수 있는 무기' 목록에서 자신을 제거
+            // 플레이어의 WeaponHold 스크립트를 찾아 '주울 수 있는 무기' 목록에서 자신을 제거
             WeaponHold weaponHold = other.GetComponent<WeaponHold>();
             if (weaponHold != null)
             {

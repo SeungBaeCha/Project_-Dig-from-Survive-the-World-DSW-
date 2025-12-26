@@ -11,7 +11,7 @@ public class Timer : MonoBehaviour
         // 게임매니저가 실행될때
         if (GameManager.Instance != null)
         {
-            // remainingTime 과 isNight 의 변수를 Gamemanager안 함수를 가져온다
+            // remainingTime 과 isNight 변수를 Gamemanager의 함수를 가져온다.
             float remainingTime = GameManager.Instance.GetRemainingTime();
             bool isNight = GameManager.Instance.IsNight;
 
@@ -22,7 +22,7 @@ public class Timer : MonoBehaviour
             int seconds = Mathf.FloorToInt(remainingTime % 60);
 
             // 타이머의 작동
-            timerText.text = $"{minutes:00}:{seconds:00} {dayNightStatus}";
+            timerText.text = $"{dayNightStatus} {minutes:00}:{seconds:00}";
         }
     }
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4569974685649433872}
   - component: {fileID: 9093548793735408653}
   - component: {fileID: 7680192384607868514}
+  - component: {fileID: 607463849615514729}
   m_Layer: 0
   m_Name: AR 2Recipe_prefab
   m_TagString: Item
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7187320824981851257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -150,3 +151,16 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 39a779db066624842b42da4177f9c242, type: 2}
   lifeTime: 10
   spawnForce: 0
+--- !u!114 &607463849615514729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7187320824981851257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea01bb940dbd4b24aa7924ca495f4335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 60

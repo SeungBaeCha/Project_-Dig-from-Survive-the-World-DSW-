@@ -19,6 +19,8 @@ public class GunData : ItemData
 
     [Header("Ammo")]
     public int maxAmmo = 30; // 최대 장탄 수
+    [Tooltip("이 총이 사용되는 총알의 아이템 데이터")]
+    public ItemData ammoType; // 사용되는 총알 종류
 
     [Header("Prefabs & VFX")]
     public GameObject bulletPrefab; // 총알 프리팹

@@ -18,7 +18,7 @@ public class WeaponManager : MonoBehaviour
         // true를 인자로 넘겨주면, 비활성화된 오브젝트에 있는 컴포넌트까지 모두 찾아온다.
         GetComponentsInChildren<Gun>(true, weapons);
         
-        // 찾은 무기들을 순회하면서 WeaponManager를 참조하게 설정 (선택적 확장 기능)
+        // 찾은 무기들을 순회하면서 WeaponManager를 참조하게 설정 (확장 기능)
         // foreach (var weapon in weapons) { /* 필요 시 weapon.Init(this); 같은 코드 추가 */ }
     }
 

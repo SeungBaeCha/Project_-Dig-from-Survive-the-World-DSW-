@@ -29,23 +29,23 @@ public class CraftingRecipe : ScriptableObject
     public ItemData result;
 
     [Header("레시피 발견 상태")]
-    [Tooltip("플레이어가 이 레시피를 발견했는지 여부. true이면 조합 가능.")]
+    [Tooltip("플레이어가 이 레시피를 발견했는지 여부. true이면 조합 가능")]
     public bool isDiscovered = false;
 
     /// <summary>
-    /// 이 레시피를 '발견' 상태로 변경합니다.
+    /// 이 레시피를 '발견' 상태로 변경한다.
     /// </summary>
     public void Discover()
     {
         isDiscovered = true;
-        // 참고: ScriptableObject의 변경사항은 런타임 중에만 유지됩니다.
-        // 게임을 재시작하면 isDiscovered의 값은 에디터에서 설정한 기본값으로 초기화됩니다.
-        // 영구적인 저장을 위해서는 별도의 저장 시스템(예: PlayerPrefs, Json)이 필요합니다.
+        // 참고: ScriptableObject의 변경사항은 플레이 중에만 유지된다.
+        // 게임을 재시작하면 isDiscovered의 값은 에디터에서 설정한 기본값으로 초기화된다.
+        // 영구적인 저장을 위해서는 별도의 저장 시스템(ex. PlayerPrefs, Json)이 필요하다.
         Debug.Log($"레시피 발견: {this.name}");
     }
 
     /// <summary>
-    /// 테스트 및 디버깅을 위해 레시피를 '미발견' 상태로 초기화합니다.
+    /// 테스트 및 디버깅을 위해 레시피를 '미발견' 상태로 초기화한다.
     /// </summary>
     public void ResetDiscovery()
     {

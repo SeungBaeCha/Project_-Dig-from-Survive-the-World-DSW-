@@ -17,7 +17,7 @@ public class Billboard : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Billboard 스크립트가 메인 카메라를 찾지 못했습니다! 카메라에 'MainCamera' 태그가 있는지 확인해주세요.");
+            Debug.LogError("Billboard 스크립트가 메인 카메라를 찾지 못했다. 카메라에 'MainCamera' 태그가 있는지 확인해줘.");
         }
     }
 

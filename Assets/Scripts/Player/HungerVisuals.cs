@@ -23,7 +23,7 @@ public class HungerVisuals : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
         if (playerHealth == null)
         {
-            Debug.LogError("PlayerHealth 컴포넌트를 찾을 수 없습니다!");
+            Debug.LogError("PlayerHealth 컴포넌트를 찾을 수 없다!");
             this.enabled = false; // 스크립트 비활성화
             return;
         }
@@ -48,7 +48,7 @@ public class HungerVisuals : MonoBehaviour
             colorAdjustments.saturation.value = defaultSaturation;
             colorAdjustments.colorFilter.value = defaultColorFilter;
 
-            Debug.LogWarning("ColorAdjustments 효과가 없어 새로 추가했습니다. 기본값을 설정합니다.");
+            Debug.LogWarning("ColorAdjustments 효과가 없어 새로 추가했다. 기본값을 설정한다.");
         }
     }
 
@@ -61,14 +61,14 @@ public class HungerVisuals : MonoBehaviour
 
         if (hungerPercent <= 0)
         {
-            // 배고픔이 0일 때: 화면을 붉게 만듦
+            // 배고픔이 0일 때 화면을 붉게 만듦
             colorAdjustments.saturation.value = 0; // 채도를 약간 주어 붉은색이 보이게 함
             colorAdjustments.colorFilter.value = new Color(1f, 0.2f, 0.2f, 1f); // 붉은색 필터
         }
         else if (hungerPercent < 0.4f)
         {
-            // 40% 미만일 때: 점차 흑백으로 변경
-            // 40%일 때 1, 0%일 때 0이 되는 값을 계산
+            // 40% 미만일 때 점차 흑백으로 변경
+            // 40%일때 1, 0%일때 0이 되는 값을 계산
             float lerpFactor = hungerPercent / 0.4f; 
             // 채도를 0(기본)에서 -100(흑백)으로 보간
             colorAdjustments.saturation.value = Mathf.Lerp(-100f, defaultSaturation, lerpFactor);
@@ -77,7 +77,7 @@ public class HungerVisuals : MonoBehaviour
         }
         else
         {
-            // 40% 이상일 때: 효과를 원래대로 복구
+            // 40% 이상일 때 효과를 원래대로 복구
             colorAdjustments.saturation.value = defaultSaturation;
             colorAdjustments.colorFilter.value = defaultColorFilter;
         }

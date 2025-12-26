@@ -11,11 +11,11 @@ public class Shovel : MonoBehaviour
     [Header("삽 설정")]
     [Tooltip("땅을 팔 수 있는 최대 사정거리")]
     [SerializeField] private float digDistance = 3f;
-    [Tooltip("파기 가능한 땅을 식별하는 데 사용될 태그")]
+    [Tooltip("파기 가능한 땅을 식별하는 데 사용할 태그")]
     [SerializeField] private string diggableTag = "Diggable";
 
     [Header("이펙트 설정")]
-    [Tooltip("땅을 팔 때 생성될 파티클 이펙트")]
+    [Tooltip("땅을 팔 때 생성할 파티클 이펙트")]
     public ParticleSystem digEffectPrefab;
 
     // 메인 카메라 참조
@@ -25,13 +25,13 @@ public class Shovel : MonoBehaviour
     
     /// <summary>
     /// 현재 조준하고 있는 대상이 파기 가능한지 여부를 나타낸다.
-    /// ShovelHold 스크립트가 이 값을 참조하여 크로스헤어 색상을 변경한다.
+    /// ShovelHold 스크립트가 이 값을 참조하여 크로스헤어의 색상을 변경한다.
     /// </summary>
     public bool IsTargetDiggable { get; private set; }
 
     void Start()
     {
-        // Player의 메인 카메라를 찾아 저장한다. 이 스크립트가 활성화될 때 한 번만 호출된다.
+        // Player의 메인 카메라를 찾아 저장한다. 이 스크립트가 활성화될 때 한 번만 호출한다.
         mainCamera = Camera.main;
     }
 
@@ -40,7 +40,7 @@ public class Shovel : MonoBehaviour
         // 카메라가 없으면 아무 동작도 하지 않는다.
         if (mainCamera == null) return;
         
-        // 화면 정중앙에서 카메라 앞 방향으로 레이를 생성한다.
+        // 화면 정중앙에서 카메라의 앞 방향으로 레이를 생성한다.
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
@@ -60,14 +60,14 @@ public class Shovel : MonoBehaviour
     }
     
     /// <summary>
-    /// 삽을 사용해 땅을 파는 동작을 시도한다. PlayerMove 스크립트에서 호출된다.
+    /// 삽을 사용하여 땅을 파는 동작을 시도한다. PlayerMove 스크립트에서 호출한다.
     /// </summary>
     public void Use()
     {
         // 파기 가능한 대상이 있을 때만 땅파기 로직을 실행한다.
         if (IsTargetDiggable && diggableTarget != null)
         {
-            // 파티클 이펙트 생성을 위해 위치를 미리 저장.
+            // 파티클 이펙트를 생성하기 위해 위치를 미리 저장.
             Vector3 targetPosition = diggableTarget.transform.position;
             if (digEffectPrefab != null)
             {
@@ -89,7 +89,7 @@ public class Shovel : MonoBehaviour
                 Destroy(diggableTarget);
             }
 
-            // 상태 초기화.
+            // 상태 초기화
             diggableTarget = null;
             IsTargetDiggable = false;
         }

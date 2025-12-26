@@ -7,10 +7,10 @@ public class Bullet : MonoBehaviour
 {
     [Header("총알 설정")]
     [SerializeField] private float speed = 50f; // 총알의 속도
-    [SerializeField] private float lifeTime = 3f; // 총알이 파괴되지 않고 날아갈 수 있는 최대 시간
+    [SerializeField] private float lifeTime = 3f; // 총알이 파괴되지 않고 살아갈 수 있는 최대 시간
 
     private Rigidbody rb; 
-    private float damage; // 총알이 입힐 데미지. GunController에서 설정
+    private float damage; // 총알의 입힐 데미지. GunController에서 설정
 
     /// <summary>
     /// 이 총알이 입힐 데미지를 설정하는 함수.
@@ -34,14 +34,14 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void Awake() // Start에서 Awake로 변경하여 외부 초기화에 용이하게 함
+    void Awake() // Start에서 Awake로 변경하여 빠른 초기화에 용이하게 함
     {
         rb = GetComponent<Rigidbody>();
         
         // Rigidbody가 있는지 확인
         if(rb == null)
         {
-            Debug.LogError("Bullet 스크립트에 Rigidbody 컴포넌트가 없습니다.");
+            Debug.LogError("Bullet 스크립트에 Rigidbody 컴포넌트가 없다.");
             Destroy(gameObject);
             return;
         }

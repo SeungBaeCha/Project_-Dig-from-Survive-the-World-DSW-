@@ -22,7 +22,7 @@ public class HungerUI : MonoBehaviour
 
         if (hungerSlider == null)
         {
-            Debug.LogError("Hunger Slider가 연결되지 않았습니다!");
+            Debug.LogError("Hunger Slider가 연결되지 않았다.");
         }
     }
 

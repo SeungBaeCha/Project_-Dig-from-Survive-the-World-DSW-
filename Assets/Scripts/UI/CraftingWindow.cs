@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 제작 창 UI를 관리.
+/// 제작 창 UI를 관리
 /// </summary>
 public class CraftingWindow : MonoBehaviour
 {
@@ -13,11 +13,11 @@ public class CraftingWindow : MonoBehaviour
     [SerializeField] private GameObject windowPanel;
     
     [Header("레시피 디테일")]
-    [Tooltip("재료 아이콘을 표시할 이미지들 (4개)")]
+    [Tooltip("재료 아이콘을 표시하는 이미지들 (4개)")]
     [SerializeField] private List<Image> materialIcons;
-    [Tooltip("재료 개수를 표시할 텍스트들 (4개)")]
+    [Tooltip("재료 개수를 표시하는 텍스트들 (4개)")]
     [SerializeField] private List<TextMeshProUGUI> materialQuantities;
-    [Tooltip("결과물 아이콘을 표시할 이미지")]
+    [Tooltip("결과물 아이콘을 표시하는 이미지")]
     [SerializeField] private Image resultIcon;
     [Tooltip("제작 실행 버튼")]
     [SerializeField] private Button craftButton;
@@ -47,16 +47,16 @@ public class CraftingWindow : MonoBehaviour
     }
     
     /// <summary>
-    /// 제작 창의 활성화 상태를 토글한다.
+    /// 제작 창의 활성 상태를 토글한다.
     /// </summary>
     public void Toggle()
     {
-        // isOpen 상태를 반전시키고, 그 상태에 따라 창을 열거나 닫는다.
+        // isOpen 상태를 반전시키고 그 상태에 따라 창을 열거나 닫는다.
         ToggleWindow(!isOpen);
     }
 
     /// <summary>
-    /// 제작 창의 활성화 상태를 직접 제어한다.
+    /// 제작 창의 활성 상태를 직접 제어한다.
     /// </summary>
     public void ToggleWindow(bool state)
     {
@@ -105,9 +105,9 @@ public class CraftingWindow : MonoBehaviour
         {
             resultIcon.gameObject.SetActive(false);
             if(activeRecipe.result == null) 
-                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피에 결과물(result)이 설정되지 않았습니다.");
+                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피에 결과물(result)이 설정되지 않았다.");
             else if(activeRecipe.result.icon == null) 
-                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.result.itemName}' 아이템에 아이콘이 설정되지 않았습니다.");
+                Debug.LogWarning($"[CraftingWindow] '{activeRecipe.result.itemName}' 아이템에 아이콘이 설정되지 않았다.");
         }
 
 
@@ -145,11 +145,11 @@ public class CraftingWindow : MonoBehaviour
                     materialIcons[i].gameObject.SetActive(false);
                     materialQuantities[i].text = "";
                     if(material == null)
-                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료가 비어있습니다.");
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료가 비어있다.");
                     else if(material.item == null)
-                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료에 아이템이 설정되지 않았습니다.");
+                        Debug.LogWarning($"[CraftingWindow] '{activeRecipe.name}' 레시피의 {i+1}번째 재료의 아이템이 설정되지 않았다.");
                     else if(material.item.icon == null)
-                        Debug.LogWarning($"[CraftingWindow] 재료 아이템 '{material.item.itemName}'에 아이콘이 설정되지 않았습니다.");
+                        Debug.LogWarning($"[CraftingWindow] 재료 아이템 '{material.item.itemName}'에 아이콘이 설정되지 않았다.");
                 }
             }
             else
@@ -184,7 +184,7 @@ public class CraftingWindow : MonoBehaviour
     }
 
     /// <summary>
-    /// 제작 버튼이 클릭되었을 때 호출될 함수
+    /// 제작 버튼을 클릭했을 때 호출될 함수
     /// </summary>
     private void OnCraftButtonClicked()
     {
@@ -203,7 +203,7 @@ public class CraftingWindow : MonoBehaviour
             }
             else
             {
-                Debug.Log("제작 실패! (재료 부족 등)");
+                Debug.Log("제작 실패! (재료 부족?)");
             }
         }
     }

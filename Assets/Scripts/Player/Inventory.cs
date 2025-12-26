@@ -9,6 +9,12 @@ using System.Linq; // FindIndex 사용을 위해 필요
 /// </summary>
 public class Inventory : MonoBehaviour
 {
+    [Header("임시 디버그 설정")]
+    [Tooltip("테스트용으로 인벤토리에 추가할 총알 아이템")]
+    public ItemData debugAmmoItem;
+    [Tooltip("테스트용으로 추가할 총알 아이템의 개수")]
+    public int debugAmmoAmount = 10;
+    
     // 인벤토리 내용이 변경되었을 때 다른 스크립트에게 알려주기 위한 이벤트
     public event Action onInventoryChanged;
 
@@ -19,12 +25,29 @@ public class Inventory : MonoBehaviour
     // 실제 아이템 데이터를 저장하는 리스트. 이제 아이템과 개수를 함께 저장.
     private List<InventoryStack> _stacks = new List<InventoryStack>();
 
+    private void Start()
+    {
+        // --- 임시 디버그 코드 ---
+        // 인스펙터에서 debugAmmoItem이 설정되었다면, 게임 시작 시 해당 아이템을 인벤토리에 추가한다.
+        if (debugAmmoItem != null)
+        {
+            AddItem(debugAmmoItem, debugAmmoAmount);
+        }
+        // --------------------
+    }
+
     /// <summary>
-    /// 인벤토리에 아이템을 추가하는 함수.
+    /// 인벤토리에 아이템을 1개 추가하는 함수.
     /// </summary>
-    /// <param name="itemToAdd">추가할 아이템 데이터</param>
-    /// <returns>추가에 성공하면 true, 인벤토리가 꽉 찼으면 false</returns>
     public bool AddItem(ItemData itemToAdd)
+    {
+        return AddItem(itemToAdd, 1);
+    }
+    
+    /// <summary>
+    /// 인벤토리에 아이템을 지정된 개수만큼 추가하는 함수.
+    /// </summary>
+    public bool AddItem(ItemData itemToAdd, int quantity)
     {
         // 1. 이미 같은 종류의 아이템이 인벤토리에 있는지 확인
         int index = _stacks.FindIndex(s => s.item == itemToAdd);
@@ -32,22 +55,22 @@ public class Inventory : MonoBehaviour
         if (index > -1)
         {
             // 2. 있으면 해당 스택의 개수만 늘린다.
-            _stacks[index].quantity++;
+            _stacks[index].quantity += quantity;
         }
         else
         {
             // 3. 없다면, 인벤토리가 꽉 찼는지 확인
             if (_stacks.Count >= _maxCapacity)
             {
-                Debug.Log("인벤토리가 꽉 찼습니다.");
+                Debug.Log("인벤토리가 꽉 찼다.");
                 return false; // 추가 실패
             }
             
             // 4. 공간이 있으면 새로운 스택을 추가한다.
-            _stacks.Add(new InventoryStack(itemToAdd, 1));
+            _stacks.Add(new InventoryStack(itemToAdd, quantity));
         }
 
-        Debug.Log(itemToAdd.itemName + "을(를) 인벤토리에 추가했습니다.");
+        Debug.Log($"{itemToAdd.itemName} {quantity}개를 인벤토리에 추가했다.");
         
         // 인벤토리가 변경되었다고 모두에게 알림!
         onInventoryChanged?.Invoke();
@@ -77,7 +100,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{itemToUse.name}은(는) 사용할 수 없는 아이템입니다.");
+            Debug.LogWarning($"{itemToUse.name}은(는) 사용할 수 없는 아이템이다.");
         }
     }
 
@@ -99,7 +122,7 @@ public class Inventory : MonoBehaviour
                 _stacks.RemoveAt(index);
             }
             
-            Debug.Log($"{itemToRemove.itemName} {quantityToRemove}개를 인벤토리에서 제거했습니다.");
+            Debug.Log($"{itemToRemove.itemName} {quantityToRemove}개를 인벤토리에서 제거했다.");
             onInventoryChanged?.Invoke();
         }
     }

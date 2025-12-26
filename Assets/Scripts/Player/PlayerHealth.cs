@@ -15,31 +15,24 @@ public class PlayerHealth : MonoBehaviour
     [Header("게임 오버 설정")]
     public GameObject gameoverPanel;
 
-
-
-
     void Start()
     {
-
-        // 게임이 재시작 될 수 있어 시작할 떄 항상 시간을 원래대로 놓는다. (게임실행)
+        // 게임이 재시작되었을 수 있어 시작할 때 항상 시간을 원래대로 놓는다 (게임실행)
         Time.timeScale = 1f;
 
         // 체력 초기화 및 HP바 업데이트
         currentHealth = maxHealth;
-        //currentHunger = maxHunger; // 배고픔 초기화
+        currentHunger = maxHunger; // 배고픔 초기화
         if (hpBar != null)
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
         }
-
 
         // 시작할때 gameoverPanel이 꺼져있도록 처리
         if (gameoverPanel != null)
         {
             gameoverPanel.SetActive(false);
         }
-
-
     }
 
     void Update()
@@ -87,15 +80,14 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         // 나중에 여기에 게임 오버 로직이나 부활 로직을 추가.
-        Debug.Log("플레이어가 사망했습니다.");
+        Debug.Log("플레이어가 사망했다.");
 
         if (gameoverPanel != null)
         {
             gameoverPanel.SetActive(true);
         }
 
-
-        // 게임시간을 멈추기
+        // 게임시간 멈추기
         Time.timeScale = 0f;
     }
 }

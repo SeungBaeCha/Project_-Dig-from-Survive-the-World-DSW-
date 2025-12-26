@@ -1,6 +1,6 @@
-/// <summary>
-/// 인벤토리 내의 한 아이템 스택을 나타내는 클래스.
-/// 어떤 아이템(ItemData)이 몇 개(quantity) 있는지 저장한다.
+﻿/// <summary>
+/// ?몃깽?좊━ ?댁쓽 ???꾩씠???ㅽ깮???섑??대뒗 ?대옒??
+/// ?대뼡 ?꾩씠??ItemData)??紐?媛?quantity) ?덈뒗吏 ??ν븳??
 /// </summary>
 [System.Serializable]
 public class InventoryStack
@@ -14,3 +14,7 @@ public class InventoryStack
         this.quantity = quantity;
     }
 }
+
+
+
+

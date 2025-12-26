@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,8 +9,12 @@ public class Test : MonoBehaviour
     {
         if (context.performed)
         {
-            Debug.Log("�Է�");
+            Debug.Log("입력");
         }
     }
 
 }
+
+
+
+
