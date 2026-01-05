@@ -9,6 +9,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("배고픔 설정")]
     public float maxHunger = 100f;
     public float currentHunger;
+    private float hungerDamageTimer = 0f; // 배고픔 데미지 타이머
 
     public HPBar hpBar; // HP바 UI 참조
 
@@ -43,8 +44,27 @@ public class PlayerHealth : MonoBehaviour
         {
             TakeDamage(10);
         }
+        if (Input.GetKeyDown(KeyCode.Y)) // 배고픔 수치 감소 테스트
+        {
+            currentHunger = 0;
+        }
 #endif
         // -------------------------
+
+        // 배고픔 수치가 0 이하면 1초마다 10의 데미지를 입는다.
+        if (currentHunger <= 0)
+        {
+            // 시간의 흐름을 기록한다.
+            hungerDamageTimer += Time.deltaTime;
+            // 1초가 지났는지 확인한다.
+            if (hungerDamageTimer >= 1f)
+            {
+                // 배고픔 데미지를 입힌다.
+                TakeHungerDamage(10f);
+                // 타이머를 리셋한다.
+                hungerDamageTimer = 0f;
+            }
+        }
     }
 
     // 데미지를 받는 함수
@@ -63,6 +83,27 @@ public class PlayerHealth : MonoBehaviour
             Die();
         }
     }
+    
+    // 배고픔 데미지를 받는 함수
+    private void TakeHungerDamage(float damage)
+    {
+        // 체력이 10보다 클 때만 데미지를 입는다.
+        if (currentHealth > 10)
+        {
+            currentHealth -= damage;
+            // 데미지를 입은 후 체력이 10보다 낮아지면 10으로 고정한다.
+            if (currentHealth < 10)
+            {
+                currentHealth = 10;
+            }
+
+            if (hpBar != null)
+            {
+                hpBar.UpdateHP(currentHealth, maxHealth);
+            }
+        }
+    }
+
 
     // 배고픔을 감소시키는 함수
     public void DecreaseHunger(float amount)

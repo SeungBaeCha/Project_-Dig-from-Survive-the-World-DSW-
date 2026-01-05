@@ -14,10 +14,6 @@ public class Shovel : MonoBehaviour
     [Tooltip("파기 가능한 땅을 식별하는 데 사용할 태그")]
     [SerializeField] private string diggableTag = "Diggable";
 
-    [Header("이펙트 설정")]
-    [Tooltip("땅을 팔 때 생성할 파티클 이펙트")]
-    public ParticleSystem digEffectPrefab;
-
     // 메인 카메라 참조
     private Camera mainCamera;
     // 현재 조준하고 있는 파기 가능한 오브젝트
@@ -37,23 +33,43 @@ public class Shovel : MonoBehaviour
 
     void Update()
     {
-        // 카메라가 없으면 아무 동작도 하지 않는다.
-        if (mainCamera == null) return;
+        // 카메라가 없으면 경고를 출력하고 아무 동작도 하지 않는다.
+        if (mainCamera == null) 
+        {
+            Debug.LogWarning("Shovel: 메인 카메라를 찾을 수 없습니다! 카메라에 'MainCamera' 태그가 있는지 확인해주세요.");
+            return;
+        }
         
         // 화면 정중앙에서 카메라의 앞 방향으로 레이를 생성한다.
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
-        // 레이캐스트를 실행하여 'Diggable' 태그를 가진 오브젝트가 감지되었는지 확인한다.
-        if (Physics.Raycast(ray, out hit, digDistance) && hit.collider.CompareTag(diggableTag))
+        // 디버깅을 위해 Scene 뷰에 레이를 빨간색으로 그린다. (Play 모드에서만 보임)
+        Debug.DrawRay(ray.origin, ray.direction * digDistance, Color.red);
+
+        // 먼저 레이캐스트만 단독으로 실행해서 무언가 맞았는지 확인한다.
+        if (Physics.Raycast(ray, out hit, digDistance))
         {
-            // 감지되었다면, 파기 가능한 상태로 설정한다.
-            IsTargetDiggable = true;
-            diggableTarget = hit.collider.gameObject;
+            // 레이에 무언가 맞았다면, 그것의 이름과 태그를 콘솔에 출력한다.
+            Debug.Log($"[Shovel] 조준 중: {hit.collider.name}, 태그: {hit.collider.tag}");
+
+            // 맞은 오브젝트의 태그가 'Diggable'인지 확인한다.
+            if (hit.collider.CompareTag(diggableTag))
+            {
+                // 감지되었다면, 파기 가능한 상태로 설정한다.
+                IsTargetDiggable = true;
+                diggableTarget = hit.collider.gameObject;
+            }
+            else
+            {
+                // 태그가 달라서 실패한 경우
+                IsTargetDiggable = false;
+                diggableTarget = null;
+            }
         }
         else
         {
-            // 감지되지 않았다면, 파기 불가능한 상태로 설정한다.
+            // 레이에 아무것도 맞지 않았다면, 파기 불가능한 상태로 설정한다.
             IsTargetDiggable = false;
             diggableTarget = null;
         }
@@ -67,14 +83,6 @@ public class Shovel : MonoBehaviour
         // 파기 가능한 대상이 있을 때만 땅파기 로직을 실행한다.
         if (IsTargetDiggable && diggableTarget != null)
         {
-            // 파티클 이펙트를 생성하기 위해 위치를 미리 저장.
-            Vector3 targetPosition = diggableTarget.transform.position;
-            if (digEffectPrefab != null)
-            {
-                ParticleSystem effectInstance = Instantiate(digEffectPrefab, targetPosition, Quaternion.identity);
-                Destroy(effectInstance.gameObject, effectInstance.main.duration);
-            }
-
             // 대상에서 Chunk 컴포넌트를 가져옴.
             Chunk chunk = diggableTarget.GetComponent<Chunk>();
             if (chunk != null)
