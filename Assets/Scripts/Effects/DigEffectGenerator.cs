@@ -25,7 +25,7 @@ public class DigEffectGenerator : MonoBehaviour
         main.duration = 0.6f;                                   // 이펙트 전체 지속 시간
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.3f, 0.6f);  // 파티클 생존 시간 (무작위)
         main.startSpeed = new ParticleSystem.MinMaxCurve(1f, 3f);       // 파티클 시작 속도 (무작위)
-        main.startSize = new ParticleSystem.MinMaxCurve(0.1f, 0.25f);   // 파티클 시작 크기 (무작위)
+        main.startSize = new ParticleSystem.MinMaxCurve(0.005f, 0.015f);   // 파티클 시작 크기 (무작위). '티끌'처럼 보이게 매우 작게 수정
         main.startColor = digColor;                             // 파티클 시작 색상
         main.maxParticles = 50;                                 // 최대 파티클 개수
         main.playOnAwake = true;                                // 생성되면 바로 자동 재생

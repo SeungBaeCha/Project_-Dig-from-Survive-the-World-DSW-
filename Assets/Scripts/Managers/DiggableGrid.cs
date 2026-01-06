@@ -30,6 +30,20 @@ public class DiggableGrid : MonoBehaviour
     [Tooltip("NavMesh 업데이트 주기. 이 시간(초)마다 한 번씩만 업데이트를 실행하여 부하를 줄인다.")]
     public float navMeshRebuildInterval = 2.0f;
 
+    [Header("Multi-Grid Settings")]
+    [Tooltip("생성될 그리드들 사이의 간격. 그리드의 크기를 고려하여 설정해야 겹치지 않습니다.")]
+    public float gridSpacing = 5f;
+    [Tooltip("중앙 (0,0,0) 위치에 그리드를 생성합니다.")]
+    public bool generateInCenter = true;
+    [Tooltip("위쪽 (+Z) 방향에 그리드를 생성합니다.")]
+    public bool generateUp = true;
+    [Tooltip("아래쪽 (-Z) 방향에 그리드를 생성합니다.")]
+    public bool generateDown = true;
+    [Tooltip("왼쪽 (-X) 방향에 그리드를 생성합니다.")]
+    public bool generateLeft = true;
+    [Tooltip("오른쪽 (+X) 방향에 그리드를 생성합니다.")]
+    public bool generateRight = true;
+
     // NavMesh 업데이트가 필요한지 여부를 나타내는 플래그
     private bool navMeshNeedsRebuild = false;
 
@@ -52,8 +66,8 @@ public class DiggableGrid : MonoBehaviour
             return;
         }
 
-        // 격자 생성을 시작
-        GenerateGrid();
+        // 설정에 따라 여러 그리드를 생성
+        CreateGrids();
 
         // 초기 격자 생성 후 NavMesh 전체를 한 번 빌드
         surface.BuildNavMesh();
@@ -63,9 +77,46 @@ public class DiggableGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// 설정된 크기에 맞춰 청크들로 격자를 생성
+    /// 설정에 따라 여러 위치에 그리드를 생성한다.
+    /// 이 메서드는 월드 원점(0,0,0)을 기준으로 동작한다.
     /// </summary>
-    void GenerateGrid()
+    void CreateGrids()
+    {
+        // 그리드 하나의 전체 너비(x)와 깊이(z)를 계산
+        float gridTotalWidth = width * chunkSize;
+        float gridTotalDepth = depth * chunkSize;
+
+        // 중앙 그리드 생성 (월드 원점 기준)
+        if (generateInCenter)
+        {
+            GenerateGrid(Vector3.zero);
+        }
+
+        // 상하좌우 그리드는 '전체 그리드 크기 + 설정된 간격'을 기준으로 월드 원점으로부터의 위치를 계산
+        if (generateUp)
+        {
+            GenerateGrid(new Vector3(0, 0, gridTotalDepth + gridSpacing));
+        }
+        if (generateDown)
+        {
+            GenerateGrid(new Vector3(0, 0, -(gridTotalDepth + gridSpacing)));
+        }
+        if (generateLeft)
+        {
+            GenerateGrid(new Vector3(-(gridTotalWidth + gridSpacing), 0, 0));
+        }
+        if (generateRight)
+        {
+            GenerateGrid(new Vector3(gridTotalWidth + gridSpacing, 0, 0));
+        }
+    }
+
+
+    /// <summary>
+    /// 지정된 원점(gridOrigin)을 기준으로, 설정된 크기에 맞춰 청크들로 격자를 생성
+    /// </summary>
+    /// <param name="gridOrigin">이 그리드의 시작 위치(좌측 하단 앞쪽)</param>
+    void GenerateGrid(Vector3 gridOrigin)
     {
         for (int x = 0; x < width; x++)
         {
@@ -73,8 +124,8 @@ public class DiggableGrid : MonoBehaviour
             {
                 for (int z = 0; z < depth; z++)
                 {
-                    // 각 청크의 위치를 계산
-                    Vector3 position = new Vector3(x * chunkSize, y * chunkSize, z * chunkSize) + transform.position;
+                    // 각 청크의 위치를 계산. 이제 gridOrigin을 기준으로 함
+                    Vector3 position = new Vector3(x * chunkSize, y * chunkSize, z * chunkSize) + gridOrigin;
 
                     // 청크 프리팹을 씬에 생성(인스턴스화)
                     GameObject chunk = Instantiate(chunkPrefab, position, Quaternion.identity);

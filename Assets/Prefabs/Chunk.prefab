@@ -120,7 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   lootTable: {fileID: 11400000, guid: 4693ab65120250f48a3160cd6551ea0c, type: 2}
-  digEffectPrefab: {fileID: 1896330609510464544, guid: 80c2327f21e933c4a912952544a70ba0,
+  digEffectPrefab: {fileID: 3829434132657083626, guid: 35528b00125ce974082220da683b4085,
     type: 3}
   uniqueRecipeToUnlock: {fileID: 11400000, guid: 76c60a76cf1f7944b8194acf2f9f86fb,
     type: 2}
