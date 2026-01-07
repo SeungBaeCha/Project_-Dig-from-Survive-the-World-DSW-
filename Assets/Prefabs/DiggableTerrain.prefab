@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7543014865819710379}
   - component: {fileID: 1883086983142559150}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DiggableTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,8 +45,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 20
-  height: 10
-  depth: 20
+  height: 5
+  depth: 50
   chunkPrefab: {fileID: 649906139070711462, guid: 45d4a6e39a0b5dc4cbe41584f13cb4cf,
     type: 3}
   chunkSize: 1
+  surface: {fileID: 0}
+  navMeshRebuildInterval: 30
+  gridSpacing: 15
+  generateInCenter: 0
+  generateUp: 1
+  generateDown: 1
+  generateLeft: 1
+  generateRight: 1

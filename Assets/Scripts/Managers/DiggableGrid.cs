@@ -124,8 +124,8 @@ public class DiggableGrid : MonoBehaviour
             {
                 for (int z = 0; z < depth; z++)
                 {
-                    // 각 청크의 위치를 계산. 이제 gridOrigin을 기준으로 함
-                    Vector3 position = new Vector3(x * chunkSize, y * chunkSize, z * chunkSize) + gridOrigin;
+                    // 각 청크의 위치를 계산. 이제 gridOrigin과 이 오브젝트의 월드 위치(transform.position)를 모두 기준으로 함
+                    Vector3 position = transform.position + new Vector3(x * chunkSize, y * chunkSize, z * chunkSize) + gridOrigin;
 
                     // 청크 프리팹을 씬에 생성(인스턴스화)
                     GameObject chunk = Instantiate(chunkPrefab, position, Quaternion.identity);
