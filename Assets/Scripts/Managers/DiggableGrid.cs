@@ -27,9 +27,10 @@ public class DiggableGrid : MonoBehaviour
     [Header("NavMesh Settings")]
     [Tooltip("씬의 유일한 NavMeshSurface 컴포넌트(보통 Ground 오브젝트에 있음)를 여기에 할당해야 한다.")]
     public NavMeshSurface surface;
-    [Tooltip("NavMesh 업데이트 주기. 이 시간(초)마다 한 번씩만 업데이트를 실행하여 부하를 줄인다.")]
-    public float navMeshRebuildInterval = 2.0f;
-
+    
+    // NavMesh 업데이트가 중복 실행되지 않도록 관리하는 코루틴 참조
+    private Coroutine _rebuildCoroutine;
+    
     [Header("Multi-Grid Settings")]
     [Tooltip("생성될 그리드들 사이의 간격. 그리드의 크기를 고려하여 설정해야 겹치지 않습니다.")]
     public float gridSpacing = 5f;
@@ -43,10 +44,7 @@ public class DiggableGrid : MonoBehaviour
     public bool generateLeft = true;
     [Tooltip("오른쪽 (+X) 방향에 그리드를 생성합니다.")]
     public bool generateRight = true;
-
-    // NavMesh 업데이트가 필요한지 여부를 나타내는 플래그
-    private bool navMeshNeedsRebuild = false;
-
+    
     // 생성된(또는 파괴되어 생긴) 입구(구멍) 위치들 관리
     private List<Vector3> entrances = new List<Vector3>();
 
@@ -71,9 +69,6 @@ public class DiggableGrid : MonoBehaviour
 
         // 초기 격자 생성 후 NavMesh 전체를 한 번 빌드
         surface.BuildNavMesh();
-
-        // NavMesh를 주기적으로 체크하고 필요시 재빌드하는 코루틴을 시작
-        StartCoroutine(NavMeshRebuildRoutine());
     }
 
     /// <summary>
@@ -141,32 +136,33 @@ public class DiggableGrid : MonoBehaviour
     }
 
     /// <summary>
-    /// Chunk가 파괴될 때 NavMesh 업데이트가 필요하다고 플래그를 설정한다.
+    /// Chunk가 파괴될 때 NavMesh 업데이트를 요청한다. (Debounced)
+    /// 여러 번 호출되더라도 마지막 호출 후 짧은 시간 뒤에 한 번만 실행된다.
     /// </summary>
     public void RequestNavMeshUpdate()
     {
-        navMeshNeedsRebuild = true;
+        // 이미 실행중인 업데이트 코루틴이 있다면 중지시킨다.
+        if (_rebuildCoroutine != null)
+        {
+            StopCoroutine(_rebuildCoroutine);
+        }
+        // 새로운 업데이트 코루틴을 시작하고 참조를 저장한다.
+        _rebuildCoroutine = StartCoroutine(DelayedRebuild());
     }
 
     /// <summary>
-    /// 일정 주기로 NavMesh 업데이트가 필요한지 확인하고, 필요하다면 재빌드한다.
+    /// 짧은 지연 시간 후에 NavMesh를 재빌드하는 코루틴.
     /// </summary>
-    private IEnumerator NavMeshRebuildRoutine()
+    private IEnumerator DelayedRebuild()
     {
-        // 게임이 실행되는 동안 계속 반복
-        while (true)
-        {
-            // navMeshNeedsRebuild 플래그가 true일 때만 업데이트를 진행
-            if (navMeshNeedsRebuild)
-            {
-                // 플래그를 리셋하고 NavMesh를 다시 빌드
-                navMeshNeedsRebuild = false;
-                surface.BuildNavMesh();
-            }
-
-            // 설정된 시간(navMeshRebuildInterval)만큼 대기
-            yield return new WaitForSeconds(navMeshRebuildInterval);
-        }
+        // 1.0초 대기. 이 시간 안에 또 Request가 들어오면 이 코루틴은 중지되고 새로 시작된다.
+        yield return new WaitForSeconds(1.0f);
+        
+        // NavMesh를 다시 빌드한다.
+        surface.BuildNavMesh();
+        
+        // 코루틴 실행이 끝났으므로 참조를 null로 설정한다.
+        _rebuildCoroutine = null;
     }
 
     // --- Entrance 관리 API ---

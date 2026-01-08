@@ -51,7 +51,7 @@ public class Shovel : MonoBehaviour
         if (Physics.Raycast(ray, out hit, digDistance))
         {
             // 레이에 무언가 맞았다면, 그것의 이름과 태그를 콘솔에 출력한다.
-            Debug.Log($"[Shovel] 조준 중: {hit.collider.name}, 태그: {hit.collider.tag}");
+            //Debug.Log($"[Shovel] 조준 중: {hit.collider.name}, 태그: {hit.collider.tag}");
 
             // 맞은 오브젝트의 태그가 'Diggable'인지 확인한다.
             if (hit.collider.CompareTag(diggableTag))

@@ -37,8 +37,7 @@ public class CraftingSystem : MonoBehaviour
         else
         {
             Instance = this;
-            // 게임 내에 계속 유지되도록 설정
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
         }
 
         // --- 모든 레시피의 '발견' 상태를 '미발견'으로 초기화 ---

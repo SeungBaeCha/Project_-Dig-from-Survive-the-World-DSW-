@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     // 현재 시간과 타이머
     public bool IsNight { get; private set; }
+    public int DayCount { get; private set; } = 0; // 현재 날짜
     private float timer;
     private Coroutine lightingCoroutine;
     private float logTimer = 1f; // 1초마다 로그를 출력하기 위한 타이머
@@ -55,7 +56,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
         }
     }
 
@@ -85,7 +86,10 @@ public class GameManager : MonoBehaviour
         timer = dayDuration;
         hungerTimer = hungerDecreaseInterval; // 배고픔 타이머 초기화
         SetLightingImmediate(false); // 시작 시 낮 조명 즉시 설정
-        Debug.Log("Day has started.");
+        
+        // 첫째 날 시작
+        DayCount = 1;
+        Debug.Log($"Day {DayCount} has started.");
         OnDayStart?.Invoke();
     }
 
@@ -98,7 +102,7 @@ public class GameManager : MonoBehaviour
         logTimer -= Time.deltaTime;
         if (logTimer <= 0f)
         {
-            Debug.Log("Current Timer (int): " + Mathf.FloorToInt(timer));
+            //Debug.Log("Current Timer (int): " + Mathf.FloorToInt(timer));
             logTimer = 1f; // logTimer 리셋
         }
 
@@ -109,13 +113,14 @@ public class GameManager : MonoBehaviour
             if (IsNight)
             {
                 timer = nightDuration;
-                Debug.Log("Night has started.");
+                Debug.Log($"Night of Day {DayCount} has started.");
                 OnNightStart?.Invoke();
             }
             else
             {
+                DayCount++; // 다음 날로 증가
                 timer = dayDuration;
-                Debug.Log("Day has started.");
+                Debug.Log($"Day {DayCount} has started.");
                 OnDayStart?.Invoke();
             }
         }

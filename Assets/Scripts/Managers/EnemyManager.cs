@@ -10,7 +10,13 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab; // 생성할 적 프리팹
     [SerializeField] private Transform[] spawnPoints; // 적 생성 위치
     [SerializeField] private int dayEnemyCount = 3; // 낮에 생성할 적의 수
-    [SerializeField] private int nightEnemyCount = 10; // 밤에 생성할 적의 수
+    
+    [Header("밤 웨이브 설정")]
+    [SerializeField] private int initialNightEnemyCount; // 첫날 밤에 생성할 적의 수
+    [SerializeField] private int minEnemiesToAddPerDay; // 매일 최소로 추가될 적의 수
+    [SerializeField] private int maxEnemiesToAddPerDay; // 매일 최대로 추가될 적의 수
+    
+    private int currentNightEnemyCount; // 현재 밤에 생성할 적의 수
     private List<GameObject> activeEnemies = new List<GameObject>();
 
     void Awake()
@@ -23,6 +29,9 @@ public class EnemyManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        // 밤에 생성될 적의 수 초기화
+        currentNightEnemyCount = initialNightEnemyCount;
     }
 
     void OnEnable()
@@ -44,6 +53,7 @@ public class EnemyManager : MonoBehaviour
         // 밤에 활동하던 모든 적을 제거
         ClearAllEnemies();
         // 낮에 활동할 적들을 생성
+        Debug.Log($"낮이 되었습니다. {dayEnemyCount}마리의 적을 생성합니다.");
         SpawnEnemies(dayEnemyCount);
     }
 
@@ -51,15 +61,33 @@ public class EnemyManager : MonoBehaviour
     {
         // 낮에 활동하던 모든 적을 제거
         ClearAllEnemies();
-        // 밤에 활동할 적들을 생성
-        SpawnEnemies(nightEnemyCount);
+
+        // 날짜에 따라 생성할 적의 수를 계산
+        int day = GameManager.Instance.DayCount;
+        if (day > 1)
+        {
+            // 둘째 날부터 적의 수를 랜덤하게 늘림
+            int enemiesToAdd = Random.Range(minEnemiesToAddPerDay, maxEnemiesToAddPerDay + 1);
+            currentNightEnemyCount += enemiesToAdd;
+            Debug.Log($"오늘은 {day}일차 밤입니다. 어젯밤보다 {enemiesToAdd}마리 더 많은 적이 몰려옵니다.");
+        }
+        else
+        {
+            // 첫날 밤
+            currentNightEnemyCount = initialNightEnemyCount;
+            Debug.Log("첫날 밤입니다. 생존을 준비하십시오.");
+        }
+        
+        // 계산된 수만큼 밤에 활동할 적들을 생성
+        Debug.Log($"총 {currentNightEnemyCount}마리의 적을 생성합니다.");
+        SpawnEnemies(currentNightEnemyCount);
     }
 
     private void SpawnEnemies(int count)
     {
         if (enemyPrefab == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("적 프리팹 또는 스폰 포인트가 설정되지 않았다.");
+            Debug.LogError("적 프리팹 또는 스폰 포인트가 설정되지 않았습니다.");
             return;
         }
 

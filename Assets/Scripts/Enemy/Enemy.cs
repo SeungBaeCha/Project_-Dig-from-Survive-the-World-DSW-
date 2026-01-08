@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq; // LINQ 사용을 위해 추가
 
 public class Enemy : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent agent;
     private Transform player;
     private Vector3 startingPosition; // 처음 위치를 저장할 변수
+    private DiggableGrid diggableGrid; // DiggableGrid 참조
 
     [Header("추격 설정")]
     public float detectionRadius = 15f; // 플레이어를 탐지할 반경
@@ -56,6 +58,9 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         startingPosition = transform.position;
+        
+        // DiggableGrid 인스턴스를 찾아서 참조를 저장
+        diggableGrid = FindObjectOfType<DiggableGrid>();
 
         currentHealth = maxHealth;
         if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
@@ -108,15 +113,12 @@ public class Enemy : MonoBehaviour
                 break;
 
             case State.Chasing:
-                // 주기적으로 목표 지점을 플레이어 위치로 갱신
+                // 주기적으로 목표 지점을 플레이어 위치 또는 가장 가까운 입구로 갱신
                 destinationUpdateTimer += Time.deltaTime;
                 if (destinationUpdateTimer >= destinationUpdateInterval)
                 {
                     destinationUpdateTimer = 0f;
-                    if (agent.isOnNavMesh)
-                    {
-                        agent.SetDestination(player.position);
-                    }
+                    SetChaseDestination();
                 }
 
                 // 공격 로직
@@ -144,11 +146,47 @@ public class Enemy : MonoBehaviour
             case State.Chasing:
                 agent.speed = chaseSpeed;
                 SetEyeColor(chaseColor);
-                if (agent.isOnNavMesh && player != null)
-                {
-                    agent.SetDestination(player.position);
-                }
+                SetChaseDestination(); // 추격 상태로 전환 시 즉시 목표 설정
                 break;
+        }
+    }
+
+    /// <summary>
+    /// 추격 상태일 때 목표 지점을 설정하는 새로운 지능형 메서드
+    /// </summary>
+    private void SetChaseDestination()
+    {
+        if (!agent.isOnNavMesh || player == null) return;
+
+        // 1. 플레이어에게 직접 가는 경로가 있는지 확인
+        NavMeshPath path = new NavMeshPath();
+        agent.CalculatePath(player.position, path);
+
+        // 2. 경로가 완전하다면(막히지 않았다면) 플레이어를 목표로 설정
+        if (path.status == NavMeshPathStatus.PathComplete)
+        {
+            agent.SetDestination(player.position);
+            //Debug.Log($"<color=green>[Enemy AI - {gameObject.name}]</color> 플레이어에게 가는 길이 있습니다! 직접 추적합니다. 목표: {player.position}");
+        }
+        // 3. 경로가 불완전하다면(막혔다면) 가장 가까운 '입구'를 찾아 목표로 설정
+        else
+        {
+            Debug.Log($"<color=orange>[Enemy AI - {gameObject.name}]</color> 플레이어에게 가는 길이 막혔습니다! 우회할 입구를 찾습니다.");
+            if (diggableGrid != null && diggableGrid.GetEntrances().Any())
+            {
+                // 가장 가까운 입구 찾기
+                Vector3 closestEntrance = diggableGrid.GetEntrances()
+                    .OrderBy(entrance => Vector3.Distance(transform.position, entrance))
+                    .First();
+                
+                agent.SetDestination(closestEntrance);
+                //Debug.Log($"<color=cyan>[Enemy AI - {gameObject.name}]</color> 가장 가까운 입구({closestEntrance})로 이동합니다.");
+            }
+            // 입구가 없다면, 그냥 현재 위치에 멈춤 (또는 다른 행동 추가 가능)
+            else
+            {
+                //Debug.LogWarning($"<color=red>[Enemy AI - {gameObject.name}]</color> 길이 막혔지만, 우회할 입구를 찾지 못했습니다!");
+            }
         }
     }
 
