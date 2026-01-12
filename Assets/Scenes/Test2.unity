@@ -305,21 +305,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
         type: 3}
-      propertyPath: dayEnemyCount
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
-        type: 3}
-      propertyPath: nightEnemyCount
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
-        type: 3}
-      propertyPath: spawnPoints.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
-        type: 3}
       propertyPath: spawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 724645713}
@@ -605,6 +590,341 @@ PrefabInstance:
       propertyPath: nightDuration
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightFogColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightFogColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightFogColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightFogDensity
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightSunIntensity
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].fogColor.b
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].fogColor.g
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].fogColor.r
+      value: 0.72156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].fogDensity
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].presetName
+      value: ClearDay
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].fogColor.b
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].fogColor.g
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].fogColor.r
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].fogDensity
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].presetName
+      value: Foggyday
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunColor.b
+      value: 0.8666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunColor.g
+      value: 0.73333335
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunColor.r
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunIntensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunIntensity
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].fogDensity
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].presetName
+      value: ClearNight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunColor.b
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunColor.g
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunColor.r
+      value: 0.53333336
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].fogColor.b
+      value: 0.09411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].fogColor.g
+      value: 0.06666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].fogColor.r
+      value: 0.06666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].fogDensity
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].presetName
+      value: FoggyNight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunColor.b
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunColor.g
+      value: 0.26666668
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunColor.r
+      value: 0.26666668
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].fogDensity
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].presetName
+      value: BlackNight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunRotation.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunRotation.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].ambientColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].ambientColor.b
+      value: 0.34901962
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].ambientColor.g
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].ambientColor.r
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].ambientColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].ambientColor.b
+      value: 0.2784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].ambientColor.g
+      value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].ambientColor.r
+      value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunIntensity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunIntensity
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunRotation.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunRotation.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].sunRotation.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].sunRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].ambientColor.b
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].ambientColor.g
+      value: 0.101960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].ambientColor.r
+      value: 0.101960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].ambientColor.b
+      value: 0.050980393
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].ambientColor.g
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].ambientColor.r
+      value: 0.03137255
+      objectReference: {fileID: 0}
     - target: {fileID: 6174248598769668855, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: m_Name
@@ -620,6 +940,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 819645383502791731, guid: de5ad1c6015a6a54bbbf442a33be94fe,
     type: 3}
   m_PrefabInstance: {fileID: 431945608}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &472174473 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8033805235655334679, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+    type: 3}
+  m_PrefabInstance: {fileID: 613048752}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &553246201
 PrefabInstance:
@@ -707,11 +1033,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 94856158628296907, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 744299541423105240, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -727,11 +1048,6 @@ PrefabInstance:
       propertyPath: weaponHold
       value: 
       objectReference: {fileID: 630478793}
-    - target: {fileID: 2286491269033157223, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2556229880400971679, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_Pivot.x
@@ -832,21 +1148,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3567700674864839622, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+    - target: {fileID: 4735878352254939054, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5024635213803540369, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1177965221}
+    - target: {fileID: 4892495435857484291, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5133135639857105855, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1177965221}
     - target: {fileID: 5386163321969097878, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -855,6 +1166,11 @@ PrefabInstance:
     - target: {fileID: 5386163321969097878, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7054886525507605764, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8476211226050488003, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
@@ -952,6 +1268,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1467490088}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &846531540
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 846531542}
+  - component: {fileID: 846531541}
+  - component: {fileID: 846531543}
+  m_Layer: 0
+  m_Name: GameStartTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &846531541
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846531540}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 0.6130378}
+  m_Center: {x: 0, y: 0, z: -0.0031012297}
+--- !u!4 &846531542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846531540}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.71, y: 0, z: 1.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &846531543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846531540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75d7819933804204aaa7dba97bbc3448, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &873741585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -964,6 +1346,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CraftingManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3630784295409163279, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4971082994548645762, guid: de1aabecdae90094cb8697faed6ebd9e,
         type: 3}
@@ -1037,6 +1424,16 @@ PrefabInstance:
       objectReference: {fileID: 1602462578}
     - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
         type: 3}
+      propertyPath: gameHUD
+      value: 
+      objectReference: {fileID: 472174473}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: tutorialPanel
+      value: 
+      objectReference: {fileID: 1225272653}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
       propertyPath: craftingWindow
       value: 
       objectReference: {fileID: 1615100632}
@@ -1045,6 +1442,26 @@ PrefabInstance:
       propertyPath: notificationText
       value: 
       objectReference: {fileID: 1016187576}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: tutorialContainer
+      value: 
+      objectReference: {fileID: 1536969740}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: tutorialPages.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: tutorialPages.Array.data[0]
+      value: 
+      objectReference: {fileID: 1536969739}
+    - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: tutorialPages.Array.data[1]
+      value: 
+      objectReference: {fileID: 1225272653}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1394,6 +1811,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054625354}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1177965221 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
+    type: 3}
+  m_PrefabInstance: {fileID: 873741585}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92cbf4c57ee424646b585f1c04855a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1188096755 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6347664554758682086, guid: 255633cf681d9e14b9f11364ea998a7b,
@@ -1496,6 +1925,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1225272653 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3098563923195425009, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+    type: 3}
+  m_PrefabInstance: {fileID: 613048752}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1270697075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1992,6 +2427,18 @@ Transform:
   - {fileID: 1407849195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1536969739 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3482821366783670406, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+    type: 3}
+  m_PrefabInstance: {fileID: 613048752}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1536969740 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7054886525507605764, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+    type: 3}
+  m_PrefabInstance: {fileID: 613048752}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1570463706
 GameObject:
   m_ObjectHideFlags: 0
@@ -2391,3 +2838,4 @@ SceneRoots:
   - {fileID: 1054323951}
   - {fileID: 1270697076}
   - {fileID: 1411513732}
+  - {fileID: 846531542}

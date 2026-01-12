@@ -1,49 +1,54 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
+public struct WeatherPreset
+{
+    public string presetName;
+    [Header("조명")]
+    public Color ambientColor;
+    public Color sunColor;
+    public float sunIntensity;
+    public Vector3 sunRotation;
+    [Header("안개")]
+    public Color fogColor;
+    public float fogDensity;
+}
 
 public class GameManager : MonoBehaviour
 {
-    // 싱글턴 인스턴스
     public static GameManager Instance { get; private set; }
 
+    public bool isGameStarted { get; private set; }
+
     [Header("시간 설정")]
-    [SerializeField] private float dayDuration = 60f; // 낮 지속 시간 (초)
-    [SerializeField] private float nightDuration = 60f; // 밤 지속 시간 (초)
+    [SerializeField] private float dayDuration = 60f;
+    [SerializeField] private float nightDuration = 60f;
+    [SerializeField] private float transitionDuration = 5f;
 
-    [Header("조명 및 하늘 설정")]
-    [SerializeField] private Light sun; // 태양의 주 조명 (Directional Light)
-    [SerializeField] private float transitionDuration = 5f; // 조명 전환 시간
+    [Header("날씨 프리셋")]
+    [SerializeField] private List<WeatherPreset> dayWeatherPresets;
+    [SerializeField] private List<WeatherPreset> nightWeatherPresets;
 
-    [Header("낮 조명")]
-    [SerializeField] private Color dayAmbientColor = new Color(0.3f, 0.3f, 0.3f);
-    [SerializeField] private Color daySunColor = Color.white;
-    [SerializeField] private float daySunIntensity = 1f;
-    [SerializeField] private Vector3 daySunRotation = new Vector3(50, -30, 0);
-
-    [Header("밤 조명")]
-    [SerializeField] private Color nightAmbientColor = new Color(0.1f, 0.1f, 0.2f);
-    [SerializeField] private Color nightSunColor = new Color(0.8f, 0.8f, 1f);
-    [SerializeField] private float nightSunIntensity = 0.2f;        // 밤의 밝기 조절
-    [SerializeField] private Vector3 nightSunRotation = new Vector3(-90, -30, 0);
+    private WeatherPreset currentDayWeather;
+    private WeatherPreset currentNightWeather;
 
     [Header("배고픔 설정")]
-    [SerializeField] private float hungerDecreaseInterval; // 배고픔 감소 체크 주기 (초)
-    [SerializeField, Range(0, 1)] private float hungerDecreaseChance; // 배고픔 감소 확률
-    [SerializeField] private float hungerDecreaseAmount; // 배고픔 감소량
+    [SerializeField] private float hungerDecreaseInterval;
+    [SerializeField, Range(0, 1)] private float hungerDecreaseChance;
+    [SerializeField] private float hungerDecreaseAmount;
     private float hungerTimer;
 
-    // 참조
     private PlayerHealth playerHealth;
+    [SerializeField] private Light sun;
 
-    // 현재 시간과 타이머
     public bool IsNight { get; private set; }
-    public int DayCount { get; private set; } = 0; // 현재 날짜
+    public int DayCount { get; private set; } = 0;
     private float timer;
-    private Coroutine lightingCoroutine;
-    private float logTimer = 1f; // 1초마다 로그를 출력하기 위한 타이머
+    private Coroutine transitionCoroutine;
 
-    // 시간이 변경될 때 호출될 이벤트
     public static event Action OnDayStart;
     public static event Action OnNightStart;
 
@@ -74,20 +79,50 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // 플레이어 참조 찾기
+        // 게임 시작 전 초기 상태
+        isGameStarted = false;
+        if(sun != null) sun.gameObject.SetActive(false);
+        RenderSettings.ambientLight = new Color(0.1f, 0.1f, 0.1f);
+        
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
             playerHealth = playerObject.GetComponent<PlayerHealth>();
         }
+    }
 
-        // 낮으로 시작
+    /// <summary>
+    /// GameStartTrigger에 의해 호출되어 튜토리얼 시퀀스를 시작한다.
+    /// </summary>
+    public void StartTutorialSequence()
+    {
+        // UIManager에게 튜토리얼을 보여달라고 요청한다.
+        UIManager.Instance.StartTutorial();
+    }
+    
+    /// <summary>
+    /// 튜토리얼 UI의 '닫기' 버튼에 의해 호출되어 실제 게임 플레이를 시작한다.
+    /// </summary>
+    public void BeginGameplay()
+    {
+        if (isGameStarted) return;
+
+        isGameStarted = true;
+        Debug.Log("====== 게임 플레이 시작! ======");
+
+        // UIManager에게 게임 HUD를 보여달라고 요청한다.
+        UIManager.Instance.ShowGameHUD();
+        
+        // 태양 활성화 및 첫 날 시작 로직
+        if (sun != null) sun.gameObject.SetActive(true);
         IsNight = false;
         timer = dayDuration;
-        hungerTimer = hungerDecreaseInterval; // 배고픔 타이머 초기화
-        SetLightingImmediate(false); // 시작 시 낮 조명 즉시 설정
-        
-        // 첫째 날 시작
+        hungerTimer = hungerDecreaseInterval;
+        RenderSettings.fog = true;
+
+        SelectWeatherForNewDay();
+        SetWeatherImmediate(currentDayWeather);
+
         DayCount = 1;
         Debug.Log($"Day {DayCount} has started.");
         OnDayStart?.Invoke();
@@ -95,16 +130,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        timer -= Time.deltaTime;
-        HandleHunger(); // 배고픔 처리 로직 호출
+        if (!isGameStarted) return;
 
-        // 1초마다 타이머 값을 정수로 출력
-        logTimer -= Time.deltaTime;
-        if (logTimer <= 0f)
-        {
-            //Debug.Log("Current Timer (int): " + Mathf.FloorToInt(timer));
-            logTimer = 1f; // logTimer 리셋
-        }
+        timer -= Time.deltaTime;
+        HandleHunger();
 
         if (timer <= 0)
         {
@@ -118,97 +147,97 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                DayCount++; // 다음 날로 증가
+                DayCount++;
                 timer = dayDuration;
                 Debug.Log($"Day {DayCount} has started.");
+                SelectWeatherForNewDay();
                 OnDayStart?.Invoke();
             }
         }
     }
 
+    private void SelectWeatherForNewDay()
+    {
+        if (dayWeatherPresets.Count > 0)
+        {
+            currentDayWeather = dayWeatherPresets[UnityEngine.Random.Range(0, dayWeatherPresets.Count)];
+            Debug.Log($"오늘의 낮 날씨: {currentDayWeather.presetName}");
+        }
+        if (nightWeatherPresets.Count > 0)
+        {
+            currentNightWeather = nightWeatherPresets[UnityEngine.Random.Range(0, nightWeatherPresets.Count)];
+            Debug.Log($"오늘의 밤 날씨: {currentNightWeather.presetName}");
+        }
+    }
+
     private void HandleHunger()
     {
-        if (playerHealth == null) return;
+        if (playerHealth == null || !isGameStarted) return;
 
         hungerTimer -= Time.deltaTime;
         if (hungerTimer <= 0f)
         {
-            // 확률 체크
             if (UnityEngine.Random.value < hungerDecreaseChance)
             {
                 playerHealth.DecreaseHunger(hungerDecreaseAmount);
-                Debug.Log($"Hunger decreased by {hungerDecreaseAmount}. Current Hunger: {playerHealth.currentHunger}");
             }
-            hungerTimer = hungerDecreaseInterval; // 타이머 리셋
+            hungerTimer = hungerDecreaseInterval;
         }
     }
 
     private void StartDayTransition()
     {
-        if (lightingCoroutine != null) StopCoroutine(lightingCoroutine);
-        lightingCoroutine = StartCoroutine(TransitionLighting(false));
+        if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
+        transitionCoroutine = StartCoroutine(TransitionWeather(currentDayWeather));
     }
 
     private void StartNightTransition()
     {
-        if (lightingCoroutine != null) StopCoroutine(lightingCoroutine);
-        lightingCoroutine = StartCoroutine(TransitionLighting(true));
+        if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
+        transitionCoroutine = StartCoroutine(TransitionWeather(currentNightWeather));
     }
 
-    private void SetLightingImmediate(bool isNight)
+    private void SetWeatherImmediate(WeatherPreset preset)
     {
         if (sun == null) return;
-
-        if (isNight)
-        {
-            RenderSettings.ambientLight = nightAmbientColor;
-            sun.color = nightSunColor;
-            sun.intensity = nightSunIntensity;
-            sun.transform.rotation = Quaternion.Euler(nightSunRotation);
-        }
-        else
-        {
-            RenderSettings.ambientLight = dayAmbientColor;
-            sun.color = daySunColor;
-            sun.intensity = daySunIntensity;
-            sun.transform.rotation = Quaternion.Euler(daySunRotation);
-        }
+        
+        RenderSettings.ambientLight = preset.ambientColor;
+        sun.color = preset.sunColor;
+        sun.intensity = preset.sunIntensity;
+        sun.transform.rotation = Quaternion.Euler(preset.sunRotation);
+        RenderSettings.fogColor = preset.fogColor;
+        RenderSettings.fogDensity = preset.fogDensity;
     }
 
-    private IEnumerator TransitionLighting(bool isNight)
+    private IEnumerator TransitionWeather(WeatherPreset preset)
     {
         if (sun == null) yield break;
 
         float elapsedTime = 0f;
 
-        // 시작 값 저장
         Color startAmbient = RenderSettings.ambientLight;
         Color startSunColor = sun.color;
         float startSunIntensity = sun.intensity;
         Quaternion startSunRotation = sun.transform.rotation;
-
-        // 목표 값 설정
-        Color targetAmbient = isNight ? nightAmbientColor : dayAmbientColor;
-        Color targetSunColor = isNight ? nightSunColor : daySunColor;
-        float targetSunIntensity = isNight ? nightSunIntensity : daySunIntensity;
-        Quaternion targetSunRotation = Quaternion.Euler(isNight ? nightSunRotation : daySunRotation);
+        Color startFogColor = RenderSettings.fogColor;
+        float startFogDensity = RenderSettings.fogDensity;
 
         while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / transitionDuration;
 
-            // 값들을 부드럽게 보간
-            RenderSettings.ambientLight = Color.Lerp(startAmbient, targetAmbient, progress);
-            sun.color = Color.Lerp(startSunColor, targetSunColor, progress);
-            sun.intensity = Mathf.Lerp(startSunIntensity, targetSunIntensity, progress);
-            sun.transform.rotation = Quaternion.Slerp(startSunRotation, targetSunRotation, progress);
+            RenderSettings.ambientLight = Color.Lerp(startAmbient, preset.ambientColor, progress);
+            sun.color = Color.Lerp(startSunColor, preset.sunColor, progress);
+            sun.intensity = Mathf.Lerp(startSunIntensity, preset.sunIntensity, progress);
+            sun.transform.rotation = Quaternion.Slerp(startSunRotation, Quaternion.Euler(preset.sunRotation), progress);
+            RenderSettings.fogColor = Color.Lerp(startFogColor, preset.fogColor, progress);
+            RenderSettings.fogDensity = Mathf.Lerp(startFogDensity, preset.fogDensity, progress);
 
             yield return null;
         }
 
-        // 전환이 끝나면 목표 값으로 정확하게 설정
-        SetLightingImmediate(isNight);
+        SetWeatherImmediate(preset);
     }
 
     public float GetRemainingTime()

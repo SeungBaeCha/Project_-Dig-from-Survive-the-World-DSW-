@@ -46,6 +46,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 8922663090002104265, guid: 12f6f08378d668948ac0541a164ae921,
     type: 3}
-  spawnPoints: []
+  spawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   dayEnemyCount: 3
-  nightEnemyCount: 10
+  initialNightEnemyCount: 10
+  minEnemiesToAddPerDay: 1
+  maxEnemiesToAddPerDay: 3

@@ -355,7 +355,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
@@ -395,10 +395,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   hpBar: {fileID: 1212911363011628960}
-  detectionRadius: 15
+  detectionRadius: 8
   chaseSpeed: 3
-  speedRandomness: 1
-  chaseDestinationRadius: 100
   attackDamage: 10
   attackCooldown: 2
   attackDistance: 1
@@ -421,6 +419,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2677427918973579582, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 5254c1aa16298ee4eae4f5f6c25a257a, type: 2}
     - target: {fileID: 2677427918973579582, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
         type: 3}
       propertyPath: m_FillCenter
@@ -536,6 +539,11 @@ PrefabInstance:
       propertyPath: m_Maskable
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5581203980662448195, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 5254c1aa16298ee4eae4f5f6c25a257a, type: 2}
     - target: {fileID: 5581203980662448195, guid: 746e5de42f3e3b742ae50faa98d2c4ff,
         type: 3}
       propertyPath: m_FillCenter

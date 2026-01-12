@@ -1,37 +1,38 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic; // List를 사용하기 위해 추가
 using TMPro;
 
 /// <summary>
-/// 게임의 전반적인 UI (인벤토리, 제작 창)를 관리하고 입력 처리하는 싱글턴 매니저.
+/// 게임의 전반적인 UI (인벤토리, 제작 창, HUD 등)를 관리하고 입력 처리하는 싱글턴 매니저.
 /// </summary>
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
-    [Header("관리할 UI 창")]
-    [Tooltip("인벤토리 UI를 관리하는 InventoryUI 스크립트")]
+    [Header("UI 창")]
     [SerializeField] private InventoryUI inventoryUI;
-    [Tooltip("제작 창 UI를 관리하는 CraftingWindow 스크립트")]
     [SerializeField] private CraftingWindow craftingWindow;
 
+    [Header("튜토리얼 (여러 페이지)")]
+    [SerializeField] private GameObject tutorialContainer; // 튜토리얼 페이지들의 부모 오브젝트
+    [SerializeField] private List<GameObject> tutorialPages; // 튜토리얼 페이지들
+    private int currentPageIndex = 0;
+
+    [Header("게임 HUD")]
+    [SerializeField] private GameObject gameHUD; // 체력, 배고픔, 크로스헤어 등을 포함하는 HUD
+
     [Header("알림 메시지")]
-    [Tooltip("화면에 일시 표시할 알림 메시지 TextMeshPro UI")]
     [SerializeField] private TextMeshProUGUI notificationText;
     
-    /// <summary>
-    /// UI 창(인벤토리, 제작 창 등) 중 하나라도 열려있는지 여부를 나타낸다.
-    /// 다른 스크립트에서 플레이어 입력 등을 막는 데 사용된다.
-    /// </summary>
     public static bool IsUIOpen { get; private set; }
 
     private PlayerInputActions inputActions;
-    private Coroutine notificationCoroutine; // 현재 실행 중인 알림 코루틴 참조
+    private Coroutine notificationCoroutine;
 
     private void Awake()
     {
-        // 싱글턴 패턴
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -50,15 +51,16 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        // 게임 시작 시 알림 텍스트를 비활성화한다.
-        if (notificationText != null)
-        {
-            notificationText.gameObject.SetActive(false);
-        }
-        // 게임 시작 시 커서를 숨기고 잠근다.
-        UpdateCursorAndGameState();
-    }
+        // 게임 시작 시 모든 UI를 꺼둔다.
+        if (tutorialContainer != null) tutorialContainer.SetActive(false);
+        if (gameHUD != null) gameHUD.SetActive(false);
+        if (notificationText != null) notificationText.gameObject.SetActive(false);
     
+        // 게임 시작 시에는 커서를 보이지 않게 잠금
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     private void OnEnable()
     {
         inputActions.Player.Enable();
@@ -68,17 +70,72 @@ public class UIManager : MonoBehaviour
     {
         inputActions.Player.Disable();
     }
-    
+
+    #region 튜토리얼 관련 메서드
+
     /// <summary>
-    /// 화면에 짧은 알림 메시지를 표시한다.
+    /// 튜토리얼 시퀀스를 시작한다.
     /// </summary>
-    /// <param name="message">표시할 메시지</param>
-    /// <param name="duration">메시지 표시 시간(초)</param>
+    public void StartTutorial()
+    {
+        if (tutorialContainer == null || tutorialPages.Count == 0) return;
+
+        currentPageIndex = 0;
+        tutorialContainer.SetActive(true);
+        
+        // 모든 페이지를 일단 끈 후, 첫 페이지만 활성화
+        for (int i = 0; i < tutorialPages.Count; i++)
+        {
+            tutorialPages[i].SetActive(i == currentPageIndex);
+        }
+        
+        if (gameHUD != null) gameHUD.SetActive(false);
+        UpdateCursorAndGameState();
+    }
+
+    /// <summary>
+    /// '다음' 버튼으로 호출. 다음 튜토리얼 페이지를 보여준다.
+    /// </summary>
+    public void ShowNextPage()
+    {
+        if (currentPageIndex < tutorialPages.Count - 1)
+        {
+            tutorialPages[currentPageIndex].SetActive(false);
+            currentPageIndex++;
+            tutorialPages[currentPageIndex].SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// '이전' 버튼으로 호출. 이전 튜토리얼 페이지를 보여준다.
+    /// </summary>
+    public void ShowPreviousPage()
+    {
+        if (currentPageIndex > 0)
+        {
+            tutorialPages[currentPageIndex].SetActive(false);
+            currentPageIndex--;
+            tutorialPages[currentPageIndex].SetActive(true);
+        }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 튜토리얼 종료 후 메인 게임 HUD를 표시한다.
+    /// </summary>
+    public void ShowGameHUD()
+    {
+        if (tutorialContainer != null) tutorialContainer.SetActive(false);
+        if (gameHUD != null) gameHUD.SetActive(true);
+    
+        UpdateCursorAndGameState();
+    }
+
     public void ShowNotification(string message, float duration = 2f)
     {
-        if (notificationText == null) return;
+        if (notificationText == null || !GameManager.Instance.isGameStarted) return;
 
-        // 이전에 실행 중인 알림 코루틴이 있다면 중지한다.
         if (notificationCoroutine != null)
         {
             StopCoroutine(notificationCoroutine);
@@ -86,30 +143,20 @@ public class UIManager : MonoBehaviour
         
         notificationText.text = message;
         notificationText.gameObject.SetActive(true);
-
-        // 새 알림 코루틴 시작
         notificationCoroutine = StartCoroutine(NotificationCoroutine(duration));
     }
 
-    /// <summary>
-    /// 알림 메시지를 일시 보여주고 서서히 사라지게 하는 코루틴.
-    /// </summary>
     private IEnumerator NotificationCoroutine(float duration)
     {
-        // 텍스트를 완전히 보이게 설정
         notificationText.color = new Color(notificationText.color.r, notificationText.color.g, notificationText.color.b, 1);
-        
-        // 지정된 시간의 절반만큼 대기
         yield return new WaitForSeconds(duration / 2);
 
-        // 서서히 사라지는 효과
         float fadeDuration = duration / 2;
         float timer = 0;
         Color startColor = notificationText.color;
 
         while (timer < fadeDuration)
         {
-            // 게임이 멈춰도 UI가 작동하도록 unscaledDeltaTime 사용
             timer += Time.unscaledDeltaTime; 
             float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
             notificationText.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
@@ -121,23 +168,25 @@ public class UIManager : MonoBehaviour
 
     private void ToggleInventory()
     {
-        // Tab 키를 누르면 인벤토리만 토글한다.
+        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
         inventoryUI.ToggleWindow();
         UpdateCursorAndGameState();
     }
 
     private void ToggleCrafting()
     {
-        // C 키를 누르면 제작 창만 토글한다.
+        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
         craftingWindow.Toggle();
         UpdateCursorAndGameState();
     }
 
     private void Update()
     {
-        // 'ESC' 키를 누르면 모든 창을 닫는다.
+        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // 튜토리얼 패널은 ESC로 닫지 않는다.
             if (inventoryUI.IsOpen())
             {
                 inventoryUI.ToggleWindow(false);
@@ -150,23 +199,19 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// UI 창의 열림 상태에 따라 게임 시간, 마우스 커서 상태를 업데이트한다.
-    /// </summary>
     private void UpdateCursorAndGameState()
     {
-        IsUIOpen = inventoryUI.IsOpen() || craftingWindow.IsOpen();
+        // 튜토리얼 컨테이너가 활성화되어 있는지도 UI 열림 상태에 포함시킨다.
+        IsUIOpen = inventoryUI.IsOpen() || craftingWindow.IsOpen() || (tutorialContainer != null && tutorialContainer.activeSelf);
 
         if (IsUIOpen)
         {
-            // 창이 하나라도 열려있으면 게임 시간을 멈추고 커서를 보이게 한다.
             Time.timeScale = 0f;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
-            // 모든 창이 닫혀있으면 게임 시간을 원래대로 돌리고 커서를 숨긴다.
             Time.timeScale = 1f;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
