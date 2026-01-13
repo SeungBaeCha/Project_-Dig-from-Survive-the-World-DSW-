@@ -17,7 +17,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private int maxEnemiesToAddPerDay; // 매일 최대로 추가될 적의 수
     
     private int currentNightEnemyCount; // 현재 밤에 생성할 적의 수
-    private List<GameObject> activeEnemies = new List<GameObject>();
+    private List<Enemy> activeEnemies = new List<Enemy>(); // GameObject 대신 Enemy 컴포넌트를 저장
 
     void Awake()
     {
@@ -46,6 +46,17 @@ public class EnemyManager : MonoBehaviour
         // GameManager의 이벤트 구독 해제
         GameManager.OnDayStart -= HandleDayStart;
         GameManager.OnNightStart -= HandleNightStart;
+    }
+
+    /// <summary>
+    /// 외부에서 활성화된 적 리스트를 안전하게 받아갈 수 있는 public 함수
+    /// </summary>
+    /// <returns>현재 씬에 활성화된 적(Enemy)의 리스트</returns>
+    public List<Enemy> GetActiveEnemies()
+    {
+        // 리스트를 반환하기 전에 파괴된(null) 적들을 제거하여 리스트를 정리
+        activeEnemies.RemoveAll(item => item == null);
+        return activeEnemies;
     }
 
     private void HandleDayStart()
@@ -96,8 +107,12 @@ public class EnemyManager : MonoBehaviour
             // 랜덤한 스폰 포인트를 선택
             Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
             // 적 생성 및 리스트에 추가
-            GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-            activeEnemies.Add(enemy);
+            GameObject enemyObject = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
+            if (enemyComponent != null)
+            {
+                activeEnemies.Add(enemyComponent);
+            }
         }
     }
 
@@ -108,7 +123,7 @@ public class EnemyManager : MonoBehaviour
         {
             if (enemy != null)
             {
-                Destroy(enemy);
+                Destroy(enemy.gameObject); // Enemy 컴포넌트가 아닌 GameObject를 파괴
             }
         }
         activeEnemies.Clear();

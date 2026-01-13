@@ -65,6 +65,10 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
         if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
 
+        // 첫 공격이 즉시 가능하도록 lastAttackTime을 초기화합니다.
+        // 이렇게 하면 게임 시작 후 플레이어가 처음 공격 범위에 들어왔을 때 바로 공격할 수 있습니다.
+        lastAttackTime = -attackCooldown;
+
         Transform eyesTransform = transform.Find("Eyes");
         if (eyesTransform != null) eyesRenderer = eyesTransform.GetComponent<MeshRenderer>();
         
