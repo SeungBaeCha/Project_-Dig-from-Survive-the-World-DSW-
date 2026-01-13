@@ -132,43 +132,56 @@ public class InventoryUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 인벤토리 슬롯이 오른쪽 클릭되었을 때 아이템을 버리는 함수.
+    /// 인벤토리 슬롯이 오른쪽 클릭되었을 때 아이템을 사용하거나 버리는 함수.
     /// </summary>
     public void OnSlotRightClicked(InventorySlot clickedSlot)
     {
-        // 클릭된 슬롯, 아이템, 아이템 프리팹이 유효한지 확인
+        // 클릭된 슬롯이나 아이템이 유효하지 않으면 아무것도 하지 않음
         if (clickedSlot.currentStack == null || clickedSlot.currentStack.item == null) return;
         
-        ItemData itemToDrop = clickedSlot.currentStack.item;
-        if (itemToDrop.itemPrefab == null)
+        ItemData clickedItem = clickedSlot.currentStack.item;
+
+        // 1. 아이템이 소모품(ConsumableData)인지 확인
+        if (clickedItem is ConsumableData consumable)
         {
-            Debug.LogWarning($"'{itemToDrop.itemName}' 아이템은 월드에 버릴 수 있는 프리팹이 없다.");
-            return;
+            // 플레이어의 PlayerHealth 컴포넌트를 찾아서 아이템 사용 함수 호출
+            PlayerHealth playerHealth = playerInventory.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.UseConsumable(consumable);
+                // 인벤토리에서 아이템 1개 제거
+                playerInventory.RemoveItem(clickedItem, 1);
+            }
         }
-
-        // --- 아이템을 월드에 생성 ---
-        // 플레이어의 위치를 기준으로 아이템을 생성. 약간 앞쪽에 생성하여 플레이어와 겹치지 않게 한다.
-        Transform playerTransform = playerInventory.transform;
-        Vector3 spawnPosition = playerTransform.position + playerTransform.forward * 1.5f;
-
-        // 1. 프리팹으로부터 아이템 게임오브젝트를 생성한다.
-        GameObject droppedItemGO = Instantiate(itemToDrop.itemPrefab, spawnPosition, Quaternion.identity);
-        
-        // 2. 생성된 아이템의 이름표(Billboard)를 활성화한다.
-        Billboard billboard = droppedItemGO.GetComponentInChildren<Billboard>(true);
-        if (billboard != null)
+        // 2. 소모품이 아닐 경우, 기존의 버리기 로직 실행
+        else
         {
-            billboard.gameObject.SetActive(true);
-        }
+            if (clickedItem.itemPrefab == null)
+            {
+                Debug.LogWarning($"'{clickedItem.itemName}' 아이템은 월드에 버릴 수 있는 프리팹이 없습니다.");
+                return;
+            }
 
-        // 3. 생성된 아이템의 'ItemRotator' 컴포넌트를 찾아 활성화한다.
-        ItemRotator rotator = droppedItemGO.GetComponent<ItemRotator>();
-        if (rotator != null)
-        {
-            rotator.enabled = true;
-        }
+            // --- 아이템을 월드에 생성 ---
+            Transform playerTransform = playerInventory.transform;
+            Vector3 spawnPosition = playerTransform.position + playerTransform.forward * 1.5f;
 
-        // --- 인벤토리에서 아이템 제거 ---
-        playerInventory.RemoveItem(itemToDrop, 1);
+            GameObject droppedItemGO = Instantiate(clickedItem.itemPrefab, spawnPosition, Quaternion.identity);
+            
+            Billboard billboard = droppedItemGO.GetComponentInChildren<Billboard>(true);
+            if (billboard != null)
+            {
+                billboard.gameObject.SetActive(true);
+            }
+
+            ItemRotator rotator = droppedItemGO.GetComponent<ItemRotator>();
+            if (rotator != null)
+            {
+                rotator.enabled = true;
+            }
+
+            // --- 인벤토리에서 아이템 제거 ---
+            playerInventory.RemoveItem(clickedItem, 1);
+        }
     }
 }

@@ -115,6 +115,42 @@ public class PlayerHealth : MonoBehaviour
         {
             currentHunger = 0;
         }
+        
+        // 허기 UI 업데이트
+        if (hpBar != null)
+        {
+            hpBar.UpdateHunger(currentHunger, maxHunger);
+        }
+    }
+
+    /// <summary>
+    /// 소모품 아이템을 사용해서 체력과 허기를 회복합니다.
+    /// </summary>
+    /// <param name="consumable">사용할 아이템의 ConsumableData</param>
+    public void UseConsumable(ConsumableData consumable)
+    {
+        // 체력 회복
+        if (consumable.healthToRestore > 0)
+        {
+            currentHealth += consumable.healthToRestore;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // 최대 체력을 넘지 않도록
+            Debug.Log($"체력을 {consumable.healthToRestore}만큼 회복했습니다. 현재 체력: {currentHealth}");
+        }
+
+        // 허기 회복
+        if (consumable.hungerToRestore > 0)
+        {
+            currentHunger += consumable.hungerToRestore;
+            currentHunger = Mathf.Clamp(currentHunger, 0, maxHunger); // 최대 허기를 넘지 않도록
+            Debug.Log($"허기를 {consumable.hungerToRestore}만큼 회복했습니다. 현재 허기: {currentHunger}");
+        }
+
+        // UI 업데이트
+        if (hpBar != null)
+        {
+            hpBar.UpdateHP(currentHealth, maxHealth);
+            hpBar.UpdateHunger(currentHunger, maxHunger);
+        }
     }
 
     // 사망 처리 함수

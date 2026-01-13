@@ -1194,6 +1194,11 @@ PrefabInstance:
       propertyPath: weaponHold
       value: 
       objectReference: {fileID: 630478793}
+    - target: {fileID: 1683091240787579246, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2556229880400971679, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_Pivot.x
