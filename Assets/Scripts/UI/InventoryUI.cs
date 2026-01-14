@@ -17,7 +17,7 @@ public class InventoryUI : MonoBehaviour
 
     [Header("연결될 시스템")]
     [Tooltip("플레이어의 실제 인벤토리 데이터")]
-    [SerializeField] private Inventory playerInventory;
+    [SerializeField] public Inventory playerInventory;
     [Tooltip("아이템을 전달할 조합 창")]
     [SerializeField] private CraftingWindow craftingWindow;
     

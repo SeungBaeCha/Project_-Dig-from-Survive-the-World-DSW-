@@ -141,13 +141,32 @@ public class WeaponHold : MonoBehaviour
         }
     }
 
+    [Header("상호작용 설정")]
+    [SerializeField] private float interactionDistance = 2f; // 상호작용 가능 거리
+    [SerializeField] private LayerMask interactableLayer; // 상호작용할 레이어
+
     /// <summary>
-    /// 무기 장착 입력 처리.
+    /// 무기 장착 입력 처리. F키를 누르면 상호작용 또는 무기 장착을 시도한다.
     /// </summary>
     public void OnEquip(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
 
+        // 최우선 순위: 상자 열기 시도
+        // 플레이어 주변의 일정 반경 안에 있는 모든 콜라이더를 감지한다.
+        Collider[] colliders = Physics.OverlapSphere(transform.position, interactionDistance, interactableLayer);
+        foreach (var col in colliders)
+        {
+            // 감지된 콜라이더에서 LootBox 컴포넌트를 찾는다.
+            if (col.TryGetComponent<LootBox>(out var lootBox))
+            {
+                // LootBox를 찾았다면, 상자를 열고 함수를 즉시 종료한다. (무기 장착 로직을 실행하지 않음)
+                lootBox.OpenBox();
+                return; // 상자를 열었으므로 더 이상 다른 동작을 하지 않음
+            }
+        }
+
+        // 상자가 근처에 없을 때만 무기 줍기/교체 로직 실행
         if (nearbyWeapon != null)
         {
             if (isEquipped)

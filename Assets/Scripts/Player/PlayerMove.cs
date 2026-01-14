@@ -42,8 +42,8 @@ public class PlayerMove : MonoBehaviour
     // InputActions의 Move 액션에서 호출
     public void OnMove(InputAction.CallbackContext context)
     {
-        // UI가 열려있으면 입력을 무시한다.
-        if (UIManager.IsUIOpen)
+        // 게임이 실제로 일시정지 상태일 때만 입력을 무시한다.
+        if (UIManager.IsGamePaused)
         {
             moveInput = Vector2.zero; // 움직임 입력을 0으로 초기화
             return;

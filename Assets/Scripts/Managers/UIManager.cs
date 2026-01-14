@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     [Header("UI 창")]
-    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] public InventoryUI inventoryUI;
     [SerializeField] private CraftingWindow craftingWindow;
 
     [Header("튜토리얼 (여러 페이지)")]
@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI notificationText;
     
     public static bool IsUIOpen { get; private set; }
+    public static bool IsGamePaused { get; private set; }
 
     private PlayerInputActions inputActions;
     private Coroutine notificationCoroutine;
@@ -199,20 +200,35 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void UpdateCursorAndGameState()
+    public void UpdateCursorAndGameState()
     {
-        // 튜토리얼 컨테이너가 활성화되어 있는지도 UI 열림 상태에 포함시킨다.
-        IsUIOpen = inventoryUI.IsOpen() || craftingWindow.IsOpen() || (tutorialContainer != null && tutorialContainer.activeSelf);
+        // --- 상태 정의 ---
+        // 1. 게임을 멈춰야 하는 경우: 인벤토리 또는 제작창이 열렸을 때
+        bool shouldPause = (inventoryUI != null && inventoryUI.IsOpen()) ||
+                             (craftingWindow != null && craftingWindow.IsOpen());
 
-        if (IsUIOpen)
+        // 2. 커서를 보여줘야 하는 경우: 게임을 멈추게 하는 UI가 열렸거나, 튜토리얼 또는 상자 UI가 열렸을 때
+        bool shouldShowCursor = shouldPause || 
+                                  (tutorialContainer != null && tutorialContainer.activeSelf) ||
+                                  (LootBoxUI.Instance != null && LootBoxUI.Instance.lootBoxWindow.activeSelf);
+
+        // IsUIOpen은 이제 커서가 보여야 하는 모든 경우를 의미 (플레이어의 다른 행동을 막기 위함)
+        IsUIOpen = shouldShowCursor;
+        // IsGamePaused는 실제로 게임 시간이 멈췄는지 여부를 의미
+        IsGamePaused = shouldPause;
+
+        // --- 상태 적용 ---
+        // 게임 시간 제어 (shouldPause 조건만 사용)
+        Time.timeScale = shouldPause ? 0f : 1f;
+
+        // 커서 제어 (shouldShowCursor 조건 사용)
+        if (shouldShowCursor)
         {
-            Time.timeScale = 0f;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
         else
         {
-            Time.timeScale = 1f;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
