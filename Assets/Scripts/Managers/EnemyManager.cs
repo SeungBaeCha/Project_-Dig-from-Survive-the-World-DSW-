@@ -34,19 +34,20 @@ public class EnemyManager : MonoBehaviour
         currentNightEnemyCount = initialNightEnemyCount;
     }
 
-    void OnEnable()
-    {
-        // GameManager의 이벤트에 구독
-        GameManager.OnDayStart += HandleDayStart;
-        GameManager.OnNightStart += HandleNightStart;
-    }
+    // OnEnable 및 OnDisable에서 GameManager 이벤트 구독을 제거.
+    // GameManager에서 직접 제어하도록 StartSpawning/StopSpawning 메서드를 사용한다.
+    // void OnEnable()
+    // {
+    //     GameManager.OnDayStart += HandleDayStart;
+    //     GameManager.OnNightStart += HandleNightStart;
+    // }
 
-    void OnDisable()
-    {
-        // GameManager의 이벤트 구독 해제
-        GameManager.OnDayStart -= HandleDayStart;
-        GameManager.OnNightStart -= HandleNightStart;
-    }
+    // void OnDisable()
+    // {
+    //     GameManager.OnDayStart -= HandleDayStart;
+    //     GameManager.OnNightStart -= HandleNightStart;
+    // }
+
 
     /// <summary>
     /// 외부에서 활성화된 적 리스트를 안전하게 받아갈 수 있는 public 함수
@@ -57,6 +58,28 @@ public class EnemyManager : MonoBehaviour
         // 리스트를 반환하기 전에 파괴된(null) 적들을 제거하여 리스트를 정리
         activeEnemies.RemoveAll(item => item == null);
         return activeEnemies;
+    }
+
+    /// <summary>
+    /// 적 생성 시스템을 시작하고 GameManager의 낮/밤 이벤트를 구독한다.
+    /// 이 메서드는 튜토리얼 종료 후 GameManager에서 호출된다.
+    /// </summary>
+    public void StartSpawning()
+    {
+        GameManager.OnDayStart += HandleDayStart;
+        GameManager.OnNightStart += HandleNightStart;
+        Debug.Log("Enemy Spawning Started.");
+    }
+
+    /// <summary>
+    /// 적 생성 시스템을 중지하고 GameManager의 낮/밤 이벤트 구독을 해제한다.
+    /// </summary>
+    public void StopSpawning()
+    {
+        GameManager.OnDayStart -= HandleDayStart;
+        GameManager.OnNightStart -= HandleNightStart;
+        ClearAllEnemies(); // 중지 시 모든 적 제거
+        Debug.Log("Enemy Spawning Stopped.");
     }
 
     private void HandleDayStart()

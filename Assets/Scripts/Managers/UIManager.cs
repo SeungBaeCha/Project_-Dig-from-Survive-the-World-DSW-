@@ -26,6 +26,10 @@ public class UIManager : MonoBehaviour
     [Header("알림 메시지")]
     [SerializeField] private TextMeshProUGUI notificationText;
     
+    [Header("보급 상자 알림")]
+    [SerializeField] private TextMeshProUGUI supplyBoxNotificationText;
+    private Coroutine supplyBoxNotificationCoroutine;
+    
     public static bool IsUIOpen { get; private set; }
     public static bool IsGamePaused { get; private set; }
 
@@ -56,6 +60,7 @@ public class UIManager : MonoBehaviour
         if (tutorialContainer != null) tutorialContainer.SetActive(false);
         if (gameHUD != null) gameHUD.SetActive(false);
         if (notificationText != null) notificationText.gameObject.SetActive(false);
+        if (supplyBoxNotificationText != null) supplyBoxNotificationText.gameObject.SetActive(false);
     
         // 게임 시작 시에는 커서를 보이지 않게 잠금
         Cursor.visible = false;
@@ -167,6 +172,51 @@ public class UIManager : MonoBehaviour
         notificationText.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// 보급 상자 생성 알림을 화면에 표시한다.
+    /// </summary>
+    /// <param name="message">표시할 메시지</param>
+    /// <param name="duration">메시지가 표시될 총 시간 (초)</param>
+    public void ShowSupplyBoxNotification(string message, float duration = 4f)
+    {
+        if (supplyBoxNotificationText == null)
+        {
+            Debug.LogWarning("Supply Box Notification Text가 지정되지 않아 알림을 표시할 수 없습니다.");
+            return;
+        }
+
+        if (supplyBoxNotificationCoroutine != null)
+        {
+            StopCoroutine(supplyBoxNotificationCoroutine);
+        }
+        
+        supplyBoxNotificationText.text = message;
+        supplyBoxNotificationText.gameObject.SetActive(true);
+        supplyBoxNotificationCoroutine = StartCoroutine(SupplyBoxNotificationCoroutine(duration));
+    }
+
+    private IEnumerator SupplyBoxNotificationCoroutine(float duration)
+    {
+        // 메시지 완전 불투명하게 시작
+        supplyBoxNotificationText.color = new Color(supplyBoxNotificationText.color.r, supplyBoxNotificationText.color.g, supplyBoxNotificationText.color.b, 1);
+        yield return new WaitForSeconds(duration / 2); // 절반 시간 동안은 불투명 유지
+
+        float fadeDuration = duration / 2;
+        float timer = 0;
+        Color startColor = supplyBoxNotificationText.color;
+
+        // 남은 절반 시간 동안 서서히 사라지게 함
+        while (timer < fadeDuration)
+        {
+            timer += Time.unscaledDeltaTime; 
+            float alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            supplyBoxNotificationText.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null;
+        }
+
+        supplyBoxNotificationText.gameObject.SetActive(false);
+    }
+
     private void ToggleInventory()
     {
         if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
@@ -203,9 +253,10 @@ public class UIManager : MonoBehaviour
     public void UpdateCursorAndGameState()
     {
         // --- 상태 정의 ---
-        // 1. 게임을 멈춰야 하는 경우: 인벤토리 또는 제작창이 열렸을 때
+        // 1. 게임을 멈춰야 하는 경우: 인벤토리 또는 제작창이 열렸을 때, 또는 튜토리얼이 활성화되었을 때
         bool shouldPause = (inventoryUI != null && inventoryUI.IsOpen()) ||
-                             (craftingWindow != null && craftingWindow.IsOpen());
+                             (craftingWindow != null && craftingWindow.IsOpen()) ||
+                             (tutorialContainer != null && tutorialContainer.activeSelf);
 
         // 2. 커서를 보여줘야 하는 경우: 게임을 멈추게 하는 UI가 열렸거나, 튜토리얼 또는 상자 UI가 열렸을 때
         bool shouldShowCursor = shouldPause || 

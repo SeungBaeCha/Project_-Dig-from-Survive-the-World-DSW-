@@ -129,6 +129,23 @@ public class InventoryUI : MonoBehaviour
         {
             playerInventory.UseItem(clickedItem); 
         }
+        // 아이템이 소모품(ConsumableData)인 경우 (왼쪽 클릭 시 사용)
+        else if (clickedItem is ConsumableData consumable)
+        {
+            // PlayerHealth 컴포넌트가 Inventory와 같은 GameObject에 있다고 가정
+            // (UIManager에 playerInventory를 연결할 때 Inventory 컴포넌트가 Player GameObject에 있으므로,
+            // GetComponent<PlayerHealth>()는 Player GameObject에서 PlayerHealth를 찾을 것이다.)
+            PlayerHealth playerHealth = playerInventory.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.UseConsumable(consumable);
+                playerInventory.RemoveItem(clickedItem, 1); // 사용했으니 인벤토리에서 1개 제거
+            }
+            else
+            {
+                Debug.LogWarning("플레이어의 PlayerHealth 컴포넌트를 찾을 수 없습니다. 소모품을 사용할 수 없습니다.");
+            }
+        }
     }
 
     /// <summary>
