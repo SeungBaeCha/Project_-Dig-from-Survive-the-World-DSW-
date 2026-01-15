@@ -284,4 +284,21 @@ public class UIManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
+
+    /// <summary>
+    /// 플레이어의 인벤토리, 제작 등 UI 관련 입력 액션을 비활성화한다.
+    /// 게임 오버와 같이 모든 플레이어 입력을 막아야 할 때 사용된다.
+    /// </summary>
+    public void DisablePlayerInput()
+    {
+        inputActions.Player.Disable();
+    }
+
+    /// <summary>
+    /// 플레이어의 인벤토리, 제작 등 UI 관련 입력 액션을 다시 활성화한다.
+    /// </summary>
+    public void EnablePlayerInput()
+    {
+        inputActions.Player.Enable();
+    }
 }

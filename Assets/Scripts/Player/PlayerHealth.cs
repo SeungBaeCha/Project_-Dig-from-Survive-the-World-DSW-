@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // SceneManagement를 사용하기 위해 추가
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -166,5 +167,48 @@ public class PlayerHealth : MonoBehaviour
 
         // 게임시간 멈추기
         Time.timeScale = 0f;
+
+        // 플레이어의 UI 입력 비활성화
+        UIManager.Instance.DisablePlayerInput();
+    }
+
+    /// <summary>
+    /// 게임 오버 후 게임을 재시작하는 함수.
+    /// 게임 재시작 버튼의 OnClick 이벤트에 연결된다.
+    /// </summary>
+    public void RestartGame()
+    {
+        // 게임 시간을 다시 정상으로 설정
+        Time.timeScale = 1f;
+
+        // 플레이어의 UI 입력을 다시 활성화
+        UIManager.Instance.EnablePlayerInput();
+
+        // 게임 오버 패널 비활성화
+        if (gameoverPanel != null)
+        {
+            gameoverPanel.SetActive(false);
+        }
+
+        // 현재 씬을 다시 로드하여 게임 재시작
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// 게임을 종료하는 함수.
+    /// 게임 종료 버튼의 OnClick 이벤트에 연결된다.
+    /// 에디터에서는 플레이 모드를 중지하고, 빌드에서는 애플리케이션을 종료한다.
+    /// </summary>
+    public void QuitGame()
+    {
+        Debug.Log("게임을 종료합니다.");
+
+#if UNITY_EDITOR
+        // 유니티 에디터에서 실행 중일 때는 플레이 모드를 중지
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // 빌드된 애플리케이션에서는 애플리케이션 종료
+        Application.Quit();
+#endif
     }
 }
