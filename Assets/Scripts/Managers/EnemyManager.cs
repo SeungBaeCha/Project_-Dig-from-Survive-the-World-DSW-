@@ -211,14 +211,40 @@ public class EnemyManager : MonoBehaviour
 
     private void ClearAllEnemies()
     {
-        // 생성된 모든 적을 파괴하고 리스트를 비움
+        List<Enemy> survivingEnemies = new List<Enemy>();
+
+        // 생성된 적들 중 밤을 생존할 수 있는 적들을 필터링
         foreach (var enemy in activeEnemies)
         {
-            if (enemy != null)
+            if (enemy != null && enemy.GetAssignedStats() != null)
             {
-                Destroy(enemy.gameObject); // Enemy 컴포넌트가 아닌 GameObject를 파괴
+                EnemyStats enemyStats = enemy.GetAssignedStats();
+                
+                // 생존 확률이 0보다 큰 경우에만 확률 계산
+                if (enemyStats.nightSurvivalChance > 0f)
+                {
+                    // 랜덤 값이 생존 확률보다 낮으면 생존
+                    if (UnityEngine.Random.value < enemyStats.nightSurvivalChance)
+                    {
+                        survivingEnemies.Add(enemy);
+                        // Debug.Log($"{enemy.gameObject.name} (ID: {enemy.GetInstanceID()})이(가) 확률({enemyStats.nightSurvivalChance*100}%)로 밤을 생존합니다.");
+                    }
+                    else
+                    {
+                        Destroy(enemy.gameObject); // 확률 실패로 파괴
+                    }
+                }
+                else // 생존 확률이 0이거나 음수인 경우 무조건 파괴
+                {
+                    Destroy(enemy.gameObject); // 밤을 생존할 수 없는 적은 파괴
+                }
             }
         }
+        
+        // activeEnemies 리스트를 생존한 적들로 업데이트
         activeEnemies.Clear();
+        activeEnemies.AddRange(survivingEnemies);
+        
+        // Debug.Log($"밤을 생존한 적: {activeEnemies.Count}마리");
     }
 }

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f687e23e7f7d7ea43b018f80811ce9e5, type: 3}
   m_Name: TankEnemy
   m_EditorClassIdentifier: 
-  maxHealth: 300
-  chaseSpeed: 2
-  attackDamage: 20
+  maxHealth: 400
+  chaseSpeed: 1.5
+  attackDamage: 30
   bodyColor: {r: 1, g: 0, b: 0.10779095, a: 1}
   scale: {x: 3, y: 3, z: 3}
   startDay: 3
   spawnChanceWeight: 3
+  nightSurvivalChance: 1

@@ -20,4 +20,9 @@ public class EnemyStats : ScriptableObject
     [Tooltip("스폰 가중치. 높을수록 등장할 확률이 높아짐.")]
     [Range(0.1f, 100f)]
     public float spawnChanceWeight = 1.0f;
+
+    [Header("생존 설정")]
+    [Tooltip("이 적이 밤이 되어도 살아남을 확률 (0.0 = 생존 불가, 1.0 = 100% 생존).")]
+    [Range(0f, 1f)]
+    public float nightSurvivalChance = 0f;
 }

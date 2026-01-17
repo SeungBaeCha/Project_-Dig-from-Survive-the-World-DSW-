@@ -19,3 +19,4 @@ MonoBehaviour:
   scale: {x: 0.02, y: 0.02, z: 0.02}
   startDay: 2
   spawnChanceWeight: 3
+  nightSurvivalChance: 0.1

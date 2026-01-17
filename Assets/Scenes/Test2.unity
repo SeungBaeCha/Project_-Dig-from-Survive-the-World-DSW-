@@ -427,7 +427,7 @@ PrefabInstance:
     - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
         type: 3}
       propertyPath: maxDayEnemiesToAddPerDay
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
         type: 3}

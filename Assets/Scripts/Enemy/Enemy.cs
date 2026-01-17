@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
     private float patrolSpeed;
     private float attackDamage;
     
+    private EnemyStats assignedStats; // 이 적에게 할당된 EnemyStats 참조 추가
+    
     [Header("UI")]
     public HPBar hpBar; // HP바 UI 참조
     private bool isDead = false;
@@ -73,6 +75,8 @@ public class Enemy : MonoBehaviour
     /// <param name="stats">적용할 능력치가 담긴 ScriptableObject</param>
     public void Initialize(EnemyStats stats)
     {
+        assignedStats = stats; // EnemyStats 참조 저장
+
         // ScriptableObject로부터 능력치 적용
         maxHealth = stats.maxHealth;
         chaseSpeed = stats.chaseSpeed;
@@ -98,6 +102,12 @@ public class Enemy : MonoBehaviour
         lastAttackTime = -attackCooldown;
 
         SwitchState(State.Patrolling);
+    }
+    
+    // 이 적의 EnemyStats를 외부에 노출하는 Public Getter
+    public EnemyStats GetAssignedStats()
+    {
+        return assignedStats;
     }
     
     void Update()
