@@ -24,7 +24,7 @@ MonoBehaviour:
   isAutomatic: 0
   pelletsPerShot: 5
   spreadAngle: 15
-  maxAmmo: 30
+  maxAmmo: 5
   ammoType: {fileID: 11400000, guid: a0b1c6d73d9fb9349b95081f71d02c4d, type: 2}
   bulletPrefab: {fileID: 5952692902546046483, guid: f14da2f334d3b4e4c9c865e04c11a89e,
     type: 3}

@@ -15,26 +15,26 @@ MonoBehaviour:
   items:
   - itemPrefab: {fileID: 7187320824981851257, guid: 9583d194449b4744d874b377263f6fc6,
       type: 3}
-    dropChance: 0.5
+    dropChance: 0.2
     minQuantity: 1
     maxQuantity: 1
   - itemPrefab: {fileID: 7187320824981851257, guid: b7f7f2d7cd2cc634883a3998d85e790c,
       type: 3}
-    dropChance: 0.1
+    dropChance: 0.05
     minQuantity: 1
     maxQuantity: 1
   - itemPrefab: {fileID: 7187320824981851257, guid: 241efff6892ad70458e105bd3cf24280,
       type: 3}
-    dropChance: 0.1
+    dropChance: 0.05
     minQuantity: 1
     maxQuantity: 1
   - itemPrefab: {fileID: 7187320824981851257, guid: 7646c8f57dc21b64fa59ef9f02cbbdb8,
       type: 3}
-    dropChance: 0.09
+    dropChance: 0.01
     minQuantity: 1
     maxQuantity: 1
   - itemPrefab: {fileID: 7187320824981851257, guid: 188c49c9b60c1ea4ab56b0da722d918e,
       type: 3}
-    dropChance: 0.07
+    dropChance: 0.009
     minQuantity: 1
     maxQuantity: 1

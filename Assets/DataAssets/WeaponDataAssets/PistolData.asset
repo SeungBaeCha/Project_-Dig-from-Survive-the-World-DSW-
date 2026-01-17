@@ -17,7 +17,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 677d950afd40f6941b7295fb4005c258, type: 3}
   itemPrefab: {fileID: 1694449805434718, guid: ebaf31feecf1c1e4b9fbd778e3937c9c, type: 3}
   recipeToUnlock: {fileID: 11400000, guid: 76c60a76cf1f7944b8194acf2f9f86fb, type: 2}
-  damage: 20
+  damage: 25
   range: 5
   fireRate: 3
   isAutomatic: 0

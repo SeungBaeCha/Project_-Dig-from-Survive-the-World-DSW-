@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 7380385421253639835}
   - component: {fileID: 8694451168102502949}
   - component: {fileID: 3060307304472082741}
-  - component: {fileID: 2952898232280826746}
+  - component: {fileID: 5939881474722030800}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -379,7 +379,7 @@ MonoBehaviour:
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   chaseColor: {r: 1, g: 0, b: 0, a: 1}
   enemyLootTable: {fileID: 11400000, guid: 44135b6a415598d4db0665513380ebf1, type: 2}
---- !u!136 &2952898232280826746
+--- !u!136 &5939881474722030800
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -398,7 +398,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
