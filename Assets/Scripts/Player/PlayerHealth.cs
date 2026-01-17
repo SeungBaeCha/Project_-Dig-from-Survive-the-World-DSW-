@@ -24,10 +24,11 @@ public class PlayerHealth : MonoBehaviour
 
         // 체력 초기화 및 HP바 업데이트
         currentHealth = maxHealth;
-        currentHunger = maxHunger; // 배고픔 초기화
+        // currentHunger = maxHunger; // 인스펙터에서 설정된 초기값을 사용하도록 변경
         if (hpBar != null)
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
+            hpBar.UpdateHunger(currentHunger, maxHunger); // 배고픔 UI도 시작 시 업데이트
         }
 
         // 시작할때 gameoverPanel이 꺼져있도록 처리

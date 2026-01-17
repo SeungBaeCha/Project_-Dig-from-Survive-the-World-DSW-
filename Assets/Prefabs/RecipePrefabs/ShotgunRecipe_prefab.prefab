@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 52339245762090666}
   - component: {fileID: 8366562186591101858}
   - component: {fileID: 3155960806127854848}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ShotgunRecipe_prefab
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: f0badea20494eb04bb03bf7540610433, type: 2}
-  lifeTime: 10
-  spawnForce: 0
+  lifeTime: 30
+  spawnForce: 0.5
 --- !u!114 &3155960806127854848
 MonoBehaviour:
   m_ObjectHideFlags: 0

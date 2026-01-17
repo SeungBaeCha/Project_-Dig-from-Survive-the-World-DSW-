@@ -70,7 +70,7 @@ public class Inventory : MonoBehaviour
             _stacks.Add(new InventoryStack(itemToAdd, quantity));
         }
 
-        Debug.Log($"{itemToAdd.itemName} {quantity}개를 인벤토리에 추가했다.");
+        //Debug.Log($"{itemToAdd.itemName} {quantity}개를 인벤토리에 추가했다.");
         
         // 인벤토리가 변경되었다고 모두에게 알림!
         onInventoryChanged?.Invoke();

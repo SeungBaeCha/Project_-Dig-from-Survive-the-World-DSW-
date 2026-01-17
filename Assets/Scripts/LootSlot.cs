@@ -59,8 +59,8 @@ public class LootSlot : MonoBehaviour, IPointerClickHandler
     /// <param name="eventData">클릭 이벤트 데이터</param>
     public void OnPointerClick(PointerEventData eventData)
     {
-        // 더블클릭인지 확인하고, 슬롯에 아이템이 있는지 확인
-        if (eventData.clickCount == 2 && item != null)
+        // 단일 왼쪽 클릭인지 확인하고, 슬롯에 아이템이 있는지 확인
+        if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 1 && item != null)
         {
             // 실제 아이템 이동 로직은 LootBoxUI에 위임한다.
             LootBoxUI.Instance.AttemptTransferItem(item, sourceLootBox);

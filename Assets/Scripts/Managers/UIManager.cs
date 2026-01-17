@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     [Header("UI 창")]
     [SerializeField] public InventoryUI inventoryUI;
     [SerializeField] private CraftingWindow craftingWindow;
+    [SerializeField] private SettingsMenu settingsMenu; // 설정 메뉴 참조 추가
 
     [Header("튜토리얼 (여러 페이지)")]
     [SerializeField] private GameObject tutorialContainer; // 튜토리얼 페이지들의 부모 오브젝트
@@ -177,7 +178,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="message">표시할 메시지</param>
     /// <param name="duration">메시지가 표시될 총 시간 (초)</param>
-    public void ShowSupplyBoxNotification(string message, float duration = 4f)
+    /// <param name="resetTimer">true일 경우, 기존 알림 코루틴을 중단하고 타이머를 리셋한다. false일 경우, 텍스트만 업데이트하고 기존 타이머를 유지한다.</param>
+    public void ShowSupplyBoxNotification(string message, float duration = 4f, bool resetTimer = true)
     {
         if (supplyBoxNotificationText == null)
         {
@@ -185,14 +187,23 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        if (supplyBoxNotificationCoroutine != null)
-        {
-            StopCoroutine(supplyBoxNotificationCoroutine);
-        }
-        
         supplyBoxNotificationText.text = message;
         supplyBoxNotificationText.gameObject.SetActive(true);
-        supplyBoxNotificationCoroutine = StartCoroutine(SupplyBoxNotificationCoroutine(duration));
+        
+        // resetTimer가 true이거나 기존 코루틴이 없으면 새로 시작하거나 다시 시작
+        if (resetTimer || supplyBoxNotificationCoroutine == null)
+        {
+            if (supplyBoxNotificationCoroutine != null)
+            {
+                StopCoroutine(supplyBoxNotificationCoroutine);
+            }
+            supplyBoxNotificationCoroutine = StartCoroutine(SupplyBoxNotificationCoroutine(duration));
+        }
+        else
+        {
+            // resetTimer가 false이고 기존 코루틴이 있으면 텍스트만 업데이트하고 타이머는 유지
+            // 이 경우, 코루틴은 이미 실행 중이므로 아무것도 할 필요 없음
+        }
     }
 
     private IEnumerator SupplyBoxNotificationCoroutine(float duration)
@@ -233,29 +244,34 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+        if (GameManager.Instance != null && !GameManager.Instance.isGameStarted) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // 튜토리얼 패널은 ESC로 닫지 않는다.
-            if (inventoryUI.IsOpen())
+            // 다른 UI 창이 열려있으면 그것부터 닫는다.
+            if (inventoryUI != null && inventoryUI.IsOpen())
             {
                 inventoryUI.ToggleWindow(false);
             }
-            if (craftingWindow.IsOpen())
+            else if (craftingWindow != null && craftingWindow.IsOpen())
             {
                 craftingWindow.ToggleWindow(false);
             }
-            UpdateCursorAndGameState();
+            // 닫을 다른 창이 없다면 설정 메뉴를 토글한다.
+            else if (settingsMenu != null)
+            {
+                settingsMenu.TogglePanel();
+            }
         }
     }
 
     public void UpdateCursorAndGameState()
     {
         // --- 상태 정의 ---
-        // 1. 게임을 멈춰야 하는 경우: 인벤토리 또는 제작창이 열렸을 때, 또는 튜토리얼이 활성화되었을 때
+        // 1. 게임을 멈춰야 하는 경우: 인벤토리, 제작창, 또는 설정 메뉴가 열렸을 때, 또는 튜토리얼이 활성화되었을 때
         bool shouldPause = (inventoryUI != null && inventoryUI.IsOpen()) ||
                              (craftingWindow != null && craftingWindow.IsOpen()) ||
+                             (settingsMenu != null && settingsMenu.IsOpen()) ||
                              (tutorialContainer != null && tutorialContainer.activeSelf);
 
         // 2. 커서를 보여줘야 하는 경우: 게임을 멈추게 하는 UI가 열렸거나, 튜토리얼 또는 상자 UI가 열렸을 때

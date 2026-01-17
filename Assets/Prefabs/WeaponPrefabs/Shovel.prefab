@@ -276,7 +276,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   digDistance: 3
   diggableTag: Diggable
-  digEffectPrefab: {fileID: 0}
 --- !u!54 &6270172714615825537
 Rigidbody:
   m_ObjectHideFlags: 0

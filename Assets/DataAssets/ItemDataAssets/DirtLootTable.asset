@@ -17,9 +17,9 @@ MonoBehaviour:
       type: 3}
     dropChance: 0.5
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 4
   - itemPrefab: {fileID: 7869236433036158562, guid: 9a17632e7173a9f46b6d3cee4b09d833,
       type: 3}
-    dropChance: 0.3
+    dropChance: 0.4
     minQuantity: 1
-    maxQuantity: 2
+    maxQuantity: 3

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -6438185058208631259}
   - component: {fileID: 5773685730736162095}
   - component: {fileID: 7012316079579511842}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SMGRecipe_prefab
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 2e51fdd7dd81e9049aaf97785ee37380, type: 2}
-  lifeTime: 10
-  spawnForce: 0
+  lifeTime: 30
+  spawnForce: 0.5
 --- !u!114 &7012316079579511842
 MonoBehaviour:
   m_ObjectHideFlags: 0

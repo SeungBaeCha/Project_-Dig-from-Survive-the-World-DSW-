@@ -337,6 +337,7 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 62224f4a3c11dce4e83ef71e51182e0d, type: 2}
   firePoint: {fileID: 7389543543390090204}
   currentAmmo: 0
+  playerInventory: {fileID: 0}
 --- !u!1 &1927369336514790
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +521,7 @@ PrefabInstance:
     - target: {fileID: 2483594450215666617, guid: fbc749bc9d6f1ac4fa6d5d0a73ab64b8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2629667796569561744, guid: fbc749bc9d6f1ac4fa6d5d0a73ab64b8,
         type: 3}

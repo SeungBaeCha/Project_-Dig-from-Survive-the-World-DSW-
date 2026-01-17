@@ -85,4 +85,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 5306552245824113951}
   craftingWindow: {fileID: 0}
+  settingsMenu: {fileID: 0}
+  tutorialContainer: {fileID: 0}
+  tutorialPages:
+  - {fileID: 0}
+  - {fileID: 0}
+  gameHUD: {fileID: 0}
   notificationText: {fileID: 0}
+  supplyBoxNotificationText: {fileID: 0}

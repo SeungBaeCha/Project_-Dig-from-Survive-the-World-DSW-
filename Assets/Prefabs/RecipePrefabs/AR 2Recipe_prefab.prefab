@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9093548793735408653}
   - component: {fileID: 7680192384607868514}
   - component: {fileID: 607463849615514729}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AR 2Recipe_prefab
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 39a779db066624842b42da4177f9c242, type: 2}
-  lifeTime: 10
-  spawnForce: 0
+  lifeTime: 30
+  spawnForce: 0.5
 --- !u!114 &607463849615514729
 MonoBehaviour:
   m_ObjectHideFlags: 0

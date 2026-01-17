@@ -65,7 +65,7 @@ public class HungerVisuals : MonoBehaviour
             colorAdjustments.saturation.value = 0; // 채도를 약간 주어 붉은색이 보이게 함
             colorAdjustments.colorFilter.value = new Color(1f, 0.2f, 0.2f, 1f); // 붉은색 필터
         }
-        else if (hungerPercent < 0.4f)
+        else if (hungerPercent <= 0.4f)
         {
             // 40% 미만일 때 점차 흑백으로 변경
             // 40%일때 1, 0%일때 0이 되는 값을 계산

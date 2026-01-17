@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -548060435565198516}
   - component: {fileID: -155699598238664959}
   - component: {fileID: -625634899211241467}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PistolRecipe_prefab
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: a1b9c8cc2197f2344a75e3137225aa60, type: 2}
-  lifeTime: 10
-  spawnForce: 0
+  lifeTime: 30
+  spawnForce: 0.5
 --- !u!114 &-625634899211241467
 MonoBehaviour:
   m_ObjectHideFlags: 0

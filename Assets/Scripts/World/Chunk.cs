@@ -35,7 +35,7 @@ public class Chunk : MonoBehaviour
         // 데미지를 받으면 파티클 이펙트를 생성한다.
         if (digEffectPrefab != null)
         {
-            Debug.Log("Chunk: 이펙트 프리팹 할당됨! 이펙트를 생성합니다.");
+            //Debug.Log("Chunk: 이펙트 프리팹 할당됨! 이펙트를 생성합니다.");
             Instantiate(digEffectPrefab, transform.position, Quaternion.identity);
         }
         else

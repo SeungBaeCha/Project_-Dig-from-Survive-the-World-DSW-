@@ -370,15 +370,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9956b254ec0bac94f9d894112bed9ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
   hpBar: {fileID: 1212911363011628960}
   detectionRadius: 8
-  chaseSpeed: 3
-  attackDamage: 10
   attackCooldown: 2
   attackDistance: 1.5
-  patrolRadius: 10
-  patrolSpeed: 3
+  patrolRadius: 15
   patrolWaitTime: 3
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   chaseColor: {r: 1, g: 0, b: 0, a: 1}

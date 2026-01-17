@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7532030524091046194}
   - component: {fileID: 6587928827319878631}
   - component: {fileID: 842723198153729037}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EndARRecipe_prefab
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 5fb402611d4db084d98d7f2db2466ec5, type: 2}
-  lifeTime: 10
-  spawnForce: 0
+  lifeTime: 30
+  spawnForce: 0.5
 --- !u!114 &842723198153729037
 MonoBehaviour:
   m_ObjectHideFlags: 0

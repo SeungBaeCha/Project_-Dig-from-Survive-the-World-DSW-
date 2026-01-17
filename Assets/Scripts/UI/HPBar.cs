@@ -19,8 +19,8 @@ public class HPBar : MonoBehaviour
     {
         if (hpSlider != null)
         {
-            // 슬라이더의 값은 0과 1 사이여야 하므로, 현재 체력을 최대 체력으로 나눈다.
-            hpSlider.value = currentHealth / maxHealth;
+            hpSlider.maxValue = maxHealth; // 최대 체력 설정
+            hpSlider.value = currentHealth; // 현재 체력 설정
         }
 
         if (hpText != null)
@@ -36,7 +36,8 @@ public class HPBar : MonoBehaviour
     {
         if (hungerSlider != null)
         {
-            hungerSlider.value = currentHunger / maxHunger;
+            hungerSlider.maxValue = maxHunger; // 최대 허기 설정
+            hungerSlider.value = currentHunger; // 현재 허기 설정
         }
 
         if (hungerText != null)

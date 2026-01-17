@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Food
   description: "\uD5C8\uAE30\uB97C \uCC44\uC6CC\uC904 \uC74C\uC2DD"
   icon: {fileID: 21300000, guid: 66cdcdd1902b7a44392ffe922ed541e6, type: 3}
-  itemPrefab: {fileID: 4546442092588417731, guid: fec224a1706298a4f865dafb9d3a09d2,
+  itemPrefab: {fileID: 2168584295606579043, guid: fec224a1706298a4f865dafb9d3a09d2,
     type: 3}
   recipeToUnlock: {fileID: 0}
   healthToRestore: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Medikit
   description: "\uCCB4\uB825\uC744 \uC62C\uB824\uC8FC\uB294 \uC544\uC774\uD15C\n"
   icon: {fileID: 21300000, guid: cd6e1b4c9bf238340b7e5446ae4463d8, type: 3}
-  itemPrefab: {fileID: 1624793803129934842, guid: b474ad5d141779648bc36a0760b605d8,
+  itemPrefab: {fileID: 1564024826547290436, guid: b474ad5d141779648bc36a0760b605d8,
     type: 3}
   recipeToUnlock: {fileID: 0}
   healthToRestore: 20

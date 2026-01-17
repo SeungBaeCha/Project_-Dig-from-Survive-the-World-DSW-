@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NormalEnemy
   m_EditorClassIdentifier: 
   maxHealth: 100
-  chaseSpeed: 6
+  chaseSpeed: 3
   attackDamage: 10
   bodyColor: {r: 1, g: 0, b: 0.7607843, a: 1}
   scale: {x: 1, y: 1, z: 1}

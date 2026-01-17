@@ -68,7 +68,7 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         // 디버깅: 무엇과 충돌했는지 항상 로그를 남긴다.
-        Debug.Log($"[Bullet] Triggered with {other.gameObject.name} (Tag: {other.tag}, Layer: {LayerMask.LayerToName(other.gameObject.layer)})");
+        //Debug.Log($"[Bullet] Triggered with {other.gameObject.name} (Tag: {other.tag}, Layer: {LayerMask.LayerToName(other.gameObject.layer)})");
 
         // 충돌한 오브젝트 또는 그 부모에서 Enemy 컴포넌트를 찾아본다. (더 안정적인 방법)
         Enemy enemy = other.gameObject.GetComponentInParent<Enemy>();
