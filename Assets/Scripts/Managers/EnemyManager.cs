@@ -9,9 +9,10 @@ public class EnemyManager : MonoBehaviour
     [Header("생성 설정")]
     [SerializeField] private GameObject enemyPrefab; // 생성할 적 프리팹
     [SerializeField] private Transform[] spawnPoints; // 적 생성 위치
-    [SerializeField] private int dayEnemyCount = 3; // 낮에 생성할 적의 수
+    [SerializeField] private List<EnemyStats> enemyTypes; // 생성할 적의 능력치 종류
     
-    [Header("밤 웨이브 설정")]
+    [Header("낮/밤 웨이브 설정")]
+    [SerializeField] private int dayEnemyCount = 3; // 낮에 생성할 적의 수
     [SerializeField] private int initialNightEnemyCount; // 첫날 밤에 생성할 적의 수
     [SerializeField] private int minEnemiesToAddPerDay; // 매일 최소로 추가될 적의 수
     [SerializeField] private int maxEnemiesToAddPerDay; // 매일 최대로 추가될 적의 수
@@ -34,25 +35,7 @@ public class EnemyManager : MonoBehaviour
         currentNightEnemyCount = initialNightEnemyCount;
     }
 
-    // OnEnable 및 OnDisable에서 GameManager 이벤트 구독을 제거.
-    // GameManager에서 직접 제어하도록 StartSpawning/StopSpawning 메서드를 사용한다.
-    // void OnEnable()
-    // {
-    //     GameManager.OnDayStart += HandleDayStart;
-    //     GameManager.OnNightStart += HandleNightStart;
-    // }
-
-    // void OnDisable()
-    // {
-    //     GameManager.OnDayStart -= HandleDayStart;
-    //     GameManager.OnNightStart -= HandleNightStart;
-    // }
-
-
-    /// <summary>
-    /// 외부에서 활성화된 적 리스트를 안전하게 받아갈 수 있는 public 함수
-    /// </summary>
-    /// <returns>현재 씬에 활성화된 적(Enemy)의 리스트</returns>
+    
     public List<Enemy> GetActiveEnemies()
     {
         // 리스트를 반환하기 전에 파괴된(null) 적들을 제거하여 리스트를 정리
@@ -125,15 +108,70 @@ public class EnemyManager : MonoBehaviour
             return;
         }
 
+        if (enemyTypes == null || enemyTypes.Count == 0)
+        {
+            Debug.LogError("적 능력치(EnemyTypes)가 설정되지 않았습니다.");
+            return;
+        }
+
+        // 1. 현재 날짜에 스폰 가능한 적들만 필터링
+        int currentDay = GameManager.Instance.DayCount;
+        var availableEnemies = new List<EnemyStats>();
+        foreach (var type in enemyTypes)
+        {
+            if (currentDay >= type.startDay)
+            {
+                availableEnemies.Add(type);
+            }
+        }
+
+        // 스폰 가능한 적이 없는 경우
+        if (availableEnemies.Count == 0)
+        {
+            Debug.LogWarning($"현재 {currentDay}일차에는 스폰 가능한 적 유형이 없습니다.");
+            return;
+        }
+
+        // 2. 가중치 총합 계산
+        float totalWeight = 0;
+        foreach (var type in availableEnemies)
+        {
+            totalWeight += type.spawnChanceWeight;
+        }
+
         for (int i = 0; i < count; i++)
         {
+            // 3. 가중치 기반으로 랜덤 적 유형 선택
+            EnemyStats selectedStats = null;
+            float randomWeight = Random.Range(0, totalWeight);
+            float currentWeight = 0;
+
+            foreach (var type in availableEnemies)
+            {
+                currentWeight += type.spawnChanceWeight;
+                if (randomWeight <= currentWeight)
+                {
+                    selectedStats = type;
+                    break;
+                }
+            }
+
+            // 만약 선택되지 않았다면(부동 소수점 오류 등 예외 처리), 마지막 적을 선택
+            if (selectedStats == null && availableEnemies.Count > 0)
+            {
+                selectedStats = availableEnemies[availableEnemies.Count - 1];
+            }
+
             // 랜덤한 스폰 포인트를 선택
             Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            // 적 생성 및 리스트에 추가
+            // 적 생성
             GameObject enemyObject = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            
+            // 생성된 적에게 선택된 능력치 부여
             Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
             if (enemyComponent != null)
             {
+                enemyComponent.Initialize(selectedStats);
                 activeEnemies.Add(enemyComponent);
             }
         }

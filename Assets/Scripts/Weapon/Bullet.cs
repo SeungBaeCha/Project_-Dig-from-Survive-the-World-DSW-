@@ -67,12 +67,17 @@ public class Bullet : MonoBehaviour
     /// <param name="other">진입한 Collider 정보</param>
     void OnTriggerEnter(Collider other)
     {
-        // 충돌한 오브젝트에서 Enemy 컴포넌트를 찾아본다.
-        Enemy enemy = other.gameObject.GetComponent<Enemy>();
+        // 디버깅: 무엇과 충돌했는지 항상 로그를 남긴다.
+        Debug.Log($"[Bullet] Triggered with {other.gameObject.name} (Tag: {other.tag}, Layer: {LayerMask.LayerToName(other.gameObject.layer)})");
+
+        // 충돌한 오브젝트 또는 그 부모에서 Enemy 컴포넌트를 찾아본다. (더 안정적인 방법)
+        Enemy enemy = other.gameObject.GetComponentInParent<Enemy>();
 
         // Enemy 컴포넌트가 있다면, 데미지를 입히고 총알을 파괴한다.
         if (enemy != null)
         {
+            // 디버깅: 어떤 적에게 얼마의 데미지를 주는지 로그를 남긴다.
+            Debug.Log($"[Bullet] Enemy '{enemy.name}' detected! Calling TakeDamage with {damage} damage.");
             enemy.TakeDamage(damage);
             Destroy(gameObject); // 적과 부딪혔을 때만 파괴
         }

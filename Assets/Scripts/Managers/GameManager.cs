@@ -177,11 +177,8 @@ public class GameManager : MonoBehaviour
         SelectWeatherForNewDay();
         SetWeatherImmediate(currentDayWeather);
 
-        DayCount = 1; // 첫째 날 시작
-        Debug.Log($"Day {DayCount} has started.");
-        OnDayStart?.Invoke(); // 낮 시작 이벤트 발생
-
         // 튜토리얼 종료 후 적 생성 시스템을 시작한다.
+        // OnDayStart 이벤트가 호출되기 전에 먼저 구독하도록 한다.
         if (enemyManager != null)
         {
             enemyManager.StartSpawning();
@@ -190,6 +187,10 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("EnemyManager가 할당되지 않아 적 생성 시스템을 시작할 수 없습니다.");
         }
+
+        DayCount = 1; // 첫째 날 시작
+        Debug.Log($"Day {DayCount} has started.");
+        OnDayStart?.Invoke(); // 낮 시작 이벤트 발생
     }
 
     /// <summary>

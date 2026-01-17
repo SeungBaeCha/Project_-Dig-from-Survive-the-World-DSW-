@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 5333259694801274679}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -14.5, y: 0, z: -14.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44,15 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba28b21bd87fdc543a9c8a20bd20d9d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 20
+  width: 30
   height: 5
-  depth: 50
+  depth: 30
   chunkPrefab: {fileID: 649906139070711462, guid: 45d4a6e39a0b5dc4cbe41584f13cb4cf,
     type: 3}
   chunkSize: 1
   surface: {fileID: 0}
-  navMeshRebuildInterval: 30
-  gridSpacing: 15
+  gridSpacing: 5
   generateInCenter: 0
   generateUp: 1
   generateDown: 1

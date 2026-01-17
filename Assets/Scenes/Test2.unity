@@ -807,7 +807,7 @@ PrefabInstance:
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: nightWeatherPresets.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
@@ -1001,6 +1001,46 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].fogColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].fogColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].fogColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].fogDensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].presetName
+      value: RedNIght
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunColor.r
+      value: 0.735849
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: dayWeatherPresets.Array.data[0].sunRotation.x
       value: 50
       objectReference: {fileID: 0}
@@ -1071,6 +1111,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunIntensity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: nightWeatherPresets.Array.data[0].sunRotation.x
       value: -90
       objectReference: {fileID: 0}
@@ -1106,6 +1151,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunRotation.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: nightWeatherPresets.Array.data[0].ambientColor.b
       value: 0.2
       objectReference: {fileID: 0}
@@ -1133,6 +1188,21 @@ PrefabInstance:
         type: 3}
       propertyPath: nightWeatherPresets.Array.data[1].ambientColor.r
       value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].ambientColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].ambientColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].ambientColor.r
+      value: 0.735849
       objectReference: {fileID: 0}
     - target: {fileID: 6174248598769668855, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
@@ -2909,24 +2979,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1883086983142559150, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
         type: 3}
-      propertyPath: depth
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1883086983142559150, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
-        type: 3}
-      propertyPath: width
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1883086983142559150, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
-        type: 3}
       propertyPath: surface
       value: 
       objectReference: {fileID: 294029252}
-    - target: {fileID: 1883086983142559150, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
-        type: 3}
-      propertyPath: gridSpacing
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 5333259694801274679, guid: bbb0b20d9d4460e4e9249f7dd77248fb,
         type: 3}
       propertyPath: m_Name
