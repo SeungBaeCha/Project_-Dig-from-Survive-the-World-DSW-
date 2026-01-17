@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f687e23e7f7d7ea43b018f80811ce9e5, type: 3}
-  m_Name: ThinEnemy
+  m_Name: NormalEnemy
   m_EditorClassIdentifier: 
   maxHealth: 100
-  chaseSpeed: 3
+  chaseSpeed: 6
   attackDamage: 10
   bodyColor: {r: 1, g: 0, b: 0.7607843, a: 1}
-  scale: {x: 0.05, y: 0.05, z: 0.05}
-  startDay: 2
-  spawnChanceWeight: 3
+  scale: {x: 1, y: 1, z: 1}
+  startDay: 1
+  spawnChanceWeight: 10

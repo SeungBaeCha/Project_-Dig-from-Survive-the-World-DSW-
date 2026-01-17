@@ -17,3 +17,5 @@ MonoBehaviour:
   attackDamage: 30
   bodyColor: {r: 0.4157896, g: 0, b: 1, a: 1}
   scale: {x: 1, y: 1, z: 1}
+  startDay: 3
+  spawnChanceWeight: 3

@@ -5,7 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerAim : MonoBehaviour
 {
     [Header("카메라 감도")]
-    [SerializeField] private float sensitivity; // 기본 감도를 적절한 값으로 조절
+    [Tooltip("Time.deltaTime이 적용되므로, 100~200 사이의 높은 값을 사용해야 합니다.")]
+    [SerializeField] private float sensitivity; // Time.deltaTime 보정을 위해 감도 값을 높여야 함
 
     void Start()
     {
@@ -21,13 +22,14 @@ public class PlayerAim : MonoBehaviour
 
         if (axisName == "Mouse X")
         {
-            // 마우스의 X 움직임에 감도를 적용하여 반환
-            return mouseDelta.x * sensitivity;
+            // 마우스의 X 움직임에 감도와 Time.deltaTime을 적용하여 반환
+            // Time.deltaTime을 곱해 프레임 속도에 관계없이 일정한 속도를 보장
+            return mouseDelta.x * sensitivity * Time.deltaTime;
         }
         else if (axisName == "Mouse Y")
         {
-            // 마우스의 Y 움직임에 감도를 적용하여 반환
-            return mouseDelta.y * sensitivity;
+            // 마우스의 Y 움직임에 감도와 Time.deltaTime을 적용하여 반환
+            return mouseDelta.y * sensitivity * Time.deltaTime;
         }
 
         // 다른 축 이름이면 0을 반환

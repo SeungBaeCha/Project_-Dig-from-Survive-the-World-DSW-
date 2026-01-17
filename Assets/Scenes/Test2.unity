@@ -360,6 +360,77 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
         type: 3}
+      propertyPath: dayEnemyCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: normalDaytimeEnemy
+      value: 
+      objectReference: {fileID: 11400000, guid: 2eb221d5d92706c4786ea98de0ddc113,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: initialDayEnemyCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: maxEnemiesToAddPerDay
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: minEnemiesToAddPerDay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 2eb221d5d92706c4786ea98de0ddc113,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 121250bfbeb0f9849b66a48cd27a9ddc,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 38d78ec86d345d4478b6c30930aac6bb,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: ab95b86e0db2ea346b04e0e4e1012a05,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: enemyTypes.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: c1f5e34f80880504c9a246185feaae1e,
+        type: 2}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: maxDayEnemiesToAddPerDay
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
+      propertyPath: minDayEnemiesToAddPerDay
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7027259830283196695, guid: 61d3cc4f1b998ff4bae57e5f2ab7a98a,
+        type: 3}
       propertyPath: spawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 724645713}
@@ -766,6 +837,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: lootBoxStartDay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: nightFogColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -792,12 +868,12 @@ PrefabInstance:
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: lootBoxSpawnChanceIncrease
-      value: 0.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: dayWeatherPresets.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
@@ -916,6 +992,46 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].fogColor.b
+      value: 0.6666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].fogColor.g
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].fogColor.r
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].fogDensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].presetName
+      value: DarkDay
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: dayWeatherPresets.Array.data[0].sunIntensity
       value: 1
       objectReference: {fileID: 0}
@@ -923,6 +1039,11 @@ PrefabInstance:
         type: 3}
       propertyPath: dayWeatherPresets.Array.data[1].sunIntensity
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunIntensity
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
@@ -1061,6 +1182,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunRotation.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].sunRotation.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: dayWeatherPresets.Array.data[0].ambientColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -1098,6 +1229,26 @@ PrefabInstance:
         type: 3}
       propertyPath: dayWeatherPresets.Array.data[1].ambientColor.r
       value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].ambientColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].ambientColor.b
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].ambientColor.g
+      value: 0.101960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].ambientColor.r
+      value: 0.101960786
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}

@@ -545,8 +545,8 @@ MonoBehaviour:
   possibleLoot:
   - {fileID: 11400000, guid: 57c9f4b17dbac5b46b4074ac7153de5f, type: 2}
   - {fileID: 11400000, guid: 3128f1b3c6e3e6c4fa360d8cde7f2619, type: 2}
-  minItemsToDrop: 1
-  maxItemsToDrop: 5
+  minItemsToDrop: 3
+  maxItemsToDrop: 10
   currentLoot:
   - {fileID: 11400000, guid: 57c9f4b17dbac5b46b4074ac7153de5f, type: 2}
   - {fileID: 11400000, guid: 3128f1b3c6e3e6c4fa360d8cde7f2619, type: 2}

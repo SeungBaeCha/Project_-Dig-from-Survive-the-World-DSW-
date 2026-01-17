@@ -50,7 +50,9 @@ public class GameManager : MonoBehaviour
 
     [Header("보급 상자 설정")]
     [SerializeField] private GameObject lootBoxPrefab;
-    [Tooltip("3일차부터 매일 증가할 보급 상자 등장 확률 (예: 0.1 = 10%)")]
+    [Tooltip("보급 상자가 처음으로 등장할 수 있는 날짜")]
+    [SerializeField] private int lootBoxStartDay = 3;
+    [Tooltip("매일 증가할 보급 상자 등장 확률 (예: 0.1 = 10%)")]
     [SerializeField] private float lootBoxSpawnChanceIncrease = 0.1f;
     [Tooltip("보급 상자가 생성될 수 있는 모든 위치 목록")]
     [SerializeField] private List<Transform> lootBoxSpawnPoints;
@@ -324,47 +326,40 @@ public class GameManager : MonoBehaviour
     private void ManageLootBoxLifecycle()
     {
         // --- 1. 이전 보급 상자 제거 로직 ---
-        // activeLootBox가 비어있지 않고(즉, 이전에 생성된 상자가 있고),
-        // 현재 날짜가 상자가 생성된 날짜보다 크면(즉, 하루가 지났으면) 해당 상자를 제거한다.
         if (activeLootBox != null && DayCount > lootBoxSpawnDay)
         {
-            Debug.Log($"<color=orange>지난 ({lootBoxSpawnDay}일차) 보급 상자를 제거합니다.</color>");
+            string expiryMessage = $"지난 {lootBoxSpawnDay}일차 보급 상자가 사라졌습니다.";
+            UIManager.Instance.ShowSupplyBoxNotification(expiryMessage);
+            Debug.Log($"<color=orange>{expiryMessage}</color>");
+            
             Destroy(activeLootBox);
             activeLootBox = null;
         }
 
         // --- 2. 새 보급 상자 생성 로직 ---
-        // 이미 맵에 보급 상자가 있다면 새로 생성하지 않는다 (한 번에 하나의 상자만 활성화).
         if (activeLootBox != null) return;
         
-        // 3일차부터 보급 상자 등장 확률이 적용된다.
-        if (DayCount < 3) return;
+        // 설정된 시작일 이전에는 생성하지 않음
+        if (DayCount < lootBoxStartDay) return;
 
-        // 날짜가 지날수록 확률 증가 (예: 3일차 10%, 4일차 20%...)
-        float spawnChance = (DayCount - 2) * lootBoxSpawnChanceIncrease;
+        // 날짜가 지날수록 확률 증가
+        float spawnChance = (DayCount - (lootBoxStartDay - 1)) * lootBoxSpawnChanceIncrease;
         
-        // 계산된 확률에 따라 보급 상자 생성 시도
         if (UnityEngine.Random.value < spawnChance)
         {
-            // 보급 상자 프리팹과 스폰 지점 목록이 유효한지 확인
             if (lootBoxPrefab != null && lootBoxSpawnPoints != null && lootBoxSpawnPoints.Count > 0)
             {
-                // 지정된 생성 위치 목록에서 랜덤한 지점 하나를 선택한다.
                 Transform spawnPoint = lootBoxSpawnPoints[UnityEngine.Random.Range(0, lootBoxSpawnPoints.Count)];
                 
-                // 보급 상자를 생성하고 activeLootBox 변수에 저장하여 추적한다.
                 activeLootBox = Instantiate(lootBoxPrefab, spawnPoint.position, spawnPoint.rotation);
-                // 보급 상자가 생성된 날짜를 기록한다.
                 lootBoxSpawnDay = DayCount;
 
-                // UIManager를 통해 보급 상자 생성 알림을 표시한다.
-                string message = $"희귀 보급 상자가 '{spawnPoint.name}' 위치에 나타났습니다!";
+                string message = $"보급이 떨어졌습니다!"; // 사용자가 요청한 메시지로 변경
                 UIManager.Instance.ShowSupplyBoxNotification(message); 
                 Debug.Log($"<color=yellow>{message} ({DayCount}일차)</color>");
             }
             else
             {
-                // 프리팹 또는 스폰 지점 설정 누락 경고
                 if (lootBoxPrefab == null)
                 {
                     Debug.LogWarning("보급 상자 프리팹이 지정되지 않아 생성에 실패했습니다.");
