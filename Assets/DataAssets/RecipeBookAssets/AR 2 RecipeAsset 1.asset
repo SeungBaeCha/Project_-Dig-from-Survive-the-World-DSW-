@@ -17,5 +17,5 @@ MonoBehaviour:
     quantity: 40
   - item: {fileID: 11400000, guid: e2f17dfd9b7794f4d9caac3efc5b8537, type: 2}
     quantity: 30
-  result: {fileID: 11400000, guid: 62224f4a3c11dce4e83ef71e51182e0d, type: 2}
+  result: {fileID: 11400000, guid: 39a779db066624842b42da4177f9c242, type: 2}
   isDiscovered: 0

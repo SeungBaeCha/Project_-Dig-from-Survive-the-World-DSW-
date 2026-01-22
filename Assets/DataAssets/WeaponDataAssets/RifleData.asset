@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37ef8e4beedcb74a8eaf79e5c9c8a4b, type: 3}
   m_Name: RifleData
   m_EditorClassIdentifier: 
-  itemName: AssultRifle
+  itemName: AssultRifle_AK
   description: "\uC88B\uC740 \uACF5\uACA9\uC18D\uB3C4\uC640 \uACF5\uACA9\uB825\uC744
     \uAC00\uC9C0\uACE0\uC788\uB294 \uBB34\uAE30"
   icon: {fileID: 21300000, guid: 01d674f1e0fc3a843a9c40f4635b5768, type: 3}

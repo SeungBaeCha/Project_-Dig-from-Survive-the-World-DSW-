@@ -226,6 +226,13 @@ public class WeaponHold : MonoBehaviour
         Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
         if (weaponRb != null) weaponRb.isKinematic = true;
 
+        // Weapon 스크립트에게 주워졌음을 알려 UI 등을 처리하게 함
+        Weapon weaponComponent = equippedWeapon.GetComponentInChildren<Weapon>();
+        if (weaponComponent != null)
+        {
+            weaponComponent.HandlePickup();
+        }
+
         isEquipped = true;
         nearbyWeapon = null;
         if (crosshair != null) crosshair.SetActive(true); // 크로스헤어 활성
@@ -282,10 +289,15 @@ public class WeaponHold : MonoBehaviour
             StartCoroutine(IgnoreCollisionTemporarily(droppedWeaponCollider));
         }
 
-        // Weapon 스크립트가 있다면 줍기 쿨다운 시작.
-        Weapon weaponScript = weaponToDrop.GetComponent<Weapon>();
+        // Weapon 스크립트가 있다면 줍기 쿨다운 시작하고 UI를 다시 활성화.
+        Weapon weaponScript = weaponToDrop.GetComponentInChildren<Weapon>();
         if (weaponScript != null)
         {
+            // 상호작용 UI가 있다면 다시 활성화시킨다.
+            if (weaponScript.interactionUI != null)
+            {
+                weaponScript.interactionUI.SetActive(true);
+            }
             weaponScript.StartPickupCooldown(pickupCooldown);
         }
     }

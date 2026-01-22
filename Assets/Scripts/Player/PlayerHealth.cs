@@ -41,16 +41,16 @@ public class PlayerHealth : MonoBehaviour
     void Update()
     {
         // --- 테스트용 데미지 코드 ---
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            TakeDamage(10);
-        }
-        if (Input.GetKeyDown(KeyCode.Y)) // 배고픔 수치 감소 테스트
-        {
-            currentHunger = 0;
-        }
-#endif
+//#if UNITY_EDITOR
+//        if (Input.GetKeyDown(KeyCode.T))
+//        {
+//            TakeDamage(10);
+//        }
+//        if (Input.GetKeyDown(KeyCode.Y)) // 배고픔 수치 감소 테스트
+//        {
+//            currentHunger = 0;
+//        }
+//#endif
         // -------------------------
 
         // 배고픔 수치가 0 이하면 1초마다 10의 데미지를 입는다.

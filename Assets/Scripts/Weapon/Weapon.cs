@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
 {
     [Header("상호작용 UI")]
     // 무기 위에 표시할 월드 스페이스 UI 오브젝트 
-    [SerializeField] private GameObject interactionUI;
+    [SerializeField] public GameObject interactionUI;
 
     // 무기의 물리적 상태를 제어하기 위한 컴포넌트
     private Rigidbody rb;
@@ -91,6 +91,17 @@ public class Weapon : MonoBehaviour
                     interactionUI.SetActive(false);
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// 무기를 주웠을 때 호출되어 상호작용 UI를 비활성화하는 메서드
+    /// </summary>
+    public void HandlePickup()
+    {
+        if (interactionUI != null)
+        {
+            interactionUI.SetActive(false);
         }
     }
     

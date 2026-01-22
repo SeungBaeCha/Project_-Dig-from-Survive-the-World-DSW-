@@ -24,6 +24,11 @@ public class LootBoxUI : MonoBehaviour
     [Tooltip("플레이어의 인벤토리. Inspector에서 직접 연결해야 함.")]
     [SerializeField] private Inventory playerInventory;
 
+    [Header("아이템 획득 설정")]
+    [Tooltip("아이템을 한번 클릭하고 다음 클릭까지의 최소 시간 간격")]
+    [SerializeField] private float transferCooldown = 0.1f;
+    private float lastTransferTime = 0f;
+
     private LootBox currentLootBox; // 현재 열려있는 LootBox
     private List<LootSlot> slots = new List<LootSlot>(); // 자식으로 있는 모든 LootSlot 스크립트들을 담을 리스트
 
@@ -126,6 +131,9 @@ public class LootBoxUI : MonoBehaviour
             displayStacks.Add(new InventoryStack(pair.Key, pair.Value));
         }
 
+        // 아이템 이름 순으로 정렬하여 항상 동일한 순서를 보장한다. (연속 클릭 문제 해결의 핵심)
+        displayStacks.Sort((a, b) => a.item.itemName.CompareTo(b.item.itemName));
+
         // 2. 변환된 스택 정보를 기반으로 UI 슬롯을 업데이트한다.
         for (int i = 0; i < slots.Count; i++)
         {
@@ -150,6 +158,12 @@ public class LootBoxUI : MonoBehaviour
     /// <param name="sourceBox">아이템의 출처가 되는 상자</param>
     public void AttemptTransferItem(ItemData item, LootBox sourceBox)
     {
+        // 쿨다운 확인: 마지막 획득 시간으로부터 충분한 시간이 지났는지 확인
+        if (Time.unscaledTime < lastTransferTime + transferCooldown)
+        {
+            return; // 쿨다운 중이면 아무것도 하지 않음
+        }
+
         if (playerInventory == null)
         {
             Debug.LogError("LootBoxUI에 PlayerInventory가 연결되지 않았습니다!");
@@ -160,19 +174,25 @@ public class LootBoxUI : MonoBehaviour
 
         if (wasAdded)
         {
+            // 획득 성공 시, 마지막 획득 시간을 기록
+            lastTransferTime = Time.unscaledTime;
+            
             sourceBox.RemoveItem(item);
-            Refresh();
+            StartCoroutine(Refresh()); // 코루틴으로 Refresh를 시작
         }
         else
         {
-            Debug.Log("인벤토리가 가득 찼습니다!");
-            // TODO: UIManager를 통해 알림 메시지 표시
+            // 인벤토리가 가득 찼을 때 알림 표시
+            UIManager.Instance.ShowNotification("인벤토리가 가득 찼습니다!", 2f);
         }
     }
     
     // 아이템 획득 후 UI를 새로고침하기 위한 공용 함수
-    public void Refresh()
+    public IEnumerator Refresh()
     {
+        // 다음 프레임까지 기다렸다가 UI를 업데이트한다.
+        // 이렇게 하면 클릭 이벤트 처리가 완료된 후 UI가 새로고침되어 연속 클릭 문제를 방지할 수 있다.
+        yield return null;
         UpdateUI();
     }
 }

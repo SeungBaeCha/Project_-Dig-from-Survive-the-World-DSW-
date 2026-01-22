@@ -231,6 +231,13 @@ public class UIManager : MonoBehaviour
     private void ToggleInventory()
     {
         if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+
+        // 제작창이 열려있으면 닫아준다.
+        if (craftingWindow != null && craftingWindow.IsOpen())
+        {
+            craftingWindow.ToggleWindow(false);
+        }
+
         inventoryUI.ToggleWindow();
         UpdateCursorAndGameState();
     }
@@ -238,6 +245,13 @@ public class UIManager : MonoBehaviour
     private void ToggleCrafting()
     {
         if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+
+        // 인벤토리가 열려있으면 닫아준다.
+        if (inventoryUI != null && inventoryUI.IsOpen())
+        {
+            inventoryUI.ToggleWindow(false);
+        }
+
         craftingWindow.Toggle();
         UpdateCursorAndGameState();
     }

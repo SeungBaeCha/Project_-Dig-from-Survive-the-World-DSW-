@@ -16,7 +16,7 @@ MonoBehaviour:
   chaseSpeed: 4
   attackDamage: 10
   bodyColor: {r: 0, g: 0, b: 0, a: 1}
-  scale: {x: 0.02, y: 0.02, z: 0.02}
+  scale: {x: 0.5, y: 0.5, z: 0.5}
   startDay: 2
   spawnChanceWeight: 3
   nightSurvivalChance: 0.1

@@ -97,6 +97,12 @@ public class Enemy : MonoBehaviour
         startingPosition = transform.position;
         diggableGrid = FindObjectOfType<DiggableGrid>();
 
+        // NavMeshAgent의 정지 거리를 공격 가능 거리와 동기화
+        if (agent != null)
+        {
+            agent.stoppingDistance = attackDistance;
+        }
+
         if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
 
         lastAttackTime = -attackCooldown;
@@ -122,6 +128,14 @@ public class Enemy : MonoBehaviour
                 SwitchState(State.Chasing);
             }
         }
+
+#if UNITY_EDITOR
+        // T 키를 누르면 해당 적에게 10 데미지를 입힌다.
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            TakeDamage(100); 
+        }
+#endif
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 

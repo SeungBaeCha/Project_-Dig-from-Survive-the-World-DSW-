@@ -25,6 +25,7 @@ public class LootSlot : MonoBehaviour, IPointerClickHandler
         // 아이콘 설정
         itemIcon.sprite = item.icon;
         itemIcon.enabled = true;
+        itemIcon.color = Color.white; // 아이콘을 다시 불투명하게 만든다.
 
         // 개수 텍스트 설정
         if (quantity > 1)
@@ -47,7 +48,7 @@ public class LootSlot : MonoBehaviour, IPointerClickHandler
         sourceLootBox = null;
 
         itemIcon.sprite = null;
-        itemIcon.enabled = false;
+        itemIcon.color = new Color(1, 1, 1, 0); // 아이콘을 비활성화하는 대신 투명하게 만든다.
         
         quantityText.text = "";
         quantityText.enabled = false;

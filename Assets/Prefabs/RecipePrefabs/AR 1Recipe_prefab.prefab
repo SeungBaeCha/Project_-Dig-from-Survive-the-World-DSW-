@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 62224f4a3c11dce4e83ef71e51182e0d, type: 2}
-  lifeTime: 30
+  lifeTime: 60
   spawnForce: 0
 --- !u!114 &1889995493553800316
 MonoBehaviour:
