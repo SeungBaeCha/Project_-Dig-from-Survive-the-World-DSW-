@@ -34,6 +34,11 @@ public class WeaponHold : MonoBehaviour
     private Quaternion originRotation; // 무기의 초기 회전값(모델 방향을 맞추기 위함).
     private Collider playerCollider; // 플레이어 자신의 콜라이더.
 
+    // --- 무기 컴포넌트 캐싱 ---
+    private Gun currentGun;
+    private Shovel currentShovel;
+    private ShovelHold currentShovelHold;
+
     void Start()
     {
         // 메인 카메라 및 플레이어 콜라이더를 찾아 저장.
@@ -66,23 +71,27 @@ public class WeaponHold : MonoBehaviour
         if (isEquipped)
         {
             // 무기 스웨이 로직
-            float mouseX = Mouse.current.delta.x.ReadValue() * swayAmount;
-            float mouseY = Mouse.current.delta.y.ReadValue() * swayAmount;
-            Quaternion rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
-            Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
-            Quaternion targetRotation = originRotation * rotationX * rotationY;
-            holdPoint.localRotation = Quaternion.Slerp(holdPoint.localRotation, targetRotation, smoothAmount * Time.deltaTime);
+            HandleSway();
 
-            // 발사 로직
-            if (isFiring)
+            // 자동 발사 로직 (isFiring 플래그가 true일 때)
+            if (isFiring && currentGun != null)
             {
-                Gun gun = equippedWeapon.GetComponent<Gun>();
-                if (gun != null)
-                {
-                    gun.TryFire();
-                }
+                currentGun.TryFire();
             }
         }
+    }
+
+    /// <summary>
+    /// 무기 스웨이 로직을 처리하는 헬퍼 메서드
+    /// </summary>
+    private void HandleSway()
+    {
+        float mouseX = Mouse.current.delta.x.ReadValue() * swayAmount;
+        float mouseY = Mouse.current.delta.y.ReadValue() * swayAmount;
+        Quaternion rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
+        Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
+        Quaternion targetRotation = originRotation * rotationX * rotationY;
+        holdPoint.localRotation = Quaternion.Slerp(holdPoint.localRotation, targetRotation, smoothAmount * Time.deltaTime);
     }
 
     /// <summary>
@@ -97,31 +106,24 @@ public class WeaponHold : MonoBehaviour
             return;
         }
 
-        // --- 자동/단발 공통 처리 ---
         // 버튼이 눌려있는지 여부를 isFiring 플래그에 저장 (자동 발사는 Update에서 처리)
         isFiring = context.ReadValueAsButton();
 
-        // --- 단발 무기 및 도구 사용 처리 (버튼을 처음 누른 시점) ---
+        // 단발 무기 및 도구 사용 처리 (버튼을 처음 누른 시점)
         if (context.performed)
         {
-            Gun gun = equippedWeapon.GetComponent<Gun>();
-            if (gun != null)
+            if (currentGun != null)
             {
-                // 들고 있는게 총이라면,
-                // 그리고 그 총이 단발(isAutomatic = false)이라면 여기서 즉시 발사
-                if (!gun.gunData.isAutomatic)
+                // 들고 있는 총이 단발이라면 여기서 즉시 발사
+                if (!currentGun.gunData.isAutomatic)
                 {
-                    gun.TryFire();
+                    currentGun.TryFire();
                 }
             }
-            else
+            else if (currentShovel != null)
             {
-                // 총이 아니라면, 삽인지 확인
-                Shovel shovel = equippedWeapon.GetComponent<Shovel>();
-                if (shovel != null)
-                {
-                    shovel.Use();
-                }
+                // 총이 아니고 삽이라면 사용
+                currentShovel.Use();
             }
         }
     }
@@ -131,14 +133,10 @@ public class WeaponHold : MonoBehaviour
     /// </summary>
     public void OnReload(InputAction.CallbackContext context)
     {
-        // 키를 눌렀다 떼는 시점에만 실행하고, 무기가 없으면 중단
-        if (!context.performed || !isEquipped) return;
-
-        Gun gun = equippedWeapon.GetComponent<Gun>();
-        if (gun != null)
-        {
-            gun.Reload();
-        }
+        // 키를 눌렀다 떼는 시점에만 실행하고, 총이 없으면 중단
+        if (!context.performed || currentGun == null) return;
+        
+        currentGun.Reload();
     }
 
     [Header("상호작용 설정")]
@@ -153,17 +151,9 @@ public class WeaponHold : MonoBehaviour
         if (!context.performed) return;
 
         // 최우선 순위: 상자 열기 시도
-        // 플레이어 주변의 일정 반경 안에 있는 모든 콜라이더를 감지한다.
-        Collider[] colliders = Physics.OverlapSphere(transform.position, interactionDistance, interactableLayer);
-        foreach (var col in colliders)
+        if (TryOpenLootBox())
         {
-            // 감지된 콜라이더에서 LootBox 컴포넌트를 찾는다.
-            if (col.TryGetComponent<LootBox>(out var lootBox))
-            {
-                // LootBox를 찾았다면, 상자를 열고 함수를 즉시 종료한다. (무기 장착 로직을 실행하지 않음)
-                lootBox.OpenBox();
-                return; // 상자를 열었으므로 더 이상 다른 동작을 하지 않음
-            }
+            return; // 상자를 열었으면 무기 줍기 로직을 실행하지 않음
         }
 
         // 상자가 근처에 없을 때만 무기 줍기/교체 로직 실행
@@ -171,12 +161,30 @@ public class WeaponHold : MonoBehaviour
         {
             if (isEquipped)
             {
-                DropWeapon(equippedWeapon); // 기존 무기 버리기
+                DropWeapon(); // 기존 무기 버리기
             }
             EquipWeapon(nearbyWeapon); // 새 무기 장착.
         }
     }
-    
+
+    /// <summary>
+    /// 주변의 루트박스를 찾아 열기를 시도하는 헬퍼 메서드
+    /// </summary>
+    /// <returns>상자를 열었으면 true, 아니면 false</returns>
+    private bool TryOpenLootBox()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, interactionDistance, interactableLayer);
+        foreach (var col in colliders)
+        {
+            if (col.TryGetComponent<LootBox>(out var lootBox))
+            {
+                lootBox.OpenBox();
+                return true;
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// 무기 버리기 입력 처리.
     /// </summary>
@@ -184,13 +192,7 @@ public class WeaponHold : MonoBehaviour
     {
         if (!context.performed || !isEquipped) return;
 
-        DropWeapon(equippedWeapon); // 현재 무기 버리기
-        equippedWeapon = null;
-        isEquipped = false;
-        if (crosshair != null)
-        {
-            crosshair.SetActive(false); // 크로스헤어 비활성화.
-        }
+        DropWeapon(); // 현재 무기 버리기
     }
 
     /// <summary>
@@ -200,106 +202,132 @@ public class WeaponHold : MonoBehaviour
     {
         holdPoint.gameObject.SetActive(true);
         equippedWeapon = weaponToEquip;
-        equippedWeapon.transform.SetParent(holdPoint); // 무기를 HoldPoint의 자식으로 설정.
+        equippedWeapon.transform.SetParent(holdPoint);
 
         // 아이템의 속성(위치/회전 오프셋)을 적용.
-        ItemProperties properties = equippedWeapon.GetComponent<ItemProperties>();
-        if (properties != null)
-        {
-            equippedWeapon.transform.localPosition = properties.positionOffset;
-            equippedWeapon.transform.localRotation = Quaternion.Euler(properties.rotationOffset);
-        }
-        else
-        {
-            equippedWeapon.transform.localPosition = Vector3.zero;
-            equippedWeapon.transform.localRotation = Quaternion.identity;
-        }
+        ApplyItemProperties(equippedWeapon);
 
-        // 아이템의 모든 콜라이더 비활성화 (플레이어가 들고 있을 때는 물리 충돌 방지).
-        Collider[] allColliders = equippedWeapon.GetComponentsInChildren<Collider>();
-        foreach (var col in allColliders)
-        {
-            col.enabled = false;
-        }
-
-        // 리지드바디 키네마틱 설정 (물리 영향 받지 않도록).
-        Rigidbody weaponRb = equippedWeapon.GetComponent<Rigidbody>();
-        if (weaponRb != null) weaponRb.isKinematic = true;
-
+        // 아이템의 물리적 상태 설정 (콜라이더 비활성화, 키네마틱 설정).
+        SetWeaponPhysics(equippedWeapon, false);
+        
         // Weapon 스크립트에게 주워졌음을 알려 UI 등을 처리하게 함
-        Weapon weaponComponent = equippedWeapon.GetComponentInChildren<Weapon>();
-        if (weaponComponent != null)
-        {
-            weaponComponent.HandlePickup();
-        }
+        var weaponComponent = equippedWeapon.GetComponentInChildren<Weapon>();
+        weaponComponent?.HandlePickup();
 
         isEquipped = true;
         nearbyWeapon = null;
-        if (crosshair != null) crosshair.SetActive(true); // 크로스헤어 활성
+        if (crosshair != null) crosshair.SetActive(true);
 
-        // --- 장착한 무기 타입에 따른 추가 초기화 ---
-        // Gun 컴포넌트가 있다면 플레이어 정보 전달.
-        Gun gun = equippedWeapon.GetComponentInChildren<Gun>();
-        if (gun != null)
-        {
-            gun.SetPlayerCollider(playerCollider);
-            gun.SetPlayerCamera(mainCamera);
-        }
-
-        // ShovelHold 컴포넌트가 있다면 초기화 메소드 호출.
-        ShovelHold shovelHold = equippedWeapon.GetComponentInChildren<ShovelHold>();
-        if (shovelHold != null)
-        {
-            shovelHold.Initialize(this);
-        }
+        // --- 장착한 무기 타입에 따른 컴포넌트 캐싱 및 초기화 ---
+        CacheAndInitializeWeaponComponents(equippedWeapon);
     }
-
+    
     /// <summary>
     /// 무기를 버리는 실제 로직.
     /// </summary>
-    private void DropWeapon(GameObject weaponToDrop)
+    private void DropWeapon()
     {
-        // ShovelHold 컴포넌트가 있다면 초기화 해제 메소드 호출.
-        ShovelHold shovelHold = weaponToDrop.GetComponentInChildren<ShovelHold>();
-        if (shovelHold != null)
-        {
-            shovelHold.Deinitialize();
-        }
+        if (equippedWeapon == null) return;
+
+        GameObject weaponToDrop = equippedWeapon;
+
+        // 장착된 무기 컴포넌트 초기화 해제
+        DeinitializeWeaponComponents();
 
         weaponToDrop.transform.SetParent(null); // 무기를 부모에서 분리.
+        SetWeaponPhysics(weaponToDrop, true); // 물리 상태 활성화
 
-        // 무기의 모든 콜라이더 활성화.
-        Collider[] allColliders = weaponToDrop.GetComponentsInChildren<Collider>();
-        foreach (var col in allColliders)
-        {
-            col.enabled = true;
-        }
-
-        Rigidbody weaponRb = weaponToDrop.GetComponent<Rigidbody>();
+        // 리지드바디에 힘을 가해 버리는 동작 연출
+        var weaponRb = weaponToDrop.GetComponent<Rigidbody>();
         if (weaponRb != null)
         {
-            weaponRb.isKinematic = false; // 리지드바디 키네마틱 해제 (물리 영향 받도록).
-            weaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse); // 버리는 힘 적용.
+            weaponRb.AddForce(mainCamera.transform.forward * dropForce, ForceMode.Impulse);
         }
         
         // 방금 버린 무기와 플레이어의 물리적 충돌 일시 무시.
-        Collider droppedWeaponCollider = weaponToDrop.GetComponent<Collider>();
+        var droppedWeaponCollider = weaponToDrop.GetComponent<Collider>();
         if (playerCollider != null && droppedWeaponCollider != null)
         {
             StartCoroutine(IgnoreCollisionTemporarily(droppedWeaponCollider));
         }
 
-        // Weapon 스크립트가 있다면 줍기 쿨다운 시작하고 UI를 다시 활성화.
-        Weapon weaponScript = weaponToDrop.GetComponentInChildren<Weapon>();
+        // Weapon 스크립트에게 버려졌음을 알려 쿨다운 시작 및 UI 처리
+        var weaponScript = weaponToDrop.GetComponentInChildren<Weapon>();
         if (weaponScript != null)
         {
-            // 상호작용 UI가 있다면 다시 활성화시킨다.
-            if (weaponScript.interactionUI != null)
-            {
-                weaponScript.interactionUI.SetActive(true);
-            }
+            weaponScript.HandleDrop(); // UI 다시 활성화
             weaponScript.StartPickupCooldown(pickupCooldown);
         }
+
+        // 장착 상태 해제
+        equippedWeapon = null;
+        isEquipped = false;
+        if (crosshair != null) crosshair.SetActive(false);
+    }
+
+    // --- Equip/Drop 헬퍼 메서드 ---
+
+    private void ApplyItemProperties(GameObject item)
+    {
+        if (item.TryGetComponent<ItemProperties>(out var properties))
+        {
+            item.transform.localPosition = properties.positionOffset;
+            item.transform.localRotation = Quaternion.Euler(properties.rotationOffset);
+        }
+        else
+        {
+            item.transform.localPosition = Vector3.zero;
+            item.transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    private void SetWeaponPhysics(GameObject weapon, bool enabled)
+    {
+        // 모든 콜라이더 활성/비활성화
+        var allColliders = weapon.GetComponentsInChildren<Collider>();
+        foreach (var col in allColliders)
+        {
+            col.enabled = enabled;
+        }
+
+        // 리지드바디 키네마틱 설정
+        if (weapon.TryGetComponent<Rigidbody>(out var weaponRb))
+        {
+            weaponRb.isKinematic = !enabled;
+        }
+    }
+    
+    private void CacheAndInitializeWeaponComponents(GameObject weapon)
+    {
+        // Gun 컴포넌트 캐싱 및 초기화
+        currentGun = weapon.GetComponentInChildren<Gun>();
+        if (currentGun != null)
+        {
+            currentGun.SetPlayerCollider(playerCollider);
+            currentGun.SetPlayerCamera(mainCamera);
+        }
+
+        // Shovel 관련 컴포넌트 캐싱 및 초기화
+        currentShovel = weapon.GetComponentInChildren<Shovel>();
+        currentShovelHold = weapon.GetComponentInChildren<ShovelHold>();
+        if (currentShovelHold != null)
+        {
+            currentShovelHold.Initialize(this);
+        }
+    }
+
+    private void DeinitializeWeaponComponents()
+    {
+        // ShovelHold 초기화 해제
+        if (currentShovelHold != null)
+        {
+            currentShovelHold.Deinitialize();
+        }
+
+        // 캐시된 컴포넌트 참조 해제
+        currentGun = null;
+        currentShovel = null;
+        currentShovelHold = null;
     }
 
     /// <summary>

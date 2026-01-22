@@ -7,6 +7,7 @@ public class EnemyStats : ScriptableObject
     public float maxHealth = 100f;
     public float chaseSpeed = 6f;
     public float attackDamage = 10f;
+    public float attackDistance = 2f;
 
     [Header("시각적 요소")]
     [Tooltip("적의 몸 색깔")]

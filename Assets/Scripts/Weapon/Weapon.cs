@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
 {
     [Header("상호작용 UI")]
     // 무기 위에 표시할 월드 스페이스 UI 오브젝트 
-    [SerializeField] public GameObject interactionUI;
+    [SerializeField] private GameObject interactionUI;
 
     // 무기의 물리적 상태를 제어하기 위한 컴포넌트
     private Rigidbody rb;
@@ -33,12 +33,6 @@ public class Weapon : MonoBehaviour
         {
             interactionUI.SetActive(false);
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        // 충돌 로그를 통해 어떤 오브젝트와 부딪혔는지 확인
-        Debug.Log(gameObject.name + "이(가) " + collision.gameObject.name + " (태그: " + collision.gameObject.tag + ") 와 충돌했다!", collision.gameObject);
     }
 
     /// <summary>
@@ -104,10 +98,21 @@ public class Weapon : MonoBehaviour
             interactionUI.SetActive(false);
         }
     }
-    
+
+    /// <summary>
+    /// 무기를 버렸을 때 호출되어 상호작용 UI를 다시 활성화하는 메서드.
+    /// </summary>
+    public void HandleDrop()
+    {
+        if (interactionUI != null)
+        {
+            interactionUI.SetActive(true);
+        }
+    }
+
     /// <summary>
     /// 지정된 시간 동안 무기를 주울 수 없도록 만드는 코루틴을 시작
-    /// </summary>
+    /// </summary>>
     /// <param name="cooldownTime">줍기 비활성화 시간(초)</param>
     public void StartPickupCooldown(float cooldownTime)
     {

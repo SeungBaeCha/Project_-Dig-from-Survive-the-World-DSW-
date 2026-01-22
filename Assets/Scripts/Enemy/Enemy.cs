@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     private float chaseSpeed;
     private float patrolSpeed;
     private float attackDamage;
+    private float attackDistance; // stats에서 받아온 실제 공격 사거리
     
     private EnemyStats assignedStats; // 이 적에게 할당된 EnemyStats 참조 추가
     
@@ -34,7 +35,6 @@ public class Enemy : MonoBehaviour
     [Header("탐지 및 공격 설정")]
     public float detectionRadius = 15f; // 플레이어를 탐지할 반경
     public float attackCooldown = 2f;   // 공격 사이의 최소 시간 간격 (초)
-    public float attackDistance = 2f;   // 플레이어를 공격할 수 있는 최대 거리
     private float lastAttackTime;       // 마지막으로 공격한 시간을 저장하는 변수
 
     [Header("순찰 설정")]
@@ -82,6 +82,10 @@ public class Enemy : MonoBehaviour
         chaseSpeed = stats.chaseSpeed;
         attackDamage = stats.attackDamage;
         patrolSpeed = chaseSpeed * 0.5f; // 순찰 속도는 추격 속도의 절반으로 설정
+        
+        // 크기를 반영한 최종 공격 거리 계산 -> 이제 스케일과 상관없이 stats의 값을 그대로 사용
+        // 기본 공격 거리에 스케일의 x값을 곱하여, 적이 커질수록 공격 사거리도 늘어나게 함
+        attackDistance = stats.attackDistance; 
 
         currentHealth = maxHealth;
 
@@ -97,7 +101,7 @@ public class Enemy : MonoBehaviour
         startingPosition = transform.position;
         diggableGrid = FindObjectOfType<DiggableGrid>();
 
-        // NavMeshAgent의 정지 거리를 공격 가능 거리와 동기화
+        // NavMeshAgent의 정지 거리를 크기가 반영된 공격 가능 거리와 동기화
         if (agent != null)
         {
             agent.stoppingDistance = attackDistance;
