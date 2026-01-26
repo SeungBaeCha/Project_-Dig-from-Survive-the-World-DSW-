@@ -19,6 +19,8 @@ public struct WeatherPreset
     [Header("안개")]
     public Color fogColor;
     public float fogDensity;
+    [Header("배경음악")]
+    public AudioClip bgm;
 }
 
 public class GameManager : MonoBehaviour
@@ -43,6 +45,14 @@ public class GameManager : MonoBehaviour
 
     private WeatherPreset currentDayWeather;
     private WeatherPreset currentNightWeather;
+    
+    [Header("BGM")]
+    [Tooltip("배경음악 볼륨")]
+    [SerializeField, Range(0, 1)] private float bgmVolume = 0.5f;
+    private AudioSource bgmSourceA;
+    private AudioSource bgmSourceB;
+    private AudioSource activeBgmSource;
+
 
     [Header("Enemy Manager")]
     [Tooltip("적 관리자 (EnemyManager) 스크립트 참조")]
@@ -102,8 +112,32 @@ public class GameManager : MonoBehaviour
             Instance = this;
             // 씬이 변경되어도 파괴되지 않도록 설정 (루트 오브젝트를 대상으로 함)
             DontDestroyOnLoad(transform.root.gameObject);
+
+            // BGM 소스 동적 생성 및 설정
+            InitializeBgmSources();
         }
     }
+    
+    private void InitializeBgmSources()
+    {
+        // "BGMSourceA"라는 이름의 자식 오브젝트를 찾아, 없으면 새로 생성합니다.
+        GameObject sourceAObject = new GameObject("BGMSourceA");
+        sourceAObject.transform.SetParent(this.transform); // GameManager의 자식으로 설정
+        bgmSourceA = sourceAObject.AddComponent<AudioSource>();
+        bgmSourceA.loop = true; // BGM은 반복 재생
+        bgmSourceA.volume = 0;  // 초기 볼륨은 0
+
+        // "BGMSourceB"라는 이름의 자식 오브젝트를 찾아, 없으면 새로 생성합니다.
+        GameObject sourceBObject = new GameObject("BGMSourceB");
+        sourceBObject.transform.SetParent(this.transform); // GameManager의 자식으로 설정
+        bgmSourceB = sourceBObject.AddComponent<AudioSource>();
+        bgmSourceB.loop = true; // BGM은 반복 재생
+        bgmSourceB.volume = 0;  // 초기 볼륨은 0
+
+        // 첫 활성 BGM 소스를 A로 지정합니다.
+        activeBgmSource = bgmSourceA;
+    }
+
 
     /// <summary>
     /// 스크립트가 활성화될 때 호출. 낮/밤 전환 및 보급 상자 수명 주기 관리에 대한 이벤트를 구독한다.
@@ -269,22 +303,53 @@ public class GameManager : MonoBehaviour
 
     private void SetWeatherImmediate(WeatherPreset preset)
     {
-        if (sun == null) return;
-        
-        RenderSettings.ambientLight = preset.ambientColor;
-        sun.color = preset.sunColor;
-        sun.intensity = preset.sunIntensity;
-        sun.transform.rotation = Quaternion.Euler(preset.sunRotation);
-        RenderSettings.fogColor = preset.fogColor;
-        RenderSettings.fogDensity = preset.fogDensity;
+        // 환경 설정 즉시 적용
+        if (sun != null)
+        {
+            RenderSettings.ambientLight = preset.ambientColor;
+            sun.color = preset.sunColor;
+            sun.intensity = preset.sunIntensity;
+            sun.transform.rotation = Quaternion.Euler(preset.sunRotation);
+            RenderSettings.fogColor = preset.fogColor;
+            RenderSettings.fogDensity = preset.fogDensity;
+        }
+
+        // BGM 즉시 변경
+        // 현재 활성화된 소스가 아닌 다른 소스를 정지
+        AudioSource otherSource = (activeBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
+        otherSource.Stop();
+        otherSource.volume = 0;
+
+        // 활성화된 소스에 새 클립 설정 및 재생
+        if (activeBgmSource.clip != preset.bgm)
+        {
+            activeBgmSource.clip = preset.bgm;
+        }
+        activeBgmSource.volume = (preset.bgm != null) ? bgmVolume : 0;
+        if (preset.bgm != null && !activeBgmSource.isPlaying)
+        {
+            activeBgmSource.Play();
+        }
+        else if (preset.bgm == null)
+        {
+            activeBgmSource.Stop();
+        }
     }
 
     private IEnumerator TransitionWeather(WeatherPreset preset)
     {
-        if (sun == null) yield break;
+        // --- BGM 크로스페이드 설정 ---
+        AudioSource oldSource = activeBgmSource;
+        AudioSource newSource = (activeBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
+        
+        newSource.clip = preset.bgm;
+        if (newSource.clip != null)
+        {
+            newSource.Play(); // 새 BGM 재생 시작 (볼륨은 0)
+        }
 
+        // --- 환경 설정 값 가져오기 ---
         float elapsedTime = 0f;
-
         Color startAmbient = RenderSettings.ambientLight;
         Color startSunColor = sun.color;
         float startSunIntensity = sun.intensity;
@@ -292,11 +357,13 @@ public class GameManager : MonoBehaviour
         Color startFogColor = RenderSettings.fogColor;
         float startFogDensity = RenderSettings.fogDensity;
 
+        // --- 전환 루프 ---
         while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / transitionDuration;
 
+            // 환경 전환
             RenderSettings.ambientLight = Color.Lerp(startAmbient, preset.ambientColor, progress);
             sun.color = Color.Lerp(startSunColor, preset.sunColor, progress);
             sun.intensity = Mathf.Lerp(startSunIntensity, preset.sunIntensity, progress);
@@ -304,8 +371,20 @@ public class GameManager : MonoBehaviour
             RenderSettings.fogColor = Color.Lerp(startFogColor, preset.fogColor, progress);
             RenderSettings.fogDensity = Mathf.Lerp(startFogDensity, preset.fogDensity, progress);
 
+            // BGM 크로스페이드
+            oldSource.volume = Mathf.Lerp(bgmVolume, 0f, progress);
+            if (newSource.clip != null)
+            {
+                newSource.volume = Mathf.Lerp(0f, bgmVolume, progress);
+            }
+
             yield return null;
         }
+
+        // --- 전환 완료 ---
+        oldSource.Stop();
+        oldSource.volume = 0;
+        activeBgmSource = newSource; // 활성 소스 교체
 
         SetWeatherImmediate(preset);
     }

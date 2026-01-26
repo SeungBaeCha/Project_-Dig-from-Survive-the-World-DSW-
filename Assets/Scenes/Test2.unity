@@ -1282,6 +1282,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].sunIntensity
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: nightWeatherPresets.Array.data[3].sunIntensity
       value: 0.1
       objectReference: {fileID: 0}
@@ -1373,7 +1378,7 @@ PrefabInstance:
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: nightWeatherPresets.Array.data[3].ambientColor.r
-      value: 0.735849
+      value: 0.4433962
       objectReference: {fileID: 0}
     - target: {fileID: 6174248598769668855, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
