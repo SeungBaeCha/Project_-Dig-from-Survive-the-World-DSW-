@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, Range(0, 1)] private float bgmVolume = 0.5f;
     private AudioSource bgmSourceA;
     private AudioSource bgmSourceB;
-    private AudioSource activeBgmSource;
+    public AudioSource ActiveBgmSource { get; private set; }
 
 
     [Header("Enemy Manager")]
@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
         bgmSourceB.volume = 0;  // 초기 볼륨은 0
 
         // 첫 활성 BGM 소스를 A로 지정합니다.
-        activeBgmSource = bgmSourceA;
+        ActiveBgmSource = bgmSourceA;
     }
 
 
@@ -316,31 +316,31 @@ public class GameManager : MonoBehaviour
 
         // BGM 즉시 변경
         // 현재 활성화된 소스가 아닌 다른 소스를 정지
-        AudioSource otherSource = (activeBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
+        AudioSource otherSource = (ActiveBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
         otherSource.Stop();
         otherSource.volume = 0;
 
         // 활성화된 소스에 새 클립 설정 및 재생
-        if (activeBgmSource.clip != preset.bgm)
+        if (ActiveBgmSource.clip != preset.bgm)
         {
-            activeBgmSource.clip = preset.bgm;
+            ActiveBgmSource.clip = preset.bgm;
         }
-        activeBgmSource.volume = (preset.bgm != null) ? bgmVolume : 0;
-        if (preset.bgm != null && !activeBgmSource.isPlaying)
+        ActiveBgmSource.volume = (preset.bgm != null) ? bgmVolume : 0;
+        if (preset.bgm != null && !ActiveBgmSource.isPlaying)
         {
-            activeBgmSource.Play();
+            ActiveBgmSource.Play();
         }
         else if (preset.bgm == null)
         {
-            activeBgmSource.Stop();
+            ActiveBgmSource.Stop();
         }
     }
 
     private IEnumerator TransitionWeather(WeatherPreset preset)
     {
         // --- BGM 크로스페이드 설정 ---
-        AudioSource oldSource = activeBgmSource;
-        AudioSource newSource = (activeBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
+        AudioSource oldSource = ActiveBgmSource;
+        AudioSource newSource = (ActiveBgmSource == bgmSourceA) ? bgmSourceB : bgmSourceA;
         
         newSource.clip = preset.bgm;
         if (newSource.clip != null)
@@ -360,7 +360,7 @@ public class GameManager : MonoBehaviour
         // --- 전환 루프 ---
         while (elapsedTime < transitionDuration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             float progress = elapsedTime / transitionDuration;
 
             // 환경 전환
@@ -384,7 +384,7 @@ public class GameManager : MonoBehaviour
         // --- 전환 완료 ---
         oldSource.Stop();
         oldSource.volume = 0;
-        activeBgmSource = newSource; // 활성 소스 교체
+        ActiveBgmSource = newSource; // 활성 소스 교체
 
         SetWeatherImmediate(preset);
     }

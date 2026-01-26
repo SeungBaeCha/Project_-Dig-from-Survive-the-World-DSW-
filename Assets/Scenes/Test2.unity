@@ -932,6 +932,41 @@ PrefabInstance:
       objectReference: {fileID: 1407849195}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: dayWeatherPresets.Array.data[0].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 01e9bab3199fbc74cbe094be36539703, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[1].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 17d7fa7a027284e4e8e395f7f55e4274, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: dayWeatherPresets.Array.data[2].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 6e589fc673b01304fa03d24a5e4972bf, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[0].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 5353b13373e18784fae321aea9cc85c1, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[1].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 0767407a3df179945ad7f467cdc522a4, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[2].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 66034804deaa9dc46bc34176f897445e, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: nightWeatherPresets.Array.data[3].bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 82c27d343d7d5c641ad82ea2fe019fe1, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: dayWeatherPresets.Array.data[0].fogColor.b
       value: 0.72156864
       objectReference: {fileID: 0}

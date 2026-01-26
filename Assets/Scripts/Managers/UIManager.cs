@@ -36,6 +36,7 @@ public class UIManager : MonoBehaviour
 
     private PlayerInputActions inputActions;
     private Coroutine notificationCoroutine;
+    private Coroutine audioFadeCoroutine;
 
     private void Awake()
     {
@@ -66,6 +67,8 @@ public class UIManager : MonoBehaviour
         // 게임 시작 시에는 커서를 보이지 않게 잠금
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        // 오디오 리스너 볼륨 초기화
+        AudioListener.volume = 1f;
     }
 
     private void OnEnable()
@@ -302,6 +305,14 @@ public class UIManager : MonoBehaviour
         // 게임 시간 제어 (shouldPause 조건만 사용)
         Time.timeScale = shouldPause ? 0f : 1f;
 
+        // BGM 페이드 제어
+        if (audioFadeCoroutine != null)
+        {
+            StopCoroutine(audioFadeCoroutine);
+        }
+        // 게임이 멈추면 볼륨을 0으로, 다시 시작되면 1로 0.5초 동안 페이드합니다.
+        audioFadeCoroutine = StartCoroutine(FadeAudioListener(shouldPause ? 0f : 1f, 0.5f));
+
         // 커서 제어 (shouldShowCursor 조건 사용)
         if (shouldShowCursor)
         {
@@ -314,6 +325,26 @@ public class UIManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
+
+    /// <summary>
+    /// 지정된 시간에 걸쳐 오디오 리스너의 볼륨을 부드럽게 변경합니다.
+    /// Time.unscaledDeltaTime를 사용하여 Time.timeScale에 영향을 받지 않습니다.
+    /// </summary>
+    private IEnumerator FadeAudioListener(float targetVolume, float duration)
+    {
+        float startVolume = AudioListener.volume;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.unscaledDeltaTime;
+            AudioListener.volume = Mathf.Lerp(startVolume, targetVolume, timer / duration);
+            yield return null;
+        }
+
+        AudioListener.volume = targetVolume;
+    }
+
 
     /// <summary>
     /// 플레이어의 인벤토리, 제작 등 UI 관련 입력 액션을 비활성화한다.
