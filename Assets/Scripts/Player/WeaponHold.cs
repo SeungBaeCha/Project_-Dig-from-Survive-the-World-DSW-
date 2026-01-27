@@ -106,25 +106,35 @@ public class WeaponHold : MonoBehaviour
             return;
         }
 
-        // 버튼이 눌려있는지 여부를 isFiring 플래그에 저장 (자동 발사는 Update에서 처리)
-        isFiring = context.ReadValueAsButton();
-
-        // 단발 무기 및 도구 사용 처리 (버튼을 처음 누른 시점)
-        if (context.performed)
+        if (currentGun != null) // 총을 들고 있을 때
         {
-            if (currentGun != null)
+            if (currentGun.gunData.isAutomatic)
             {
-                // 들고 있는 총이 단발이라면 여기서 즉시 발사
-                if (!currentGun.gunData.isAutomatic)
+                // 자동 총: 버튼 누름 상태를 isFiring에 저장 -> Update에서 연속 발사
+                isFiring = context.ReadValueAsButton();
+            }
+            else
+            {
+                // 단발 총: isFiring은 항상 false. 버튼을 처음 눌렀을 때만 발사
+                isFiring = false;
+                if (context.performed)
                 {
                     currentGun.TryFire();
                 }
             }
-            else if (currentShovel != null)
+        }
+        else if (currentShovel != null) // 삽을 들고 있을 때
+        {
+            isFiring = false; // 삽은 자동 공격이 아님
+            if (context.performed)
             {
-                // 총이 아니고 삽이라면 사용
                 currentShovel.Use();
             }
+        }
+        else
+        {
+            // 다른 종류의 무기나 도구가 추가될 경우
+            isFiring = false;
         }
     }
 

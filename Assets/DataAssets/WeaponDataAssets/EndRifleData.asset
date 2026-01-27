@@ -18,9 +18,9 @@ MonoBehaviour:
   itemPrefab: {fileID: 2522372694526072791, guid: 5857258ff0934e84f842a689fce85a49,
     type: 3}
   recipeToUnlock: {fileID: 11400000, guid: c1f50c24d7fd6624e94e9c08c8014857, type: 2}
-  damage: 50
+  damage: 100
   range: 7
-  fireRate: 15
+  fireRate: 2
   isAutomatic: 1
   pelletsPerShot: 1
   spreadAngle: 0
