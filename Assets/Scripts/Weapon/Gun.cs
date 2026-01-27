@@ -19,6 +19,9 @@ public abstract class Gun : MonoBehaviour
 
     // 발사 속도 제어를 위한 변수
     protected float nextFireTime;
+    
+    // 사운드 재생을 위한 변수
+    protected AudioSource audioSource;
 
     // 컴포넌트가 활성화될 때 또는 게임 시작 시 호출
     // 자식 클래스에서 재정의(override)할 수 있도록 virtual로 선언
@@ -26,6 +29,14 @@ public abstract class Gun : MonoBehaviour
     {
         // 총이 처음 생성될 때 장탄 수를 0으로 초기화하여 재장전을 유도한다.
         currentAmmo = 0;
+        
+        // 사운드 컴포넌트 초기화
+        // AudioSource 컴포넌트를 찾거나, 없으면 새로 추가한다.
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     // 외부에서 플레이어 콜라이더를 설정하기 위한 메서드
@@ -59,6 +70,12 @@ public abstract class Gun : MonoBehaviour
         // 현재 시간이 다음 발사 가능 시간보다 크거나 같으면 발사
         if (Time.time >= nextFireTime)
         {
+            // 발사 사운드 재생. PlayOneShot을 사용해 여러 발의 사운드가 겹쳐서 재생될 수 있게 한다.
+            if (gunData.shotSound != null)
+            {
+                audioSource.PlayOneShot(gunData.shotSound);
+            }
+
             // 다음 발사 시간 계산 (1 / 초당 발사 수)
             nextFireTime = Time.time + 1f / gunData.fireRate;
             
@@ -116,7 +133,12 @@ public abstract class Gun : MonoBehaviour
         playerInventory.RemoveItem(gunData.ammoType, ammoToReload);
 
         UIManager.Instance.ShowNotification("재장전 완료!");
-        // (추후 추가) 재장전 사운드 재생, 애니메이션 실행 등의 로직을 여기에 추가할 수 있다.
+        
+        // 재장전 사운드 재생
+        if (gunData.reloadSound != null)
+        {
+            audioSource.PlayOneShot(gunData.reloadSound);
+        }
     }
 
     // 각 총의 종류마다 다르게 구현될 실제 발사 로직 (추상 메서드)

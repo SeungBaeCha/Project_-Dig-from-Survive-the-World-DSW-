@@ -25,5 +25,8 @@ public class GunData : ItemData
     [Header("Prefabs & VFX")]
     public GameObject bulletPrefab; // 총알 프리팹
     // public GameObject muzzleFlash; // 총구 화염 효과 (나중에 추가)
-    // public AudioClip shotSound;    // 발사 소리 (나중에 추가)
+
+    [Header("Sound")]
+    public AudioClip shotSound;    // 발사 소리
+    public AudioClip reloadSound;  // 재장전 소리
 }
