@@ -66,6 +66,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float lootBoxSpawnChanceIncrease = 0.1f;
     [Tooltip("보급 상자가 생성될 수 있는 모든 위치 목록")]
     [SerializeField] private List<Transform> lootBoxSpawnPoints;
+    [Tooltip("보급 상자가 나타날 때 재생할 사운드")]
+    [SerializeField] private AudioClip lootBoxSpawnSound;
+    [Tooltip("보급 상자가 사라질 때 재생할 사운드")]
+    [SerializeField] private AudioClip lootBoxDespawnSound;
 
     [Header("배고픔 설정")]
     [SerializeField] private float hungerDecreaseInterval;
@@ -407,6 +411,12 @@ public class GameManager : MonoBehaviour
         // --- 1. 이전 보급 상자 제거 로직 ---
         if (activeLootBox != null && DayCount > lootBoxSpawnDay)
         {
+            // 상자가 사라지는 소리 재생
+            if (lootBoxDespawnSound != null)
+            {
+                AudioSource.PlayClipAtPoint(lootBoxDespawnSound, activeLootBox.transform.position);
+            }
+
             string expiryMessage = $"지난 {lootBoxSpawnDay}일차 보급 상자가 사라졌습니다.";
             UIManager.Instance.ShowSupplyBoxNotification(expiryMessage);
             Debug.Log($"<color=orange>{expiryMessage}</color>");
@@ -432,6 +442,14 @@ public class GameManager : MonoBehaviour
                 
                 activeLootBox = Instantiate(lootBoxPrefab, spawnPoint.position, spawnPoint.rotation);
                 lootBoxSpawnDay = DayCount;
+
+                // 상자가 나타나는 소리 재생
+                if (lootBoxSpawnSound != null)
+                {
+                    // 플레이어가 존재하면 플레이어 위치에서, 아니면 월드 원점에서 소리 재생
+                    Vector3 soundPosition = (playerTransform != null) ? playerTransform.position : Vector3.zero;
+                    AudioSource.PlayClipAtPoint(lootBoxSpawnSound, soundPosition);
+                }
 
                 string message = $"보급이 떨어졌습니다!"; // 사용자가 요청한 메시지로 변경
                 UIManager.Instance.ShowSupplyBoxNotification(message); 

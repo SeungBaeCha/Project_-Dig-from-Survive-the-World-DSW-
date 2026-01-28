@@ -867,6 +867,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: lootBoxSpawnSound
+      value: 
+      objectReference: {fileID: 8300000, guid: e769072c3efe7e04b8c527be53e8f1a3, type: 3}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: nightSunIntensity
       value: 0.05
       objectReference: {fileID: 0}
@@ -875,6 +880,11 @@ PrefabInstance:
       propertyPath: transitionDuration
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
+      propertyPath: lootBoxDespawnSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 28582b5e65b8441459418f2d9591c27f, type: 3}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
       propertyPath: hungerDecreaseChance
