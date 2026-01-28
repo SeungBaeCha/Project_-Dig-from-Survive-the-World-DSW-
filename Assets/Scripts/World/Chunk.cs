@@ -17,6 +17,9 @@ public class Chunk : MonoBehaviour
     [Tooltip("청크가 파괴될 때 생성될 파티클 이펙트")]
     public GameObject digEffectPrefab;
 
+    [Tooltip("땅을 팔 때 재생될 음향 효과")]
+    public AudioClip digSound;
+
     [Header("Unique Recipe Drop")]
     [Tooltip("이 청크가 낮은 확률로 드랍할 수 있는 고유 레시피")]
     public CraftingRecipe uniqueRecipeToUnlock;
@@ -32,6 +35,12 @@ public class Chunk : MonoBehaviour
     /// <param name="damageAmount">입힐 데미지 양</param>
     public void TakeDamage(int damageAmount)
     {
+        // 땅 파는 소리 재생
+        if (digSound != null)
+        {
+            AudioSource.PlayClipAtPoint(digSound, transform.position);
+        }
+
         // 데미지를 받으면 파티클 이펙트를 생성한다.
         if (digEffectPrefab != null)
         {

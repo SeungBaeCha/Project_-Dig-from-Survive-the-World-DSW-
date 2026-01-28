@@ -122,6 +122,7 @@ MonoBehaviour:
   lootTable: {fileID: 11400000, guid: 4693ab65120250f48a3160cd6551ea0c, type: 2}
   digEffectPrefab: {fileID: 3829434132657083626, guid: 35528b00125ce974082220da683b4085,
     type: 3}
+  digSound: {fileID: 8300000, guid: 652043be54b1346408ecf49620cc9f4b, type: 3}
   uniqueRecipeToUnlock: {fileID: 11400000, guid: 76c60a76cf1f7944b8194acf2f9f86fb,
     type: 2}
   recipeItemPrefab: {fileID: 7187320824981851257, guid: 568734ef56a92b7459962f2f6d9c4045,

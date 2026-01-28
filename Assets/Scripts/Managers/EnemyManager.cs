@@ -60,8 +60,8 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     public void StartSpawning()
     {
-        GameManager.OnDayStart += HandleDayStart;
-        GameManager.OnNightStart += HandleNightStart;
+        GameManager.OnDayStart += OnDayStartEventHandler;
+        GameManager.OnNightStart += OnNightStartEventHandler;
         Debug.Log("Enemy Spawning Started.");
     }
 
@@ -70,14 +70,37 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     public void StopSpawning()
     {
-        GameManager.OnDayStart -= HandleDayStart;
-        GameManager.OnNightStart -= HandleNightStart;
+        GameManager.OnDayStart -= OnDayStartEventHandler;
+        GameManager.OnNightStart -= OnNightStartEventHandler;
         ClearAllEnemies(); // 중지 시 모든 적 제거
         Debug.Log("Enemy Spawning Stopped.");
     }
 
-    private void HandleDayStart()
+    // 이벤트 핸들러: OnDayStart 이벤트가 발생하면 코루틴 시작
+    private void OnDayStartEventHandler()
     {
+        StartCoroutine(HandleDayStartCoroutine());
+    }
+
+    // 이벤트 핸들러: OnNightStart 이벤트가 발생하면 코루틴 시작
+    private void OnNightStartEventHandler()
+    {
+        StartCoroutine(HandleNightStartCoroutine());
+    }
+
+    private IEnumerator HandleDayStartCoroutine()
+    {
+        // NavMesh 업데이트가 완료될 때까지 기다린다.
+        if (DiggableGrid.Instance != null)
+        {
+            yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
+            Debug.Log("NavMesh 업데이트 완료. 낮 적 생성 시작.");
+        }
+        else
+        {
+            Debug.LogWarning("DiggableGrid.Instance가 null입니다. NavMesh 업데이트 대기 로직을 건너뜜니다.");
+        }
+
         // 밤에 활동하던 모든 적을 제거
         ClearAllEnemies();
 
@@ -100,8 +123,19 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    private void HandleNightStart()
+    private IEnumerator HandleNightStartCoroutine()
     {
+        // NavMesh 업데이트가 완료될 때까지 기다린다.
+        if (DiggableGrid.Instance != null)
+        {
+            yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
+            Debug.Log("NavMesh 업데이트 완료. 밤 적 생성 시작.");
+        }
+        else
+        {
+            Debug.LogWarning("DiggableGrid.Instance가 null입니다. NavMesh 업데이트 대기 로직을 건너뜜니다.");
+        }
+
         // 낮에 활동하던 모든 적을 제거
         ClearAllEnemies();
 

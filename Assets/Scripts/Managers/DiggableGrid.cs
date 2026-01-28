@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation; // NavMeshSurface를 사용하기 위해 추가
+using UnityEngine.AI; // NavMesh, NavMeshBuildSettings, NavMeshBuilder 등을 사용하기 위해 추가
 
 /// <summary>
 /// 작은 '청크' 프리팹을 이용하여 팔 수 있는 지형을 격자 형태로 생성하고,
@@ -30,7 +31,12 @@ public class DiggableGrid : MonoBehaviour
     
     // NavMesh 업데이트가 중복 실행되지 않도록 관리하는 코루틴 참조
     private Coroutine _rebuildCoroutine;
-    
+
+    // NavMesh 업데이트 상태를 나타내는 플래그 추가
+    public bool IsNavMeshUpdating { get; private set; } = false; // 외부에서 읽기 전용
+
+    public static DiggableGrid Instance { get; private set; } // 싱글톤 인스턴스
+
     [Header("Multi-Grid Settings")]
     [Tooltip("생성될 그리드들 사이의 간격. 그리드의 크기를 고려하여 설정해야 겹치지 않습니다.")]
     public float gridSpacing = 5f;
@@ -47,6 +53,20 @@ public class DiggableGrid : MonoBehaviour
     
     // 생성된(또는 파괴되어 생긴) 입구(구멍) 위치들 관리
     private List<Vector3> entrances = new List<Vector3>();
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            // 씬이 변경되어도 파괴되지 않도록 설정 (루트 오브젝트를 대상으로 함)
+            DontDestroyOnLoad(transform.root.gameObject);
+        }
+    }
 
     void Start()
     {
@@ -67,8 +87,8 @@ public class DiggableGrid : MonoBehaviour
         // 설정에 따라 여러 그리드를 생성
         CreateGrids();
 
-        // 초기 격자 생성 후 NavMesh 전체를 한 번 빌드
-        surface.BuildNavMesh();
+        // 초기 격자 생성 후 NavMesh 전체를 한 번 비동기 빌드
+        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(0f)); // 0초 지연으로 즉시 비동기 빌드 시작
     }
 
     /// <summary>
@@ -147,21 +167,30 @@ public class DiggableGrid : MonoBehaviour
             StopCoroutine(_rebuildCoroutine);
         }
         // 새로운 업데이트 코루틴을 시작하고 참조를 저장한다.
-        _rebuildCoroutine = StartCoroutine(DelayedRebuild());
+        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(1.0f)); // 1초 지연 후 비동기 업데이트 시작
     }
 
     /// <summary>
     /// 짧은 지연 시간 후에 NavMesh를 재빌드하는 코루틴.
     /// </summary>
-    private IEnumerator DelayedRebuild()
+    private IEnumerator DelayedRebuildAsync(float delay)
     {
-        // 1.0초 대기. 이 시간 안에 또 Request가 들어오면 이 코루틴은 중지되고 새로 시작된다.
-        yield return new WaitForSeconds(1.0f);
-        
-        // NavMesh를 다시 빌드한다.
+        if (delay > 0)
+        {
+            yield return new WaitForSeconds(delay);
+        }
+
+        IsNavMeshUpdating = true;
+        Debug.Log("NavMesh update started (synchronously for now).");
+
+        // Unity의 내장된 NavMeshSurface.BuildNavMesh()를 사용한다.
+        // 이 메서드는 동기적으로 동작하며, 메인 스레드를 잠시 블록할 수 있지만
+        // 현재 Unity 환경에서 런타임에 가장 안정적으로 NavMesh를 업데이트하는 방법이다.
         surface.BuildNavMesh();
         
-        // 코루틴 실행이 끝났으므로 참조를 null로 설정한다.
+        IsNavMeshUpdating = false;
+        Debug.Log("NavMesh update completed (synchronously for now).");
+
         _rebuildCoroutine = null;
     }
 
