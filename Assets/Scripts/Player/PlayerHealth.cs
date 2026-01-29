@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; // SceneManagement를 사용하기 위해 추가
+using UnityEngine.UI; // UI Image 사용을 위해 추가
 using Cinemachine; // 시네머신 사용을 위해 추가
 
 [RequireComponent(typeof(AudioSource))]
@@ -26,6 +27,9 @@ public class PlayerHealth : MonoBehaviour
     public AudioClip hitSound; // 피격 시 재생할 사운드
     [Range(0f, 1f)]
     public float hitSoundVolume = 0.5f; // 피격 사운드 볼륨
+    [Tooltip("체력이 낮을수록 붉게 변하는 화면 효과")]
+    public Image damageOverlay; // 화면 오버레이 이미지
+    public Color damageOverlayColor = Color.red; // 오버레이 색상
     
     private AudioSource audioSource; // 사운드 재생을 위한 AudioSource
     private CinemachineImpulseSource impulseSource; // 카메라 흔들림을 위한 ImpulseSource
@@ -52,6 +56,8 @@ public class PlayerHealth : MonoBehaviour
         {
             gameoverPanel.SetActive(false);
         }
+        
+        UpdateDamageOverlay(); // 오버레이 초기화
     }
 
     void Update()
@@ -91,6 +97,8 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0) return;
 
         currentHealth -= damage;
+        UpdateDamageOverlay(); // 데미지를 입었을 때 오버레이 업데이트
+        
         if (hpBar != null)
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
@@ -107,10 +115,6 @@ public class PlayerHealth : MonoBehaviour
         // 체력이 낮을수록 더 강하게 흔들린다.
         float healthPercent = Mathf.Max(0, currentHealth) / maxHealth; // 0~1 사이의 체력 비율
         float impulseStrength = (1 - healthPercent) * healthBasedImpulseMultiplier;
-
-        //// 이 Debug.Log가 콘솔에 찍히는지 확인
-        //Debug.Log("카메라 흔들림 시도! 강도: " + impulseStrength);
-
         if (impulseSource != null) // impulseSource가 null이 아닌지 확인
         {
              impulseSource.GenerateImpulseWithVelocity(Random.insideUnitSphere.normalized * impulseStrength);
@@ -130,6 +134,8 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > 10)
         {
             currentHealth -= damage;
+            UpdateDamageOverlay(); // 배고픔 데미지를 입었을 때 오버레이 업데이트
+
             // 데미지를 입은 후 체력이 10보다 낮아지면 10으로 고정한다.
             if (currentHealth < 10)
             {
@@ -190,6 +196,8 @@ public class PlayerHealth : MonoBehaviour
             hpBar.UpdateHP(currentHealth, maxHealth);
             hpBar.UpdateHunger(currentHunger, maxHunger);
         }
+        
+        UpdateDamageOverlay(); // 아이템 사용 후 오버레이 업데이트
     }
 
     // 사망 처리 함수
@@ -203,11 +211,30 @@ public class PlayerHealth : MonoBehaviour
             gameoverPanel.SetActive(true);
         }
 
+        // 플레이어 사망 시 화면 오버레이 비활성화
+        if (damageOverlay != null)
+        {
+            damageOverlay.gameObject.SetActive(false);
+        }
+
         // 게임시간 멈추기
         Time.timeScale = 0f;
 
         // 플레이어의 UI 입력 비활성화
         UIManager.Instance.DisablePlayerInput();
+    }
+    
+    /// <summary>
+    /// 체력 변화에 따라 화면 오버레이 효과를 업데이트합니다.
+    /// </summary>
+    private void UpdateDamageOverlay()
+    {
+        if (damageOverlay == null) return;
+
+        float healthPercent = Mathf.Max(0, currentHealth) / maxHealth; // 0~1 사이의 체력 비율
+        float alpha = 1.0f - healthPercent; // 체력이 낮을수록 alpha값이 1에 가까워짐
+
+        damageOverlay.color = new Color(damageOverlayColor.r, damageOverlayColor.g, damageOverlayColor.b, alpha);
     }
 
     /// <summary>
@@ -249,4 +276,4 @@ public class PlayerHealth : MonoBehaviour
         Application.Quit();
 #endif
     }
-} // 누락된 닫는 괄호 추가
+}
