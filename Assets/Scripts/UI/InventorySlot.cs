@@ -94,6 +94,12 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
         // 왼쪽 클릭: 아이템 사용 (레시피 북 등)
         if (eventData.button == PointerEventData.InputButton.Left)
         {
+            // 클릭 사운드 재생
+            if (inventoryUI != null && inventoryUI.slotClickSound != null)
+            {
+                AudioSource.PlayClipAtPoint(inventoryUI.slotClickSound, transform.position, inventoryUI.slotClickVolume);
+            }
+
             // InventoryUI에 '나(이 슬롯) 왼쪽 클릭됐어!' 라고 알린다.
             inventoryUI.OnSlotClicked(this);
         }

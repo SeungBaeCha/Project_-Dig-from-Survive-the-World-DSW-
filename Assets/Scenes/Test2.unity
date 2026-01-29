@@ -877,6 +877,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: lootBoxSpawnVolume
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: transitionDuration
       value: 10
       objectReference: {fileID: 0}
@@ -2396,6 +2401,11 @@ PrefabInstance:
       propertyPath: inventoryPanel
       value: 
       objectReference: {fileID: 369934069}
+    - target: {fileID: 5306552245824113951, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: slotClickSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8c47cf7d1f02aed4ab705caffe5d8361, type: 3}
     - target: {fileID: 5306552245824113951, guid: de1aabecdae90094cb8697faed6ebd9e,
         type: 3}
       propertyPath: playerInventory

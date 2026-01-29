@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
 
+[RequireComponent(typeof(AudioSource))]
 public class Enemy : MonoBehaviour
 {
     // --- 능력치 변수 (Initialize에서 설정됨) ---
@@ -55,9 +56,16 @@ public class Enemy : MonoBehaviour
     [Header("드랍 아이템 설정")]
     public LootTable enemyLootTable;
 
+    [Header("사운드 설정")]
+    public AudioClip hitSound; // 피격 시 재생할 사운드
+    [Range(0f, 1f)]
+    public float hitSoundVolume = 0.5f; // 피격 사운드 볼륨
+    private AudioSource audioSource; // 사운드 재생을 위한 AudioSource
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        audioSource = GetComponent<AudioSource>(); // AudioSource 컴포넌트 가져오기
         
         // 눈과 몸 렌더러 찾기
         eyesRenderer = transform.Find("Eyes")?.GetComponent<MeshRenderer>();
@@ -245,11 +253,30 @@ public class Enemy : MonoBehaviour
 
         if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
 
+        // 피격 사운드를 0.1초 지연 후 재생하기 위해 코루틴을 시작한다.
+        if (hitSound != null && audioSource != null)
+        {
+            StartCoroutine(PlayHitSoundWithDelay(0.1f));
+        }
+
+
         if (currentHealth <= 0)
         {
             Die();
         }
     }
+
+    /// <summary>
+    /// 지정된 시간만큼 기다린 후 피격 사운드를 재생하는 코루틴.
+    /// </summary>
+    /// <param name="delay">사운드 재생 전 대기할 시간(초)</param>
+    /// <returns></returns>
+    private System.Collections.IEnumerator PlayHitSoundWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        audioSource.PlayOneShot(hitSound, hitSoundVolume);
+    }
+
 
     private void Die()
     {

@@ -19,6 +19,9 @@ public class Chunk : MonoBehaviour
 
     [Tooltip("땅을 팔 때 재생될 음향 효과")]
     public AudioClip digSound;
+    [Tooltip("땅 파는 소리의 볼륨 (0.0 ~ 1.0)")]
+    [Range(0f, 1f)]
+    public float digVolume = 1.0f; // 기본 볼륨은 1.0f
 
     [Header("Unique Recipe Drop")]
     [Tooltip("이 청크가 낮은 확률로 드랍할 수 있는 고유 레시피")]
@@ -38,7 +41,7 @@ public class Chunk : MonoBehaviour
         // 땅 파는 소리 재생
         if (digSound != null)
         {
-            AudioSource.PlayClipAtPoint(digSound, transform.position);
+            AudioSource.PlayClipAtPoint(digSound, transform.position, digVolume);
         }
 
         // 데미지를 받으면 파티클 이펙트를 생성한다.

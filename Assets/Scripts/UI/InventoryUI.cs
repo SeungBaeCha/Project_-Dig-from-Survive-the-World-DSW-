@@ -14,6 +14,13 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Transform slotsParent;
     [Tooltip("인벤토리 슬롯 프리팹")]
     [SerializeField] private GameObject slotPrefab;
+    
+    [Header("사운드 설정")]
+    [Tooltip("인벤토리 슬롯을 클릭했을 때 재생할 사운드")]
+    public AudioClip slotClickSound;
+    [Tooltip("슬롯 클릭 사운드의 볼륨")]
+    [Range(0f, 1f)]
+    public float slotClickVolume = 1.0f;
 
     [Header("연결될 시스템")]
     [Tooltip("플레이어의 실제 인벤토리 데이터")]

@@ -76,6 +76,7 @@ public abstract class Gun : MonoBehaviour
                 audioSource.PlayOneShot(gunData.shotSound);
             }
 
+
             // 다음 발사 시간 계산 (1 / 초당 발사 수)
             nextFireTime = Time.time + 1f / gunData.fireRate;
             
@@ -84,6 +85,9 @@ public abstract class Gun : MonoBehaviour
             // --------------------------
 
             Fire(); // 실제 발사 로직 실행
+
+            
+
         }
     }
 
