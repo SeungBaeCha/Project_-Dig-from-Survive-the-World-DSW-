@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; // SceneManagement를 사용하기 위해 추가
+using Cinemachine; // 시네머신 사용을 위해 추가
 
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(CinemachineImpulseSource))] // Cinemachine Impulse Source 추가
 public class PlayerHealth : MonoBehaviour
 {
     [Header("체력 설정")]
@@ -16,11 +19,24 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("게임 오버 설정")]
     public GameObject gameoverPanel;
+    
+    [Header("피격 효과")] // 기존 피격 연출 및 사운드 설정 통합
+    [Tooltip("체력이 낮을수록 강해지는 흔들림의 강도")]
+    public float healthBasedImpulseMultiplier = 1f; // 체력에 따른 흔들림 강도 배율
+    public AudioClip hitSound; // 피격 시 재생할 사운드
+    [Range(0f, 1f)]
+    public float hitSoundVolume = 0.5f; // 피격 사운드 볼륨
+    
+    private AudioSource audioSource; // 사운드 재생을 위한 AudioSource
+    private CinemachineImpulseSource impulseSource; // 카메라 흔들림을 위한 ImpulseSource
 
     void Start()
     {
         // 게임이 재시작되었을 수 있어 시작할 때 항상 시간을 원래대로 놓는다 (게임실행)
         Time.timeScale = 1f;
+
+        audioSource = GetComponent<AudioSource>(); // AudioSource 컴포넌트 가져오기
+        impulseSource = GetComponent<CinemachineImpulseSource>(); // ImpulseSource 컴포넌트 가져오기
 
         // 체력 초기화 및 HP바 업데이트
         currentHealth = maxHealth;
@@ -79,6 +95,27 @@ public class PlayerHealth : MonoBehaviour
         {
             hpBar.UpdateHP(currentHealth, maxHealth);
         }
+        
+        // --- 피격 효과 ---
+        // 1. 피격 사운드 재생
+        if (hitSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(hitSound, hitSoundVolume);
+        }
+
+        // 2. 시네머신 Impulse를 사용한 카메라 흔들림
+        // 체력이 낮을수록 더 강하게 흔들린다.
+        float healthPercent = Mathf.Max(0, currentHealth) / maxHealth; // 0~1 사이의 체력 비율
+        float impulseStrength = (1 - healthPercent) * healthBasedImpulseMultiplier;
+
+        //// 이 Debug.Log가 콘솔에 찍히는지 확인
+        //Debug.Log("카메라 흔들림 시도! 강도: " + impulseStrength);
+
+        if (impulseSource != null) // impulseSource가 null이 아닌지 확인
+        {
+             impulseSource.GenerateImpulseWithVelocity(Random.insideUnitSphere.normalized * impulseStrength);
+        }
+        // ------------------
 
         if (currentHealth <= 0)
         {
@@ -212,4 +249,4 @@ public class PlayerHealth : MonoBehaviour
         Application.Quit();
 #endif
     }
-}
+} // 누락된 닫는 괄호 추가
