@@ -80,4 +80,22 @@ public class LootBox : MonoBehaviour
             currentLoot.Remove(item);
         }
     }
+
+    /// <summary>
+    /// 이 LootBox 오브젝트가 파괴될 때 자동으로 호출된다.
+    /// 만약 이 상자의 UI가 열려있다면, 그 UI를 닫도록 처리한다.
+    /// </summary>
+    private void OnDestroy()
+    {
+        // LootBoxUI 싱글톤 인스턴스가 아직 존재하는지 확인
+        if (LootBoxUI.Instance != null)
+        {
+            // UI에 열려있는 상자가 지금 파괴되려는 이 상자인지 확인
+            if (LootBoxUI.Instance.IsCurrentLootBox(this))
+            {
+                // 맞다면, UI를 닫도록 요청한다.
+                LootBoxUI.Instance.Close();
+            }
+        }
+    }
 }

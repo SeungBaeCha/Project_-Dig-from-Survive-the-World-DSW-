@@ -104,6 +104,16 @@ public class LootBoxUI : MonoBehaviour
     }
 
     /// <summary>
+    /// UI에 현재 표시되고 있는 상자가 전달된 lootBox 인스턴스와 동일한지 확인한다.
+    /// </summary>
+    /// <param name="lootBox">확인할 LootBox 인스턴스</param>
+    /// <returns>동일하면 true, 아니면 false</returns>
+    public bool IsCurrentLootBox(LootBox lootBox)
+    {
+        return currentLootBox == lootBox;
+    }
+
+    /// <summary>
     /// currentLootBox의 아이템 목록을 기반으로 UI 슬롯들을 업데이트한다.
     /// </summary>
     private void UpdateUI()
