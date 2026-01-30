@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; // 'SceneManager'를 사용하기 위해 추가
 
 /// <summary>
 /// 게임의 전반적인 상태(시간, 날씨, 낮/밤 주기)를 관리하고,
@@ -30,6 +31,11 @@ public class GameManager : MonoBehaviour
 
     // 게임이 시작되었는지 여부를 나타내는 플래그.
     public bool isGameStarted { get; private set; }
+    // 플레이어가 사망했는지 여부를 나타내는 플래그
+    public bool IsPlayerDead { get; private set; }
+
+    [Header("UI")]
+    [SerializeField] private GameObject gameOverPanel;
 
     [Header("시간 설정")]
     [Tooltip("낮 시간의 지속 시간 (초)")]
@@ -152,6 +158,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void OnEnable()
     {
+        // 씬이 로드될 때마다 OnSceneLoaded 메서드가 호출되도록 이벤트를 구독합니다.
+        // 이는 게임 재시작 시 상태를 깨끗하게 리셋하기 위함입니다.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         OnDayStart += StartDayTransition; // 낮 전환 시작
         OnNightStart += StartNightTransition; // 밤 전환 시작
         OnDayStart += ManageLootBoxLifecycle; // 매일 아침 보급 상자 수명 주기 관리
@@ -162,6 +172,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void OnDisable()
     {
+        // OnEnable에서 구독했던 모든 이벤트를 해지합니다.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
         OnDayStart -= StartDayTransition;
         OnNightStart -= StartNightTransition;
         OnDayStart -= ManageLootBoxLifecycle;
@@ -243,6 +256,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // 게임이 시작되지 않았다면 아무것도 처리하지 않는다.
+        if (!isGameStarted) return;
 
         timer -= Time.deltaTime;
         HandleHunger();
@@ -471,5 +485,113 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// 씬이 로드될 때마다 호출되어 게임의 상태를 초기화합니다.
+    /// 게임 재시작 시 모든 것을 처음부터 시작할 수 있도록 보장합니다.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 게임 상태를 초기화
+        isGameStarted = false;
+        IsPlayerDead = false; // 사망 상태 리셋
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false); // 게임오버 패널 숨기기
+        }
+        
+        if(sun != null) sun.gameObject.SetActive(false);
+        RenderSettings.ambientLight = new Color(0.1f, 0.1f, 0.1f);
+        RenderSettings.fog = false;
+
+        // 모든 타이머와 카운터 리셋
+        DayCount = 0;
+        IsNight = false;
+        timer = 0;
+        hungerTimer = 0;
+        if (transitionCoroutine != null)
+        {
+            StopCoroutine(transitionCoroutine);
+            transitionCoroutine = null;
+        }
+
+        // 새 씬에서 플레이어 다시 찾기
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            playerHealth = playerObject.GetComponent<PlayerHealth>();
+            playerTransform = playerObject.transform;
+        }
+        else
+        {
+            // 재시작 시점에 플레이어를 못찾는 경우를 대비해 null 처리
+            playerHealth = null;
+            playerTransform = null;
+        }
+
+        // BGM 리셋
+        if (bgmSourceA != null)
+        {
+            bgmSourceA.Stop();
+            bgmSourceA.volume = 0;
+        }
+        if (bgmSourceB != null)
+        {
+            bgmSourceB.Stop();
+            bgmSourceB.volume = 0;
+        }
+        ActiveBgmSource = bgmSourceA;
+
+        // 이전 보급 상자 참조 제거
+        activeLootBox = null;
+        
+        Debug.Log("GameManager state has been reset on scene load.");
+    }
+
+    /// <summary>
+    /// 플레이어의 사망을 처리합니다. PlayerHealth에서 호출됩니다.
+    /// </summary>
+    public void HandlePlayerDeath()
+    {
+        if (IsPlayerDead) return;
+
+        IsPlayerDead = true;
+        Time.timeScale = 0f;
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+        // 게임오버 시 커서를 보이게 하고 잠금을 해제합니다.
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    /// <summary>
+    /// 게임을 재시작하는 함수. GameOver UI의 재시작 버튼에 연결됩니다.
+    /// </summary>
+    public void RestartGame()
+    {
+        // 게임 시간을 다시 정상으로 설정
+        Time.timeScale = 1f;
+
+        // 현재 씬을 다시 로드. OnSceneLoaded 이벤트가 게임 상태를 리셋할 것입니다.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// 게임을 종료하는 함수. GameOver UI의 종료 버튼에 연결됩니다.
+    /// </summary>
+    public void QuitGame()
+    {
+        Debug.Log("게임을 종료합니다.");
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }

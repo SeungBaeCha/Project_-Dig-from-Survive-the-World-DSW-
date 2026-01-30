@@ -50,12 +50,6 @@ public class PlayerHealth : MonoBehaviour
             hpBar.UpdateHP(currentHealth, maxHealth);
             hpBar.UpdateHunger(currentHunger, maxHunger); // 배고픔 UI도 시작 시 업데이트
         }
-
-        // 시작할때 gameoverPanel이 꺼져있도록 처리
-        if (gameoverPanel != null)
-        {
-            gameoverPanel.SetActive(false);
-        }
         
         UpdateDamageOverlay(); // 오버레이 초기화
     }
@@ -203,13 +197,7 @@ public class PlayerHealth : MonoBehaviour
     // 사망 처리 함수
     private void Die()
     {
-        // 나중에 여기에 게임 오버 로직이나 부활 로직을 추가.
         Debug.Log("플레이어가 사망했다.");
-
-        if (gameoverPanel != null)
-        {
-            gameoverPanel.SetActive(true);
-        }
 
         // 플레이어 사망 시 화면 오버레이 비활성화
         if (damageOverlay != null)
@@ -217,11 +205,8 @@ public class PlayerHealth : MonoBehaviour
             damageOverlay.gameObject.SetActive(false);
         }
 
-        // 게임시간 멈추기
-        Time.timeScale = 0f;
-
-        // 플레이어의 UI 입력 비활성화
-        UIManager.Instance.DisablePlayerInput();
+        // 모든 사망 관련 처리를 GameManager에 위임합니다.
+        GameManager.Instance.HandlePlayerDeath();
     }
     
     /// <summary>
@@ -237,43 +222,5 @@ public class PlayerHealth : MonoBehaviour
         damageOverlay.color = new Color(damageOverlayColor.r, damageOverlayColor.g, damageOverlayColor.b, alpha);
     }
 
-    /// <summary>
-    /// 게임 오버 후 게임을 재시작하는 함수.
-    /// 게임 재시작 버튼의 OnClick 이벤트에 연결된다.
-    /// </summary>
-    public void RestartGame()
-    {
-        // 게임 시간을 다시 정상으로 설정
-        Time.timeScale = 1f;
 
-        // 플레이어의 UI 입력을 다시 활성화
-        UIManager.Instance.EnablePlayerInput();
-
-        // 게임 오버 패널 비활성화
-        if (gameoverPanel != null)
-        {
-            gameoverPanel.SetActive(false);
-        }
-
-        // 현재 씬을 다시 로드하여 게임 재시작
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    /// <summary>
-    /// 게임을 종료하는 함수.
-    /// 게임 종료 버튼의 OnClick 이벤트에 연결된다.
-    /// 에디터에서는 플레이 모드를 중지하고, 빌드에서는 애플리케이션을 종료한다.
-    /// </summary>
-    public void QuitGame()
-    {
-        Debug.Log("게임을 종료합니다.");
-
-#if UNITY_EDITOR
-        // 유니티 에디터에서 실행 중일 때는 플레이 모드를 중지
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        // 빌드된 애플리케이션에서는 애플리케이션 종료
-        Application.Quit();
-#endif
-    }
 }

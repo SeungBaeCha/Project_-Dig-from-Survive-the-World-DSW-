@@ -46,16 +46,82 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dayDuration: 10
   nightDuration: 10
-  sun: {fileID: 0}
-  transitionDuration: 1
-  dayAmbientColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
-  daySunColor: {r: 1, g: 1, b: 1, a: 1}
-  daySunIntensity: 1
-  daySunRotation: {x: 50, y: -30, z: 0}
-  nightAmbientColor: {r: 0.1, g: 0.1, b: 0.2, a: 1}
-  nightSunColor: {r: 0.8, g: 0.8, b: 1, a: 1}
-  nightSunIntensity: 0.1
-  nightSunRotation: {x: -90, y: -30, z: 0}
-  hungerDecreaseInterval: 5
-  hungerDecreaseChance: 0.5
+  transitionDuration: 10
+  dayWeatherPresets:
+  - presetName: ClearDay
+    ambientColor: {r: 0.4, g: 0.4, b: 0.34901962, a: 1}
+    sunColor: {r: 1, g: 1, b: 1, a: 0}
+    sunIntensity: 1
+    sunRotation: {x: 50, y: -30, z: 0}
+    fogColor: {r: 0.72156864, g: 0.72156864, b: 0.72156864, a: 0}
+    fogDensity: 0.005
+    bgm: {fileID: 8300000, guid: 01e9bab3199fbc74cbe094be36539703, type: 3}
+  - presetName: Foggyday
+    ambientColor: {r: 0.2509804, g: 0.2509804, b: 0.2784314, a: 1}
+    sunColor: {r: 0.6666667, g: 0.73333335, b: 0.8666667, a: 0}
+    sunIntensity: 0.8
+    sunRotation: {x: 50, y: -30, z: 0}
+    fogColor: {r: 0.6, g: 0.6, b: 0.6666667, a: 0}
+    fogDensity: 0.08
+    bgm: {fileID: 8300000, guid: 17d7fa7a027284e4e8e395f7f55e4274, type: 3}
+  - presetName: DarkDay
+    ambientColor: {r: 0.101960786, g: 0.101960786, b: 0.2, a: 1}
+    sunColor: {r: 1, g: 1, b: 1, a: 0}
+    sunIntensity: 0.5
+    sunRotation: {x: 50, y: -30, z: 0}
+    fogColor: {r: 0.6, g: 0.6, b: 0.6666667, a: 0}
+    fogDensity: 0
+    bgm: {fileID: 8300000, guid: 6e589fc673b01304fa03d24a5e4972bf, type: 3}
+  nightWeatherPresets:
+  - presetName: ClearNight
+    ambientColor: {r: 0.101960786, g: 0.101960786, b: 0.2, a: 0}
+    sunColor: {r: 0.53333336, g: 0.6, b: 0.6666667, a: 0}
+    sunIntensity: 0.1
+    sunRotation: {x: -90, y: -30, z: 0}
+    fogColor: {r: 0, g: 0, b: 0, a: 0}
+    fogDensity: 0.01
+    bgm: {fileID: 8300000, guid: 5353b13373e18784fae321aea9cc85c1, type: 3}
+  - presetName: FoggyNight
+    ambientColor: {r: 0.03137255, g: 0.03137255, b: 0.050980393, a: 0}
+    sunColor: {r: 0.26666668, g: 0.26666668, b: 0.33333334, a: 0}
+    sunIntensity: 0.05
+    sunRotation: {x: -90, y: -30, z: 0}
+    fogColor: {r: 0.06666667, g: 0.06666667, b: 0.09411765, a: 0}
+    fogDensity: 0.2
+    bgm: {fileID: 8300000, guid: 0767407a3df179945ad7f467cdc522a4, type: 3}
+  - presetName: BlackNight
+    ambientColor: {r: 0, g: 0, b: 0, a: 0}
+    sunColor: {r: 0, g: 0, b: 0, a: 0}
+    sunIntensity: 0.5
+    sunRotation: {x: -90, y: -30, z: 0}
+    fogColor: {r: 0, g: 0, b: 0, a: 0}
+    fogDensity: 0.5
+    bgm: {fileID: 8300000, guid: 66034804deaa9dc46bc34176f897445e, type: 3}
+  - presetName: RedNIght
+    ambientColor: {r: 0.4433962, g: 0, b: 0, a: 0}
+    sunColor: {r: 0.735849, g: 0, b: 0, a: 0}
+    sunIntensity: 0.1
+    sunRotation: {x: -90, y: -30, z: 0}
+    fogColor: {r: 0, g: 0, b: 0, a: 0}
+    fogDensity: 0
+    bgm: {fileID: 8300000, guid: 82c27d343d7d5c641ad82ea2fe019fe1, type: 3}
+  bgmVolume: 0.5
+  enemyManager: {fileID: 0}
+  lootBoxPrefab: {fileID: 8763997468460610338, guid: 076aabf93799806419fcaee17b0c757b,
+    type: 3}
+  lootBoxStartDay: 2
+  lootBoxSpawnChanceIncrease: 0.3
+  lootBoxSpawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  lootBoxSpawnSound: {fileID: 8300000, guid: e769072c3efe7e04b8c527be53e8f1a3, type: 3}
+  lootBoxSpawnVolume: 0.4
+  lootBoxDespawnSound: {fileID: 8300000, guid: 28582b5e65b8441459418f2d9591c27f, type: 3}
+  lootBoxDespawnVolume: 1
+  hungerDecreaseInterval: 10
+  hungerDecreaseChance: 0.3
   hungerDecreaseAmount: 2
+  sun: {fileID: 0}

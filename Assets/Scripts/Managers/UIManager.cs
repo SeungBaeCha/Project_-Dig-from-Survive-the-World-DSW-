@@ -233,7 +233,8 @@ public class UIManager : MonoBehaviour
 
     private void ToggleInventory()
     {
-        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+        // 플레이어가 사망했거나 게임이 아직 시작되지 않았다면 창을 열 수 없습니다.
+        if (GameManager.Instance == null || !GameManager.Instance.isGameStarted || GameManager.Instance.IsPlayerDead) return;
 
         // 제작창이 열려있으면 닫아준다.
         if (craftingWindow != null && craftingWindow.IsOpen())
@@ -247,7 +248,8 @@ public class UIManager : MonoBehaviour
 
     private void ToggleCrafting()
     {
-        if (!GameManager.Instance.isGameStarted) return; // 게임 시작 후에만 가능
+        // 플레이어가 사망했거나 게임이 아직 시작되지 않았다면 창을 열 수 없습니다.
+        if (GameManager.Instance == null || !GameManager.Instance.isGameStarted || GameManager.Instance.IsPlayerDead) return;
 
         // 인벤토리가 열려있으면 닫아준다.
         if (inventoryUI != null && inventoryUI.IsOpen())
@@ -261,7 +263,11 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance != null && !GameManager.Instance.isGameStarted) return;
+        // 게임 매니저가 없거나, 게임이 시작되지 않았거나, 플레이어가 사망했다면 입력을 처리하지 않습니다.
+        if (GameManager.Instance == null || !GameManager.Instance.isGameStarted || GameManager.Instance.IsPlayerDead)
+        {
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
