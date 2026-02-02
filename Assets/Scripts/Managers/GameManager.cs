@@ -488,8 +488,8 @@ public class GameManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 씬이 로드될 때마다 호출되어 게임의 상태를 초기화합니다.
-    /// 게임 재시작 시 모든 것을 처음부터 시작할 수 있도록 보장합니다.
+    /// 씬이 로드될 때마다 호출되어 게임의 상태를 초기화
+    /// 게임 재시작 시 모든 것을 처음부터 시작할 수 있도록 보장
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -550,7 +550,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어의 사망을 처리합니다. PlayerHealth에서 호출됩니다.
+    /// 플레이어의 사망을 처리합니다. PlayerHealth에서 호출
     /// </summary>
     public void HandlePlayerDeath()
     {
@@ -563,26 +563,30 @@ public class GameManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
         }
+        //else
+        //{
+        //    Debug.LogError("GameOverPanel 참조가 GameManager에 할당되지 않았습니다! 인스펙터에서 확인해주세요.");
+        //}
 
-        // 게임오버 시 커서를 보이게 하고 잠금을 해제합니다.
+        // 게임오버 시 커서를 보이게 하고 잠금을 해제
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
     /// <summary>
-    /// 게임을 재시작하는 함수. GameOver UI의 재시작 버튼에 연결됩니다.
+    /// 게임을 재시작하는 함수. GameOver UI의 재시작 버튼에 연결
     /// </summary>
     public void RestartGame()
     {
         // 게임 시간을 다시 정상으로 설정
         Time.timeScale = 1f;
 
-        // 현재 씬을 다시 로드. OnSceneLoaded 이벤트가 게임 상태를 리셋할 것입니다.
+        // 현재 씬을 다시 로드. OnSceneLoaded 이벤트가 게임 상태를 리셋
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     /// <summary>
-    /// 게임을 종료하는 함수. GameOver UI의 종료 버튼에 연결됩니다.
+    /// 게임을 종료하는 함수. GameOver UI의 종료 버튼에 연결
     /// </summary>
     public void QuitGame()
     {

@@ -826,6 +826,11 @@ PrefabInstance:
       objectReference: {fileID: 219415029}
     - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
         type: 3}
+      propertyPath: gameOverPanel
+      value: 
+      objectReference: {fileID: 613048753}
+    - target: {fileID: 1894415317537615909, guid: de5ad1c6015a6a54bbbf442a33be94fe,
+        type: 3}
       propertyPath: lootBoxSpawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 724645713}
@@ -1104,6 +1109,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 431945610}
+    - target: {fileID: 3369038503378210421, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4735878352254939054, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1143,6 +1153,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8795698214702018098, guid: 3a3d2d482eb52aa4d9c9f400b4160bec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1406,12 +1421,17 @@ PrefabInstance:
         type: 3}
       propertyPath: slotClickSound
       value: 
-      objectReference: {fileID: 8300000, guid: 8c47cf7d1f02aed4ab705caffe5d8361, type: 3}
+      objectReference: {fileID: 8300000, guid: 97b85a83a3dd5984787ad73dc5c92c2f, type: 3}
     - target: {fileID: 5306552245824113951, guid: de1aabecdae90094cb8697faed6ebd9e,
         type: 3}
       propertyPath: playerInventory
       value: 
       objectReference: {fileID: 1602462578}
+    - target: {fileID: 5306552245824113951, guid: de1aabecdae90094cb8697faed6ebd9e,
+        type: 3}
+      propertyPath: slotClickVolume
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7339526438160142191, guid: de1aabecdae90094cb8697faed6ebd9e,
         type: 3}
       propertyPath: gameHUD

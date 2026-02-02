@@ -141,13 +141,13 @@ public class Enemy : MonoBehaviour
             }
         }
 
-#if UNITY_EDITOR
-        // T 키를 누르면 해당 적에게 10 데미지를 입힌다.
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            TakeDamage(100); 
-        }
-#endif
+//#if UNITY_EDITOR
+//        // T 키를 누르면 해당 적에게 10 데미지를 입힌다. 테스트 코드
+//        if (Input.GetKeyDown(KeyCode.T))
+//        {
+//            TakeDamage(100); 
+//        }
+//#endif
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 

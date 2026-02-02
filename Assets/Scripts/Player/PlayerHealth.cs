@@ -17,9 +17,6 @@ public class PlayerHealth : MonoBehaviour
     private float hungerDamageTimer = 0f; // 배고픔 데미지 타이머
 
     public HPBar hpBar; // HP바 UI 참조
-
-    [Header("게임 오버 설정")]
-    public GameObject gameoverPanel;
     
     [Header("피격 효과")] // 기존 피격 연출 및 사운드 설정 통합
     [Tooltip("체력이 낮을수록 강해지는 흔들림의 강도")]
