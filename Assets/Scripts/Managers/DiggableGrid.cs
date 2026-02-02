@@ -167,7 +167,7 @@ public class DiggableGrid : MonoBehaviour
             StopCoroutine(_rebuildCoroutine);
         }
         // 새로운 업데이트 코루틴을 시작하고 참조를 저장한다.
-        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(1.0f)); // 1초 지연 후 비동기 업데이트 시작
+        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(2.0f)); // 2초 지연 후 비동기 업데이트 시작
     }
 
     /// <summary>

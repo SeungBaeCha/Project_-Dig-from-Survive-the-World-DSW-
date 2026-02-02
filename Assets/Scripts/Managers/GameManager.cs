@@ -218,7 +218,7 @@ public class GameManager : MonoBehaviour
         if (isGameStarted) return;
 
         isGameStarted = true;
-        Debug.Log("====== 게임 플레이 시작! ======");
+        // Debug.Log("====== 게임 플레이 시작! ======");
 
         // UIManager에 게임 HUD 표시를 요청한다.
         UIManager.Instance.ShowGameHUD();
@@ -242,11 +242,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EnemyManager가 할당되지 않아 적 생성 시스템을 시작할 수 없습니다.");
+            // Debug.LogWarning("EnemyManager가 할당되지 않아 적 생성 시스템을 시작할 수 없습니다.");
         }
 
         DayCount = 1; // 첫째 날 시작
-        Debug.Log($"Day {DayCount} has started.");
+        // Debug.Log($"Day {DayCount} has started.");
         OnDayStart?.Invoke(); // 낮 시작 이벤트 발생
     }
 
@@ -268,14 +268,14 @@ public class GameManager : MonoBehaviour
             if (IsNight)
             {
                 timer = nightDuration;
-                Debug.Log($"Night of Day {DayCount} has started.");
+                // Debug.Log($"Night of Day {DayCount} has started.");
                 OnNightStart?.Invoke();
             }
             else
             {
                 DayCount++;
                 timer = dayDuration;
-                Debug.Log($"Day {DayCount} has started.");
+                // Debug.Log($"Day {DayCount} has started.");
                 SelectWeatherForNewDay();
                 OnDayStart?.Invoke();
             }
@@ -287,12 +287,12 @@ public class GameManager : MonoBehaviour
         if (dayWeatherPresets.Count > 0)
         {
             currentDayWeather = dayWeatherPresets[UnityEngine.Random.Range(0, dayWeatherPresets.Count)];
-            Debug.Log($"오늘의 낮 날씨: {currentDayWeather.presetName}");
+            // Debug.Log($"오늘의 낮 날씨: {currentDayWeather.presetName}");
         }
         if (nightWeatherPresets.Count > 0)
         {
             currentNightWeather = nightWeatherPresets[UnityEngine.Random.Range(0, nightWeatherPresets.Count)];
-            Debug.Log($"오늘의 밤 날씨: {currentNightWeather.presetName}");
+            // Debug.Log($"오늘의 밤 날씨: {currentNightWeather.presetName}");
         }
     }
 
@@ -437,7 +437,7 @@ public class GameManager : MonoBehaviour
 
             string expiryMessage = $"지난 {lootBoxSpawnDay}일차 보급 상자가 사라졌습니다.";
             UIManager.Instance.ShowSupplyBoxNotification(expiryMessage);
-            Debug.Log($"<color=orange>{expiryMessage}</color>");
+            // Debug.Log($"<color=orange>{expiryMessage}</color>");
             
             Destroy(activeLootBox);
             activeLootBox = null;
@@ -471,17 +471,17 @@ public class GameManager : MonoBehaviour
 
                 string message = $"보급이 떨어졌습니다!"; // 사용자가 요청한 메시지로 변경
                 UIManager.Instance.ShowSupplyBoxNotification(message); 
-                Debug.Log($"<color=yellow>{message} ({DayCount}일차)</color>");
+                // Debug.Log($"<color=yellow>{message} ({DayCount}일차)</color>");
             }
             else
             {
                 if (lootBoxPrefab == null)
                 {
-                    Debug.LogWarning("보급 상자 프리팹이 지정되지 않아 생성에 실패했습니다.");
+                    // Debug.LogWarning("보급 상자 프리팹이 지정되지 않아 생성에 실패했습니다.");
                 }
                 if (lootBoxSpawnPoints == null || lootBoxSpawnPoints.Count == 0)
                 {
-                    Debug.LogWarning("보급 상자 생성 지점이 지정되지 않아 생성에 실패했습니다.");
+                    // Debug.LogWarning("보급 상자 생성 지점이 지정되지 않아 생성에 실패했습니다.");
                 }
             }
         }
@@ -546,7 +546,7 @@ public class GameManager : MonoBehaviour
         // 이전 보급 상자 참조 제거
         activeLootBox = null;
         
-        Debug.Log("GameManager state has been reset on scene load.");
+        // Debug.Log("GameManager state has been reset on scene load.");
     }
 
     /// <summary>
@@ -590,7 +590,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
-        Debug.Log("게임을 종료합니다.");
+        // Debug.Log("게임을 종료합니다.");
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

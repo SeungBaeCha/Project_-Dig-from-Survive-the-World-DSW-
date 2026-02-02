@@ -30,6 +30,12 @@ public class EnemyManager : MonoBehaviour
     private int currentNightEnemyCount; // 현재 밤에 생성할 적의 수
     private List<Enemy> activeEnemies = new List<Enemy>(); // GameObject 대신 Enemy 컴포넌트를 저장
 
+    // --- 오브젝트 풀링 ---
+    private Queue<GameObject> enemyPool = new Queue<GameObject>();
+    [SerializeField, Tooltip("게임 시작 시 미리 생성해 둘 적의 수 (오브젝트 풀)")]
+    private int initialPoolSize = 20;
+
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -41,9 +47,22 @@ public class EnemyManager : MonoBehaviour
             Instance = this;
         }
 
+        // 오브젝트 풀 초기화
+        InitializePool();
+
         // 주간/야간에 생성될 적의 수 초기화
         currentDayEnemyCount = initialDayEnemyCount;
         currentNightEnemyCount = initialNightEnemyCount;
+    }
+
+    private void InitializePool()
+    {
+        for (int i = 0; i < initialPoolSize; i++)
+        {
+            GameObject enemyObject = Instantiate(enemyPrefab);
+            enemyObject.SetActive(false);
+            enemyPool.Enqueue(enemyObject);
+        }
     }
 
     
@@ -62,7 +81,7 @@ public class EnemyManager : MonoBehaviour
     {
         GameManager.OnDayStart += OnDayStartEventHandler;
         GameManager.OnNightStart += OnNightStartEventHandler;
-        Debug.Log("Enemy Spawning Started.");
+        // Debug.Log("Enemy Spawning Started.");
     }
 
     /// <summary>
@@ -73,7 +92,7 @@ public class EnemyManager : MonoBehaviour
         GameManager.OnDayStart -= OnDayStartEventHandler;
         GameManager.OnNightStart -= OnNightStartEventHandler;
         ClearAllEnemies(); // 중지 시 모든 적 제거
-        Debug.Log("Enemy Spawning Stopped.");
+        // Debug.Log("Enemy Spawning Stopped.");
     }
 
     // 이벤트 핸들러: OnDayStart 이벤트가 발생하면 코루틴 시작
@@ -94,7 +113,7 @@ public class EnemyManager : MonoBehaviour
         if (DiggableGrid.Instance != null)
         {
             yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
-            Debug.Log("NavMesh 업데이트 완료. 낮 적 생성 시작.");
+            // Debug.Log("NavMesh 업데이트 완료. 낮 적 생성 시작.");
         }
         else
         {
@@ -109,10 +128,10 @@ public class EnemyManager : MonoBehaviour
         {
             int enemiesToAdd = Random.Range(minDayEnemiesToAddPerDay, maxDayEnemiesToAddPerDay + 1);
             currentDayEnemyCount += enemiesToAdd;
-            Debug.Log($"오늘은 {day}일차 낮입니다. {enemiesToAdd}마리 더 많은 적이 나타납니다.");
+            // Debug.Log($"오늘은 {day}일차 낮입니다. {enemiesToAdd}마리 더 많은 적이 나타납니다.");
         }
 
-        Debug.Log($"낮이 되었습니다. {currentDayEnemyCount}마리의 일반 적을 생성합니다.");
+        // Debug.Log($"낮이 되었습니다. {currentDayEnemyCount}마리의 일반 적을 생성합니다.");
         if (normalDaytimeEnemy != null)
         {
             SpawnEnemies(currentDayEnemyCount, normalDaytimeEnemy);
@@ -129,7 +148,7 @@ public class EnemyManager : MonoBehaviour
         if (DiggableGrid.Instance != null)
         {
             yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
-            Debug.Log("NavMesh 업데이트 완료. 밤 적 생성 시작.");
+            // Debug.Log("NavMesh 업데이트 완료. 밤 적 생성 시작.");
         }
         else
         {
@@ -144,15 +163,15 @@ public class EnemyManager : MonoBehaviour
         {
             int enemiesToAdd = Random.Range(minEnemiesToAddPerDay, maxEnemiesToAddPerDay + 1);
             currentNightEnemyCount += enemiesToAdd;
-            Debug.Log($"오늘은 {day}일차 밤입니다. 어젯밤보다 {enemiesToAdd}마리 더 많은 적이 몰려옵니다.");
+            // Debug.Log($"오늘은 {day}일차 밤입니다. 어젯밤보다 {enemiesToAdd}마리 더 많은 적이 몰려옵니다.");
         }
         else
         {
             currentNightEnemyCount = initialNightEnemyCount;
-            Debug.Log("첫날 밤입니다. 생존을 준비하십시오.");
+            // Debug.Log("첫날 밤입니다. 생존을 준비하십시오.");
         }
         
-        Debug.Log($"총 {currentNightEnemyCount}마리의 적을 생성합니다.");
+        // Debug.Log($"총 {currentNightEnemyCount}마리의 적을 생성합니다.");
         SpawnEnemies(currentNightEnemyCount, null); // null을 전달하여 가중치 기반 랜덤 생성 로직 사용
     }
 
@@ -163,122 +182,139 @@ public class EnemyManager : MonoBehaviour
             Debug.LogError("적 프리팹 또는 스폰 포인트가 설정되지 않았습니다.");
             return;
         }
-        
-        // 특정 타입의 적만 생성하는 경우
-        if (specificType != null)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-                GameObject enemyObject = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-                Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
-                if (enemyComponent != null)
-                {
-                    enemyComponent.Initialize(specificType);
-                    activeEnemies.Add(enemyComponent);
-                }
-            }
-            return; // 로직 종료
-        }
-
-        // --- 다양한 종류의 적을 가중치에 따라 생성하는 기존 로직 ---
-        if (enemyTypes == null || enemyTypes.Count == 0)
-        {
-            Debug.LogError("적 능력치(EnemyTypes)가 설정되지 않았습니다.");
-            return;
-        }
-
-        int currentDay = GameManager.Instance.DayCount;
-        var availableEnemies = new List<EnemyStats>();
-        foreach (var type in enemyTypes)
-        {
-            if (currentDay >= type.startDay)
-            {
-                availableEnemies.Add(type);
-            }
-        }
-
-        if (availableEnemies.Count == 0)
-        {
-            Debug.LogWarning($"현재 {currentDay}일차에는 스폰 가능한 적 유형이 없습니다.");
-            return;
-        }
-
-        float totalWeight = 0;
-        foreach (var type in availableEnemies)
-        {
-            totalWeight += type.spawnChanceWeight;
-        }
 
         for (int i = 0; i < count; i++)
         {
-            EnemyStats selectedStats = null;
-            float randomWeight = Random.Range(0, totalWeight);
-            float currentWeight = 0;
-
-            foreach (var type in availableEnemies)
+            GameObject enemyObject;
+            // 1. 오브젝트 풀에서 가져오기 시도
+            if (enemyPool.Count > 0)
             {
-                currentWeight += type.spawnChanceWeight;
-                if (randomWeight <= currentWeight)
+                enemyObject = enemyPool.Dequeue();
+            }
+            // 2. 풀이 비어있으면 새로 생성 (Fallback)
+            else
+            {
+                enemyObject = Instantiate(enemyPrefab);
+            }
+
+            // 적 능력치 선택
+            EnemyStats selectedStats = null;
+            if (specificType != null)
+            {
+                selectedStats = specificType;
+            }
+            else
+            {
+                // 다양한 종류의 적을 가중치에 따라 생성하는 로직
+                if (enemyTypes == null || enemyTypes.Count == 0)
                 {
-                    selectedStats = type;
-                    break;
+                    Debug.LogError("적 능력치(EnemyTypes)가 설정되지 않았습니다.");
+                    // 사용한 오브젝트는 다시 풀에 반환
+                    enemyObject.SetActive(false);
+                    enemyPool.Enqueue(enemyObject);
+                    return;
+                }
+
+                int currentDay = GameManager.Instance.DayCount;
+                var availableEnemies = new List<EnemyStats>();
+                foreach (var type in enemyTypes)
+                {
+                    if (currentDay >= type.startDay)
+                    {
+                        availableEnemies.Add(type);
+                    }
+                }
+
+                if (availableEnemies.Count == 0)
+                {
+                    // Debug.LogWarning($"현재 {currentDay}일차에는 스폰 가능한 적 유형이 없습니다.");
+                    // 사용한 오브젝트는 다시 풀에 반환
+                    enemyObject.SetActive(false);
+                    enemyPool.Enqueue(enemyObject);
+                    continue; // 다음 루프로
+                }
+
+                float totalWeight = 0;
+                foreach (var type in availableEnemies)
+                {
+                    totalWeight += type.spawnChanceWeight;
+                }
+
+                float randomWeight = Random.Range(0, totalWeight);
+                float currentWeight = 0;
+                foreach (var type in availableEnemies)
+                {
+                    currentWeight += type.spawnChanceWeight;
+                    if (randomWeight <= currentWeight)
+                    {
+                        selectedStats = type;
+                        break;
+                    }
+                }
+                if (selectedStats == null && availableEnemies.Count > 0)
+                {
+                    selectedStats = availableEnemies[availableEnemies.Count - 1];
                 }
             }
 
-            if (selectedStats == null && availableEnemies.Count > 0)
+            // 3. 적 위치 및 상태 설정, 활성화
+            if (selectedStats != null)
             {
-                selectedStats = availableEnemies[availableEnemies.Count - 1];
-            }
+                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                enemyObject.transform.position = spawnPoint.position;
+                enemyObject.transform.rotation = spawnPoint.rotation;
+                enemyObject.SetActive(true); // 오브젝트 활성화
 
-            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            GameObject enemyObject = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-            
-            Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
-            if (enemyComponent != null)
+                Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
+                if (enemyComponent != null)
+                {
+                    enemyComponent.Initialize(selectedStats);
+                    activeEnemies.Add(enemyComponent);
+                }
+            }
+            else
             {
-                enemyComponent.Initialize(selectedStats);
-                activeEnemies.Add(enemyComponent);
+                // 적합한 적을 못찾은 경우, 가져온 오브젝트 다시 풀에 반환
+                enemyObject.SetActive(false);
+                enemyPool.Enqueue(enemyObject);
             }
         }
     }
 
     private void ClearAllEnemies()
     {
+        if (activeEnemies.Count == 0) return;
+
         List<Enemy> survivingEnemies = new List<Enemy>();
 
-        // 생성된 적들 중 밤을 생존할 수 있는 적들을 필터링
         foreach (var enemy in activeEnemies)
         {
-            if (enemy != null && enemy.GetAssignedStats() != null)
+            if (enemy == null) continue;
+
+            bool survived = false;
+            if (enemy.GetAssignedStats() != null)
             {
                 EnemyStats enemyStats = enemy.GetAssignedStats();
-                
-                // 생존 확률이 0보다 큰 경우에만 확률 계산
-                if (enemyStats.nightSurvivalChance > 0f)
+                if (enemyStats.nightSurvivalChance > 0f && Random.value < enemyStats.nightSurvivalChance)
                 {
-                    // 랜덤 값이 생존 확률보다 낮으면 생존
-                    if (UnityEngine.Random.value < enemyStats.nightSurvivalChance)
-                    {
-                        survivingEnemies.Add(enemy);
-                        // Debug.Log($"{enemy.gameObject.name} (ID: {enemy.GetInstanceID()})이(가) 확률({enemyStats.nightSurvivalChance*100}%)로 밤을 생존합니다.");
-                    }
-                    else
-                    {
-                        Destroy(enemy.gameObject); // 확률 실패로 파괴
-                    }
+                    survived = true;
                 }
-                else // 생존 확률이 0이거나 음수인 경우 무조건 파괴
-                {
-                    Destroy(enemy.gameObject); // 밤을 생존할 수 없는 적은 파괴
-                }
+            }
+
+            if (survived)
+            {
+                survivingEnemies.Add(enemy);
+            }
+            else
+            {
+                // 적을 파괴하는 대신 비활성화하고 풀에 반환
+                enemy.gameObject.SetActive(false);
+                enemyPool.Enqueue(enemy.gameObject);
             }
         }
         
-        // activeEnemies 리스트를 생존한 적들로 업데이트
+        // activeEnemies 리스트를 생존한 적들로만 업데이트
         activeEnemies.Clear();
         activeEnemies.AddRange(survivingEnemies);
-        
-        // Debug.Log($"밤을 생존한 적: {activeEnemies.Count}마리");
     }
 }
