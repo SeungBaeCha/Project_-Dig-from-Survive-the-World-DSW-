@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
 
     // 목표 지점 갱신 타이머
     private float destinationUpdateTimer;
-    private float destinationUpdateInterval = 0.5f; // 0.5초마다 목표 지점 갱신
+    private float destinationUpdateInterval = 1.0f; // 1.0초마다 목표 지점 갱신
 
     [Header("눈 색깔 설정")]
     public Color idleColor; // 평상시/순찰 시 색
@@ -81,7 +81,7 @@ public class Enemy : MonoBehaviour
     /// EnemyManager가 적을 생성한 직후 호출하여 능력치를 설정하는 메서드.
     /// </summary>
     /// <param name="stats">적용할 능력치가 담긴 ScriptableObject</param>
-    public void Initialize(EnemyStats stats)
+    public void Initialize(EnemyStats stats, Transform playerTransform, DiggableGrid grid)
     {
         assignedStats = stats; // EnemyStats 참조 저장
 
@@ -105,9 +105,9 @@ public class Enemy : MonoBehaviour
         }
 
         // AI 및 기타 초기화
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        player = playerTransform; // 인자로 받은 값 할당
         startingPosition = transform.position;
-        diggableGrid = FindObjectOfType<DiggableGrid>();
+        diggableGrid = grid; // 인자로 받은 값 할당
 
         // NavMeshAgent의 정지 거리를 크기가 반영된 공격 가능 거리와 동기화
         if (agent != null)
@@ -222,10 +222,25 @@ public class Enemy : MonoBehaviour
         {
             if (diggableGrid != null && diggableGrid.GetEntrances().Any())
             {
-                Vector3 closestEntrance = diggableGrid.GetEntrances()
-                    .OrderBy(entrance => Vector3.Distance(transform.position, entrance))
-                    .First();
-                agent.SetDestination(closestEntrance);
+                Vector3 closestEntrance = Vector3.zero;
+                float minDistance = float.MaxValue;
+                bool foundEntrance = false;
+
+                foreach (Vector3 entrance in diggableGrid.GetEntrances())
+                {
+                    float dist = Vector3.Distance(transform.position, entrance);
+                    if (dist < minDistance)
+                    {
+                        minDistance = dist;
+                        closestEntrance = entrance;
+                        foundEntrance = true;
+                    }
+                }
+
+                if (foundEntrance)
+                {
+                    agent.SetDestination(closestEntrance);
+                }
             }
         }
     }
