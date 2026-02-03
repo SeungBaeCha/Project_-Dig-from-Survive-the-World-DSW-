@@ -73,7 +73,7 @@ public abstract class Gun : MonoBehaviour
             // 발사 사운드 재생. PlayOneShot을 사용해 여러 발의 사운드가 겹쳐서 재생될 수 있게 한다.
             if (gunData.shotSound != null)
             {
-                audioSource.PlayOneShot(gunData.shotSound);
+                audioSource.PlayOneShot(gunData.shotSound, gunData.shotSoundVolume);
             }
 
 

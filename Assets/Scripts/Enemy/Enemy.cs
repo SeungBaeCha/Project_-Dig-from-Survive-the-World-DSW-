@@ -249,7 +249,7 @@ public class Enemy : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
-        Debug.Log($"[Enemy] '{gameObject.name}' took {damage} damage. Current health: {currentHealth}/{maxHealth}");
+        //Debug.Log($"[Enemy] '{gameObject.name}' took {damage} damage. Current health: {currentHealth}/{maxHealth}");
 
         if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
 

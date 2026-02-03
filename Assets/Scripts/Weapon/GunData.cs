@@ -28,5 +28,7 @@ public class GunData : ItemData
 
     [Header("Sound")]
     public AudioClip shotSound;    // 발사 소리
+    [Range(0f, 1f)]
+    public float shotSoundVolume = 1f; // 발사 소리 볼륨 (0.0 ~ 1.0)
     public AudioClip reloadSound;  // 재장전 소리
 }
