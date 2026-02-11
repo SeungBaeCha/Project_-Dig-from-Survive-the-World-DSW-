@@ -51,23 +51,10 @@ public class DiggableGrid : MonoBehaviour
     [Tooltip("오른쪽 (+X) 방향에 그리드를 생성합니다.")]
     public bool generateRight = true;
     
-        // 생성된(또는 파괴되어 생긴) 입구(구멍) 위치들 관리
-    
-        private List<Vector3> entrances = new List<Vector3>();
-    
-    
-    
-        // 이펙트 풀링을 위한 딕셔너리
-    
-        private Dictionary<GameObject, Queue<GameObject>> effectPools = new Dictionary<GameObject, Queue<GameObject>>();
-    
-        [Tooltip("각 이펙트 프리팹별 초기 풀 크기")]
-    
-        public int initialEffectPoolSize = 10;
-    
-    
-    
-        void Awake()
+    // 생성된(또는 파괴되어 생긴) 입구(구멍) 위치들 관리
+    private List<Vector3> entrances = new List<Vector3>();
+
+    void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -79,9 +66,6 @@ public class DiggableGrid : MonoBehaviour
             // 씬이 변경되어도 파괴되지 않도록 설정 (루트 오브젝트를 대상으로 함)
             DontDestroyOnLoad(transform.root.gameObject);
         }
-
-        // GameManager의 OnNightStart 이벤트 구독
-        GameManager.OnNightStart += OnNightStartEventHandler;
     }
 
     void Start()
@@ -103,8 +87,8 @@ public class DiggableGrid : MonoBehaviour
         // 설정에 따라 여러 그리드를 생성
         CreateGrids();
 
-        // 게임 시작 시 초기 NavMesh 빌드를 한 번 수행
-        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(0f));
+        // 초기 격자 생성 후 NavMesh 전체를 한 번 비동기 빌드
+        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(0f)); // 0초 지연으로 즉시 비동기 빌드 시작
     }
 
     /// <summary>
@@ -171,26 +155,41 @@ public class DiggableGrid : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Chunk가 파괴될 때 NavMesh 업데이트를 요청한다. (Debounced)
+    /// 여러 번 호출되더라도 마지막 호출 후 짧은 시간 뒤에 한 번만 실행된다.
+    /// </summary>
+    public void RequestNavMeshUpdate()
+    {
+        // 이미 실행중인 업데이트 코루틴이 있다면 중지시킨다.
+        if (_rebuildCoroutine != null)
+        {
+            StopCoroutine(_rebuildCoroutine);
+        }
+        // 새로운 업데이트 코루틴을 시작하고 참조를 저장한다.
+        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(2.0f)); // 2초 지연 후 비동기 업데이트 시작
+    }
 
     /// <summary>
     /// 짧은 지연 시간 후에 NavMesh를 재빌드하는 코루틴.
     /// </summary>
-    private IEnumerator DelayedRebuildAsync(float delay) // delay 인자는 더 이상 사용되지 않지만, 시그니처 유지를 위해 남겨둔다.
+    private IEnumerator DelayedRebuildAsync(float delay)
     {
-        // StartContinuousNavMeshUpdate()에서 호출될 때는 delay가 0f이므로, 이 부분은 바로 통과한다.
         if (delay > 0)
         {
             yield return new WaitForSeconds(delay);
         }
 
         IsNavMeshUpdating = true;
-        LogDebugMessage("NavMesh 업데이트 시작됨 (비동기, UpdateNavMesh 사용).");
+        Debug.Log("NavMesh update started (synchronously for now).");
 
-        surface.UpdateNavMesh(surface.navMeshData);
-
+        // Unity의 내장된 NavMeshSurface.BuildNavMesh()를 사용한다.
+        // 이 메서드는 동기적으로 동작하며, 메인 스레드를 잠시 블록할 수 있지만
+        // 현재 Unity 환경에서 런타임에 가장 안정적으로 NavMesh를 업데이트하는 방법이다.
+        surface.BuildNavMesh();
+        
         IsNavMeshUpdating = false;
-        LogDebugMessage("NavMesh 업데이트 작업 예약됨 (비동기).");
+        Debug.Log("NavMesh update completed (synchronously for now).");
 
         _rebuildCoroutine = null;
     }
@@ -218,137 +217,4 @@ public class DiggableGrid : MonoBehaviour
     {
         return entrances;
     }
-
-    /// <summary>
-    /// GameManager의 OnNightStart 이벤트 발생 시 호출. 밤 시작 시 NavMesh를 업데이트한다.
-    /// </summary>
-    private void OnNightStartEventHandler()
-    {
-        LogDebugMessage("밤 시작! NavMesh 업데이트를 요청합니다.");
-        // 지연 없이 즉시 NavMesh 업데이트 코루틴을 시작한다.
-        // _rebuildCoroutine이 이미 진행 중일 경우 StopCoroutine으로 중지 후 다시 시작.
-        if (_rebuildCoroutine != null)
-        {
-            StopCoroutine(_rebuildCoroutine);
-        }
-        _rebuildCoroutine = StartCoroutine(DelayedRebuildAsync(0f));
-    }
-
-
-    /// <summary>
-    /// 오브젝트가 파괴될 때 호출되며, GameManager 이벤트 구독을 해제한다.
-    /// </summary>
-    void OnDestroy()
-    {
-        // GameManager의 OnNightStart 이벤트 구독 해제
-        if (GameManager.Instance != null)
-        {
-            GameManager.OnNightStart -= OnNightStartEventHandler;
-        }
-    }
-
-    // 이펙트 풀에서 사용될 커스텀 컴포넌트
-    public class PooledEffect : MonoBehaviour
-    {
-        public GameObject originalPrefab;
-    }
-
-    /// <summary>
-    /// 이펙트 풀에서 오브젝트를 가져오거나 새로 생성하여 반환.
-    /// </summary>
-    public GameObject GetPooledEffect(GameObject effectPrefab, Vector3 position, Quaternion rotation)
-    {
-        if (!effectPools.ContainsKey(effectPrefab))
-        {
-            effectPools[effectPrefab] = new Queue<GameObject>();
-            // 초기 풀 사이즈만큼 미리 생성
-            for (int i = 0; i < initialEffectPoolSize; i++)
-            {
-                GameObject obj = Instantiate(effectPrefab, transform); // DiggableGrid를 부모로 설정
-                obj.SetActive(false);
-                PooledEffect pooledEffect = obj.AddComponent<PooledEffect>();
-                pooledEffect.originalPrefab = effectPrefab;
-                effectPools[effectPrefab].Enqueue(obj);
-            }
-        }
-
-        GameObject effect;
-        if (effectPools[effectPrefab].Count > 0)
-        {
-            effect = effectPools[effectPrefab].Dequeue();
-        }
-        else
-        {
-            effect = Instantiate(effectPrefab, transform); // 풀이 비면 새로 생성
-            PooledEffect pooledEffect = effect.AddComponent<PooledEffect>();
-            pooledEffect.originalPrefab = effectPrefab;
-        }
-
-        effect.transform.position = position;
-        effect.transform.rotation = rotation;
-        effect.SetActive(true);
-
-        // 파티클 시스템이 끝나면 자동으로 풀로 돌아오도록 설정 (ParticleSystem 컴포넌트 필요)
-        ParticleSystem ps = effect.GetComponent<ParticleSystem>();
-        if (ps != null)
-        {
-            // 파티클 시스템의 duration과 startLifetime을 고려하여 총 재생 시간을 계산
-            float totalDuration = ps.main.duration;
-            if (ps.main.startLifetime.mode == ParticleSystemCurveMode.Constant)
-            {
-                totalDuration += ps.main.startLifetime.constant;
-            }
-            else if (ps.main.startLifetime.mode == ParticleSystemCurveMode.TwoConstants)
-            {
-                totalDuration += ps.main.startLifetime.constantMax;
-            }
-            
-            StartCoroutine(ReturnEffectAfterCompletion(effect, totalDuration));
-        } else {
-            // 파티클 시스템이 없는 이펙트인 경우, 임시로 1초 뒤에 반환
-            StartCoroutine(ReturnEffectAfterCompletion(effect, 1f)); 
-        }
-
-        return effect;
-    }
-
-    /// <summary>
-    /// 사용 완료된 이펙트 오브젝트를 풀로 반환. (GetPooledEffect에서 코루틴으로 호출됨)
-    /// </summary>
-    public void ReturnPooledEffect(GameObject effect)
-    {
-        effect.SetActive(false);
-        PooledEffect pooledEffect = effect.GetComponent<PooledEffect>();
-        if (pooledEffect != null && effectPools.ContainsKey(pooledEffect.originalPrefab))
-        {
-            effectPools[pooledEffect.originalPrefab].Enqueue(effect);
-        }
-        else
-        {
-            // 풀을 찾지 못했거나 오류 발생 시 파괴
-            Destroy(effect);
-        }
-    }
-
-    private IEnumerator ReturnEffectAfterCompletion(GameObject effect, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        // effect GameObject가 유효한지 먼저 확인한다.
-        if (effect != null) // 이펙트가 여전히 존재하면 풀로 반환
-        {
-            ReturnPooledEffect(effect);
-        }
-        else
-        {
-            LogDebugMessage($"파괴된 이펙트 GameObject에 접근하려 했습니다. (원인: 씬 전환 또는 다른 스크립트 파괴)");
-        }
-    }
-
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    private void LogDebugMessage(string message)
-    {
-        Debug.Log(message);
-    }
-
-
 }

@@ -35,9 +35,6 @@ public class EnemyManager : MonoBehaviour
     [SerializeField, Tooltip("게임 시작 시 미리 생성해 둘 적의 수 (오브젝트 풀)")]
     private int initialPoolSize = 20;
 
-    private Transform cachedPlayerTransform; // 캐싱된 플레이어 트랜스폼
-    private DiggableGrid cachedDiggableGrid; // 캐싱된 DiggableGrid
-
 
     void Awake()
     {
@@ -56,18 +53,6 @@ public class EnemyManager : MonoBehaviour
         // 주간/야간에 생성될 적의 수 초기화
         currentDayEnemyCount = initialDayEnemyCount;
         currentNightEnemyCount = initialNightEnemyCount;
-
-        // 플레이어와 DiggableGrid 참조 캐싱
-        cachedPlayerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (cachedPlayerTransform == null)
-        {
-            Debug.LogError("Player 오브젝트를 찾을 수 없습니다! 'Player' 태그를 확인하세요.");
-        }
-        cachedDiggableGrid = FindObjectOfType<DiggableGrid>();
-        if (cachedDiggableGrid == null)
-        {
-            Debug.LogError("DiggableGrid 오브젝트를 찾을 수 없습니다! 씬에 존재하는지 확인하세요.");
-        }
     }
 
     private void InitializePool()
@@ -127,12 +112,7 @@ public class EnemyManager : MonoBehaviour
         // NavMesh 업데이트가 완료될 때까지 기다린다.
         if (DiggableGrid.Instance != null)
         {
-            // NavMesh 업데이트가 비동기적으로 스케줄링되었으므로,
-            // IsNavMeshUpdating 플래그는 즉시 false가 된다.
-            // 따라서 실제 빌드가 진행될 시간을 벌기 위해 최소 한 프레임을 기다린다.
-            // 이것은 NavMesh 업데이트의 정확한 완료를 보장하지는 않지만,
-            // 메인 스레드를 블록하지 않으면서 AI가 너무 오래된 NavMesh를 사용하지 않도록 돕는다.
-            yield return null; 
+            yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
             // Debug.Log("NavMesh 업데이트 완료. 낮 적 생성 시작.");
         }
         else
@@ -167,12 +147,7 @@ public class EnemyManager : MonoBehaviour
         // NavMesh 업데이트가 완료될 때까지 기다린다.
         if (DiggableGrid.Instance != null)
         {
-            // NavMesh 업데이트가 비동기적으로 스케줄링되었으므로,
-            // IsNavMeshUpdating 플래그는 즉시 false가 된다.
-            // 따라서 실제 빌드가 진행될 시간을 벌기 위해 최소 한 프레임을 기다린다.
-            // 이것은 NavMesh 업데이트의 정확한 완료를 보장하지는 않지만,
-            // 메인 스레드를 블록하지 않으면서 AI가 너무 오래된 NavMesh를 사용하지 않도록 돕는다.
-            yield return null; 
+            yield return new WaitWhile(() => DiggableGrid.Instance.IsNavMeshUpdating);
             // Debug.Log("NavMesh 업데이트 완료. 밤 적 생성 시작.");
         }
         else
@@ -293,7 +268,7 @@ public class EnemyManager : MonoBehaviour
                 Enemy enemyComponent = enemyObject.GetComponent<Enemy>();
                 if (enemyComponent != null)
                 {
-                    enemyComponent.Initialize(selectedStats, cachedPlayerTransform, cachedDiggableGrid);
+                    enemyComponent.Initialize(selectedStats);
                     activeEnemies.Add(enemyComponent);
                 }
             }

@@ -45,11 +45,12 @@ public class Chunk : MonoBehaviour
         }
 
         // 데미지를 받으면 파티클 이펙트를 생성한다.
-        if (digEffectPrefab != null && DiggableGrid.Instance != null)
+        if (digEffectPrefab != null)
         {
-            DiggableGrid.Instance.GetPooledEffect(digEffectPrefab, transform.position, Quaternion.identity);
+            //Debug.Log("Chunk: 이펙트 프리팹 할당됨! 이펙트를 생성합니다.");
+            Instantiate(digEffectPrefab, transform.position, Quaternion.identity);
         }
-        else if (digEffectPrefab == null)
+        else
         {
             Debug.LogError("Chunk: 이펙트 프리팹이 할당되지 않았습니다! Chunk 프리팹의 Inspector를 확인해주세요!");
         }
@@ -91,7 +92,7 @@ public class Chunk : MonoBehaviour
         if (grid != null)
         {
             grid.RegisterEntrance(transform.position);
-            // grid.RequestNavMeshUpdate(); // NavMesh 업데이트는 이제 GameManager의 낮/밤 이벤트에 따라 자동 관리된다.
+            grid.RequestNavMeshUpdate();
         }
 
         // 이 게임 오브젝트(청크)를 씬에서 파괴

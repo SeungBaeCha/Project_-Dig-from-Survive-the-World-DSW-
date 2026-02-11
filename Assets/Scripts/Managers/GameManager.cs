@@ -371,7 +371,9 @@ public class GameManager : MonoBehaviour
         }
 
         // --- 환경 설정 값 가져오기 ---
-        float elapsedTime = 0f;
+        float visualElapsedTime = 0f; // 시각 효과 경과 시간 (Time.deltaTime 사용)
+        float bgmElapsedTime = 0f;    // BGM 크로스페이드 경과 시간 (Time.unscaledDeltaTime 사용)
+
         Color startAmbient = RenderSettings.ambientLight;
         Color startSunColor = sun.color;
         float startSunIntensity = sun.intensity;
@@ -380,24 +382,35 @@ public class GameManager : MonoBehaviour
         float startFogDensity = RenderSettings.fogDensity;
 
         // --- 전환 루프 ---
-        while (elapsedTime < transitionDuration)
+        while (visualElapsedTime < transitionDuration || bgmElapsedTime < transitionDuration)
         {
-            elapsedTime += Time.unscaledDeltaTime;
-            float progress = elapsedTime / transitionDuration;
+            // 시각 효과는 Time.deltaTime을 사용하여 게임 일시정지 시 함께 멈춤
+            if (visualElapsedTime < transitionDuration)
+            {
+                visualElapsedTime += Time.deltaTime;
+            }
+            float visualProgress = Mathf.Min(visualElapsedTime / transitionDuration, 1f); // progress는 1.0f를 초과하지 않도록 보장
+
+            // BGM은 Time.unscaledDeltaTime을 사용하여 게임 일시정지와 무관하게 전환
+            if (bgmElapsedTime < transitionDuration)
+            {
+                bgmElapsedTime += Time.unscaledDeltaTime;
+            }
+            float bgmProgress = Mathf.Min(bgmElapsedTime / transitionDuration, 1f); // progress는 1.0f를 초과하지 않도록 보장
 
             // 환경 전환
-            RenderSettings.ambientLight = Color.Lerp(startAmbient, preset.ambientColor, progress);
-            sun.color = Color.Lerp(startSunColor, preset.sunColor, progress);
-            sun.intensity = Mathf.Lerp(startSunIntensity, preset.sunIntensity, progress);
-            sun.transform.rotation = Quaternion.Slerp(startSunRotation, Quaternion.Euler(preset.sunRotation), progress);
-            RenderSettings.fogColor = Color.Lerp(startFogColor, preset.fogColor, progress);
-            RenderSettings.fogDensity = Mathf.Lerp(startFogDensity, preset.fogDensity, progress);
+            RenderSettings.ambientLight = Color.Lerp(startAmbient, preset.ambientColor, visualProgress);
+            sun.color = Color.Lerp(startSunColor, preset.sunColor, visualProgress);
+            sun.intensity = Mathf.Lerp(startSunIntensity, preset.sunIntensity, visualProgress);
+            sun.transform.rotation = Quaternion.Slerp(startSunRotation, Quaternion.Euler(preset.sunRotation), visualProgress);
+            RenderSettings.fogColor = Color.Lerp(startFogColor, preset.fogColor, visualProgress);
+            RenderSettings.fogDensity = Mathf.Lerp(startFogDensity, preset.fogDensity, visualProgress);
 
             // BGM 크로스페이드
-            oldSource.volume = Mathf.Lerp(bgmVolume, 0f, progress);
+            oldSource.volume = Mathf.Lerp(bgmVolume, 0f, bgmProgress);
             if (newSource.clip != null)
             {
-                newSource.volume = Mathf.Lerp(0f, bgmVolume, progress);
+                newSource.volume = Mathf.Lerp(0f, bgmVolume, bgmProgress);
             }
 
             yield return null;
@@ -408,6 +421,7 @@ public class GameManager : MonoBehaviour
         oldSource.volume = 0;
         ActiveBgmSource = newSource; // 활성 소스 교체
 
+        // 최종 상태를 한 번 더 설정하여 정확성을 보장
         SetWeatherImmediate(preset);
     }
 
