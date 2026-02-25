@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement; // 'SceneManager'를 사용하기 위해 추가
+using TMPro; // TextMeshPro를 사용하기 위해 추가
 
 /// <summary>
 /// 게임의 전반적인 상태(시간, 날씨, 낮/밤 주기)를 관리하고,
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TextMeshProUGUI killCountText; // 게임 오버 시 킬 수를 표시할 텍스트
+    [SerializeField] private TextMeshProUGUI survivedDaysText; // 게임 오버 시 생존 일수를 표시할 텍스트
 
     [Header("시간 설정")]
     [Tooltip("낮 시간의 지속 시간 (초)")]
@@ -103,9 +106,12 @@ public class GameManager : MonoBehaviour
     public bool IsNight { get; private set; }
     // 현재 게임의 일차.
     public int DayCount { get; private set; } = 0;
+    // 현재 킬 수.
+    public int KillCount { get; private set; } = 0;
     // 현재 낮 또는 밤이 지속되는 시간을 카운트하는 타이머.
     private float timer;
     // 날씨 전환 코루틴을 제어하기 위한 참조.
+    private float transitionElapsedTime;
     private Coroutine transitionCoroutine;
 
     public static event Action OnDayStart;
@@ -521,6 +527,7 @@ public class GameManager : MonoBehaviour
 
         // 모든 타이머와 카운터 리셋
         DayCount = 0;
+        KillCount = 0; // 킬 수 리셋
         IsNight = false;
         timer = 0;
         hungerTimer = 0;
@@ -575,6 +582,16 @@ public class GameManager : MonoBehaviour
 
         if (gameOverPanel != null)
         {
+            // 킬 수와 생존 일수 텍스트 업데이트
+            if (killCountText != null)
+            {
+                killCountText.text = $"총 {KillCount}마리의 적을 처치했습니다.";
+            }
+            if (survivedDaysText != null)
+            {
+                survivedDaysText.text = $"{DayCount}일 동안 생존했습니다.";
+            }
+
             gameOverPanel.SetActive(true);
         }
         //else
@@ -585,6 +602,14 @@ public class GameManager : MonoBehaviour
         // 게임오버 시 커서를 보이게 하고 잠금을 해제
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    /// <summary>
+    /// 킬 수를 증가시킵니다.
+    /// </summary>
+    public void AddKill()
+    {
+        KillCount++;
     }
 
     /// <summary>

@@ -288,6 +288,12 @@ public class Enemy : MonoBehaviour
         }
 
         if (enemyLootTable != null) enemyLootTable.SpawnLoot(transform.position);
+
+        // 킬 수 증가
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddKill();
+        }
         
         Destroy(gameObject, 1f);
     }
