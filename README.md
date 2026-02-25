@@ -123,7 +123,7 @@ NavMesh를 주기적으로 재Bake하여 동적으로 변하는 지형에도 대
 
 👉 플레이 영상 
 
-https://youtu.be/H_TIqdi8ZSE
+https://youtu.be/7cmiArroW48
 
 구성 : 
 - 전투 장면  
@@ -161,10 +161,9 @@ https://youtu.be/H_TIqdi8ZSE
 
 # 🚀 향후 개선 예정
 
-- 사운드 및 BGM 추가  
-- 게임 방법 안내 UI 개선  
-- 보급 시스템 구현  
-- AI 행동 패턴 고도화  
+- 사운드 및 BGM 개선  
+- 게임 방법 안내 UI 개선   
+- AI 행동 패턴 개선  
 - 최적화 작업
 
 ---
